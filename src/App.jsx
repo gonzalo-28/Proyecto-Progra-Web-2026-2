@@ -1,11 +1,13 @@
 // src/App.jsx
-import './styles/global.css';
+
+import { AuthProvider } from './context/AuthContext';
+import AppRouter from './components/routes/AppRouter';
 
 function App() {
   return (
-    <div>
-      <h1>Reserva de Espacios Universitarios</h1>
-    </div>
+    <AuthProvider>
+      <AppRouter />
+    </AuthProvider>
   );
 }
 
