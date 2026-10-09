@@ -1,0 +1,17 @@
+/* src/components/ui/PasswordField/Passwordfield.module.css */
+
+/* Botón "Mostrar / Ocultar": texto verde, sin caja, como en el mockup del login. */
+.toggle {
+  padding: var(--space-1) 0;
+  border: 0;
+  background: transparent;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.toggle:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}

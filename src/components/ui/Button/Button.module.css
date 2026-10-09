@@ -1,0 +1,86 @@
+/* src/components/ui/Button/Button.module.css */
+
+/* ---- Base ---- */
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-weight: var(--weight-bold);
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color var(--transition-fast),
+    border-color var(--transition-fast), color var(--transition-fast);
+}
+
+/* ---- Tamaños ---- */
+.sm {
+  height: var(--control-h-sm);
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+}
+
+.md {
+  height: var(--control-h-md);
+  padding: 0 var(--space-5);
+  font-size: var(--text-md);
+}
+
+.lg {
+  height: var(--control-h-lg);
+  padding: 0 var(--space-6);
+  font-size: var(--text-md);
+}
+
+.fullWidth {
+  display: flex;
+  width: 100%;
+}
+
+/* ---- Variantes ---- */
+.primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
+.outline {
+  background-color: var(--color-surface);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.outline:hover:not(:disabled) {
+  background-color: var(--color-primary-soft);
+}
+
+.ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--color-primary);
+}
+
+.ghost:hover:not(:disabled) {
+  background-color: var(--color-primary-soft);
+}
+
+/* ---- Estados ---- */
+/* Deshabilitado "normal": se atenúa. */
+.root:disabled:not(.loading) {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Cargando: conserva el color del mockup (verde sólido) y no se atenúa. */
+.loading {
+  cursor: progress;
+}

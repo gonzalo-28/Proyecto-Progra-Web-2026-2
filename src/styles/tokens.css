@@ -1,0 +1,92 @@
+/* src/styles/tokens.css */
+
+/* ==========================================================================
+   tokens.css — Única fuente de verdad visual de ReservaUL.
+   Los valores salen de los mockups de la cátedra y son aproximados:
+   confirmar con el color picker del archivo de diseño y ajustar AQUÍ,
+   nunca dentro de un *.module.css.
+   ========================================================================== */
+
+:root {
+  /* ---- Color: marca ---- */
+  --color-primary: #11705f;
+  --color-primary-hover: #0d5a4c;
+  --color-primary-soft: #e3f1ec; /* banners info, badge de rol, icono de éxito */
+  --color-primary-ring: rgba(17, 112, 95, 0.2);
+
+  /* ---- Color: superficies y texto ---- */
+  --color-ink: #12231f; /* footer oscuro */
+  --color-text: #14211e;
+  --color-muted: #66736f; /* subtítulos, hints, labels */
+  --color-bg: #f5f7f6; /* fondo de página */
+  --color-surface: #ffffff; /* navbar, cards, inputs */
+  --color-border: #dbe2df;
+  --color-border-strong: #bcc7c2;
+  --color-readonly-bg: #eef1ef;
+
+  /* ---- Color: estados ---- */
+  --color-danger: #b42318;
+  --color-danger-soft: #fdecea;
+  --color-danger-ring: rgba(180, 35, 24, 0.18);
+  --color-warning: #9a5b00;
+  --color-warning-soft: #fcefd6;
+  --color-success: var(--color-primary);
+  --color-success-soft: var(--color-primary-soft);
+
+  /* ---- Tipografía ---- */
+  --font-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+
+  --text-xs: 0.75rem; /* labels, hints, mensajes de campo */
+  --text-sm: 0.8125rem; /* botones sm, links de navbar */
+  --text-md: 0.875rem; /* cuerpo de formularios, botones md */
+  --text-base: 1rem;
+  --text-lg: 1.125rem; /* títulos de card */
+  --text-xl: 1.5rem; /* títulos de formulario */
+  --text-2xl: 2rem;
+  --text-3xl: 2.75rem; /* hero de la landing */
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-extrabold: 800;
+
+  --leading-tight: 1.15;
+  --leading-normal: 1.5;
+  --tracking-label: 0.06em; /* labels en mayúscula */
+
+  /* ---- Espaciado (base 4px) ---- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* ---- Forma ---- */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 1px 2px rgba(18, 35, 31, 0.06),
+    0 4px 12px rgba(18, 35, 31, 0.04);
+
+  /* ---- Controles (botones, inputs, selects) ---- */
+  --control-h-sm: 32px; /* navbar */
+  --control-h-md: 40px; /* formularios */
+  --control-h-lg: 48px; /* CTA de ancho completo */
+
+  /* ---- Layout ---- */
+  --navbar-h: 56px;
+  --container-max: 1160px;
+  --gutter: var(--space-6);
+
+  /* ---- Movimiento ---- */
+  --transition-fast: 120ms ease;
+}

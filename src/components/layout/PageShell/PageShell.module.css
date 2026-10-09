@@ -1,0 +1,17 @@
+/* src/components/layout/PageShell/PageShell.module.css */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--color-bg);
+}
+
+/* main absorbe el espacio libre: el footer queda siempre al fondo,
+   incluso en 403/404 donde hay poco contenido. */
+.main {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  min-width: 0;
+}

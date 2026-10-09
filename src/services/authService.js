@@ -1,5 +1,9 @@
 // src/services/authService.js
-import { usuarios as usuariosIniciales } from '../data/db.js';
+/*import { usuarios as usuariosIniciales } from '../data/db.js';*/
+import initialDb from '../data/db.js'; // ✅ Importa el objeto por defecto
+
+// Y luego para acceder a los usuarios usas:
+const usuariosIniciales = initialDb.usuarios;
 
 const STORAGE_KEY = 'app_usuarios';
 const NETWORK_LATENCY_MS = 500;

@@ -1,7 +1,7 @@
 // src/context/AuthContext.jsx
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import authService from '../services/authService';
+import * as authService from '../services/authService';
 
 const SESSION_KEY = 'app_session_user';
 
