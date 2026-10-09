@@ -1,0 +1,35 @@
+/* src/components/ui/Badge/Badge.module.css */
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  white-space: nowrap;
+}
+
+.success {
+  background-color: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.warning {
+  background-color: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+
+.danger {
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.role {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}

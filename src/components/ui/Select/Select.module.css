@@ -1,0 +1,65 @@
+/* src/components/ui/Select/Select.module.css */
+
+/* Todo lo visual compartido viene de TextField.module.css vía composes. */
+.root {
+  composes: root from '../TextField/Textfield.module.css';
+}
+
+.label {
+  composes: label from '../TextField/Textfield.module.css';
+}
+
+.control {
+  composes: control from '../TextField/Textfield.module.css';
+  position: relative;
+}
+
+.hasError {
+  composes: hasError from '../TextField/Textfield.module.css';
+}
+
+.select {
+  composes: input from '../TextField/Textfield.module.css';
+  padding-right: var(--space-8); /* espacio para el caret */
+  appearance: none;
+  -webkit-appearance: none;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.select:disabled {
+  cursor: not-allowed;
+}
+
+/* Tamaño compacto para el navbar (mayor especificidad que .control compuesto) */
+.control.sm {
+  min-height: var(--control-h-sm);
+}
+
+.control.sm .select {
+  padding-left: var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+}
+
+/* Caret: triángulo CSS, hereda color del texto muted */
+.caret {
+  position: absolute;
+  top: 50%;
+  right: var(--space-3);
+  width: 0;
+  height: 0;
+  margin-top: -2px;
+  border-top: 5px solid var(--color-muted);
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+  pointer-events: none;
+}
+
+.message {
+  composes: message from '../TextField/Textfield.module.css';
+}
+
+.error {
+  composes: error from '../TextField/Textfield.module.css';
+}
