@@ -1,0 +1,114 @@
+/* src/pages/LoginPage/LoginPage.module.css */
+
+/* ---- Panel izquierdo (decorativo) ---- */
+.aside {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+
+/* ImagePlaceholder debe llenar su contenedor (ancho y alto 100%). */
+.asideImage {
+  position: absolute;
+  inset: 0;
+}
+
+.testimonial {
+  position: absolute;
+  left: var(--space-8);
+  bottom: var(--space-8);
+  max-width: 340px;
+  margin: 0;
+  padding: var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.quote {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-normal);
+  color: var(--color-ink);
+}
+
+.author {
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+
+/* ---- Panel derecho (formulario) ---- */
+.content {
+  width: 100%;
+  max-width: 420px;
+  margin: auto;
+  padding: var(--space-10) var(--gutter);
+}
+
+.header {
+  margin-bottom: var(--space-6);
+}
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.subtitle {
+  margin-top: var(--space-2);
+  font-size: var(--text-md);
+  color: var(--color-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* "Recuérdame" a la izquierda, "¿Olvidaste tu contraseña?" a la derecha */
+.options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.remember {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.link {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.link:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+.signup {
+  margin-top: var(--space-5);
+  font-size: var(--text-xs);
+  text-align: center;
+  color: var(--color-muted);
+}

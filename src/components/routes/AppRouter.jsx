@@ -4,9 +4,9 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import RutaProtegida from './RutaProtegida';
 import RutaPublica from './RutaPublica';
 import AccesoDenegado from '../../pages/AccesoDenegado';
+import Login from '../../pages/LoginPage/LoginPage'; 
 
 // Importaciones / Placeholders de componentes de vista
-const Login = () => <div className="p-8 text-lg font-medium">Vista de Login</div>;
 const Registro = () => <div className="p-8 text-lg font-medium">Vista de Registro</div>;
 const Recuperar = () => <div className="p-8 text-lg font-medium">Vista de Recuperar Contraseña</div>;
 const Perfil = () => <div className="p-8 text-lg font-medium">Vista de Perfil de Usuario</div>;

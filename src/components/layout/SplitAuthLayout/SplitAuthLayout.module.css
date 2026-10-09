@@ -1,0 +1,35 @@
+.splitContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 140px); /* Ajuste aproximado para ocupar el espacio central entre navbar y footer */
+  width: 100%;
+  background-color: #ffffff;
+}
+
+.asideWrapper {
+  background-color: var(--color-bg, #F5F7F6);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  border-right: 1px solid var(--color-border, #E5E7EB);
+}
+
+.formWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+}
+
+/* Responsivo para pantallas pequeñas */
+@media (max-width: 968px) {
+  .splitContainer {
+    grid-template-columns: 1fr;
+  }
+  .asideWrapper {
+    display: none; /* En móviles ocultamos el panel lateral decorativo para priorizar el formulario */
+  }
+}
