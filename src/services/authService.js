@@ -1,47 +1,24 @@
 // src/services/authService.js
-/*import { usuarios as usuariosIniciales } from '../data/db.js';*/
-import initialDb from '../data/db.js'; // ✅ Importa el objeto por defecto
+import { getStoredData, saveStoredData } from './storageService';
 
-// Y luego para acceder a los usuarios usas:
-const usuariosIniciales = initialDb.usuarios;
-
-const STORAGE_KEY = 'app_usuarios';
 const NETWORK_LATENCY_MS = 500;
 
-/**
- * Helper para simular latencia de red de 500ms mediante Promesas.
- */
-const simularLatencia = (ms = NETWORK_LATENCY_MS) => 
+/** Simula latencia de red mediante Promesas. */
+const simularLatencia = (ms = NETWORK_LATENCY_MS) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-/**
- * Inicialización lazy/seeding de datos.
- * Verifica si existe la clave en localStorage; si no, la puebla desde db.js.
- */
-const inicializarAlmacenamiento = () => {
-  try {
-    const dataExistente = localStorage.getItem(STORAGE_KEY);
-    if (!dataExistente) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(usuariosIniciales || []));
-    }
-  } catch (error) {
-    console.error('Error al acceder a localStorage:', error);
-  }
-};
-
-// Se ejecuta al importar el módulo
-inicializarAlmacenamiento();
-
-/**
- * Métodos auxiliares privados para manipular el estado en localStorage
- */
-const obtenerUsuarios = () => {
-  const data = localStorage.getItem(STORAGE_KEY);
-  return data ? JSON.parse(data) : [];
-};
+/* Los usuarios viven en la base única 'app_db' (storageService), no en una clave aparte. */
+const obtenerUsuarios = () => getStoredData().usuarios ?? [];
 
 const guardarUsuarios = (usuarios) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(usuarios));
+  saveStoredData({ ...getStoredData(), usuarios });
+};
+
+/** Devuelve una copia del usuario sin la contraseña. */
+const sinContrasena = (usuario) => {
+  const copia = { ...usuario };
+  delete copia.contrasena;
+  return copia;
 };
 
 /**
@@ -62,9 +39,7 @@ export const login = async (correo, contrasena) => {
     throw new Error('Credenciales incorrectas');
   }
 
-  // Desestructuración para sanitizar la respuesta y omitir la contraseña
-  const { contrasena: _, ...usuarioSinPassword } = usuario;
-  return usuarioSinPassword;
+  return sinContrasena(usuario);
 };
 
 /**
@@ -95,8 +70,7 @@ export const registro = async (datosUsuario) => {
   usuarios.push(nuevoUsuario);
   guardarUsuarios(usuarios);
 
-  const { contrasena: _, ...usuarioCreadoSinPassword } = nuevoUsuario;
-  return usuarioCreadoSinPassword;
+  return sinContrasena(nuevoUsuario);
 };
 
 /**
@@ -125,6 +99,5 @@ export const actualizarPerfil = async (id, nuevosDatos) => {
   usuarios[index] = usuarioActualizado;
   guardarUsuarios(usuarios);
 
-  const { contrasena: _, ...perfilActualizado } = usuarioActualizado;
-  return perfilActualizado;
+  return sinContrasena(usuarioActualizado);
 };

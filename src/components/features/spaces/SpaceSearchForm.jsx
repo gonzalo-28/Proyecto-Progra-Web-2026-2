@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Card from '../../ui/Card/Card';
 import Select from '../../ui/Select/Select';
-import DateField from '../../ui/DataField/DataField';
+import DateField from '../../ui/DateField/DateField';
 import Button from '../../ui/Button/Button';
 import { toISODate } from '../../../utils/dates';
 import styles from './SpaceSearchForm.module.css';

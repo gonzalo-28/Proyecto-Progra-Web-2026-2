@@ -3,7 +3,7 @@
 import { forwardRef, useId, useState } from 'react';
 import TextField from '../TextField/TextField';
 
-import styles from './Passwordfield.module.css';
+import styles from './PasswordField.module.css';
 
 /**
  * Campo de contraseña. Es un TextField con type conmutable.

@@ -2,24 +2,24 @@
 
 /* Todo lo visual compartido viene de TextField.module.css vía composes. */
 .root {
-  composes: root from '../TextField/Textfield.module.css';
+  composes: root from '../TextField/TextField.module.css';
 }
 
 .label {
-  composes: label from '../TextField/Textfield.module.css';
+  composes: label from '../TextField/TextField.module.css';
 }
 
 .control {
-  composes: control from '../TextField/Textfield.module.css';
+  composes: control from '../TextField/TextField.module.css';
   position: relative;
 }
 
 .hasError {
-  composes: hasError from '../TextField/Textfield.module.css';
+  composes: hasError from '../TextField/TextField.module.css';
 }
 
 .select {
-  composes: input from '../TextField/Textfield.module.css';
+  composes: input from '../TextField/TextField.module.css';
   padding-right: var(--space-8); /* espacio para el caret */
   appearance: none;
   -webkit-appearance: none;
@@ -57,9 +57,9 @@
 }
 
 .message {
-  composes: message from '../TextField/Textfield.module.css';
+  composes: message from '../TextField/TextField.module.css';
 }
 
 .error {
-  composes: error from '../TextField/Textfield.module.css';
+  composes: error from '../TextField/TextField.module.css';
 }
