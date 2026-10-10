@@ -3,20 +3,41 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import RutaProtegida from './RutaProtegida';
 import RutaPublica from './RutaPublica';
+import PageShell from '../layout/PageShell/PageShell';
 import AccesoDenegado from '../../pages/AccesoDenegado';
-import Login from '../../pages/LoginPage/LoginPage'; 
+import Login from '../../pages/LoginPage/LoginPage';
+import LandingPage from '../../pages/LandingPage/LandingPage';
 
-// Importaciones / Placeholders de componentes de vista
+// Placeholders de vistas que aún no existen.
 const Registro = () => <div className="p-8 text-lg font-medium">Vista de Registro</div>;
 const Recuperar = () => <div className="p-8 text-lg font-medium">Vista de Recuperar Contraseña</div>;
-const Perfil = () => <div className="p-8 text-lg font-medium">Vista de Perfil de Usuario</div>;
-const EstudianteDashboard = () => <div className="p-8 text-lg font-medium">Dashboard del Estudiante</div>;
-const EncargadoDashboard = () => <div className="p-8 text-lg font-medium">Dashboard del Encargado</div>;
+
+// Las vistas privadas van dentro de PageShell: así tienen navbar con el menú
+// de usuario y "Cerrar sesión" (si no, quedas atrapado en el dashboard).
+const Perfil = () => (
+  <PageShell screen="account">
+    <div className="p-8 text-lg font-medium">Vista de Perfil de Usuario</div>
+  </PageShell>
+);
+const EstudianteDashboard = () => (
+  <PageShell screen="account">
+    <div className="p-8 text-lg font-medium">Dashboard del Estudiante</div>
+  </PageShell>
+);
+const EncargadoDashboard = () => (
+  <PageShell screen="account">
+    <div className="p-8 text-lg font-medium">Dashboard del Encargado</div>
+  </PageShell>
+);
 
 export const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Landing: abierta a todos. El navbar se adapta si hay sesión. */}
+        <Route path="/" element={<Navigate to="/landingpage" replace />} />
+        <Route path="/landingpage" element={<LandingPage />} />
+
         {/* Rutas Públicas (Solo accesibles sin sesión activa) */}
         <Route element={<RutaPublica />}>
           <Route path="/login" element={<Login />} />
@@ -42,8 +63,8 @@ export const AppRouter = () => {
         {/* Vista de Acceso Denegado */}
         <Route path="/acceso-denegado" element={<AccesoDenegado />} />
 
-        {/* Fallback 404 / Desconocido */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Fallback temporal: a la landing hasta que exista la página 404 */}
+        <Route path="*" element={<Navigate to="/landingpage" replace />} />
       </Routes>
     </BrowserRouter>
   );

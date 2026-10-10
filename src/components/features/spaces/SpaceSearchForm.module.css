@@ -1,0 +1,20 @@
+/* src/components/features/spaces/SpaceSearchForm.module.css */
+
+/* 3 campos + botón, todos alineados por la base del control. */
+.form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+  align-items: end;
+  gap: var(--space-3);
+}
+
+@media (max-width: 760px) {
+  .form {
+    grid-template-columns: 1fr;
+  }
+
+  /* Selector más específico que .root de Button: el botón ocupa todo el ancho. */
+  .actions > button {
+    width: 100%;
+  }
+}

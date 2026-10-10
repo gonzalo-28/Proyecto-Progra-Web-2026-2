@@ -1,0 +1,16 @@
+/* src/components/layout/ContentLayout/ContentLayout.module.css */
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.md {
+  padding-block: var(--space-8);
+}
+
+.none {
+  padding-block: 0;
+}

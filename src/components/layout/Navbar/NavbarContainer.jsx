@@ -1,9 +1,7 @@
-// src/components/layout/Navbar/NavbarContainer.jsx
-
 import { useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../../context/AuthContext'; // AJUSTAR a la ruta real de tu hook
 import Navbar from './Navbar';
 import {
   CAMPUS_OPTIONS,
@@ -63,7 +61,7 @@ export default function NavbarContainer({
   showCampusSelector = false,
   actions = [],
 }) {
-  const { user, logout } = useAuth();
+  const { usuario, logout } = useAuth();
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
@@ -86,7 +84,7 @@ export default function NavbarContainer({
     }
   }, [logout, navigate]);
 
-  const navbarUser = toNavbarUser(user);
+  const navbarUser = toNavbarUser(usuario);
 
   const links = navbarUser
     ? LINKS_BY_ROLE[navbarUser.role] ?? FALLBACK_USER_LINKS

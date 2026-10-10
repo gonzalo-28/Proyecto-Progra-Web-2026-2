@@ -1,5 +1,3 @@
-/* src/components/layout/Navbar/navbarConfig.js */ 
-
 /**
  * navbarConfig.js
  * Rutas, links por rol y opciones de campus del Navbar.
@@ -7,10 +5,10 @@
  */
 
 export const ROUTES = {
-  home: '/',
+  home: '/landingpage',
   login: '/login',
   register: '/registro',
-  account: '/cuenta',
+  account: '/perfil',
 };
 
 /* Links del visitante (mockups: Landing, Login, Registros, Recuperar, 404) */

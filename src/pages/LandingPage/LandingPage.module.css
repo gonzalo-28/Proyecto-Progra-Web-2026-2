@@ -1,0 +1,98 @@
+/* src/pages/LandingPage/LandingPage.module.css */
+
+/* ---- Hero: banda blanca a todo el ancho de la pantalla ---- */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: var(--space-8);
+  padding-block: var(--space-10);
+  background-color: var(--color-surface);
+  /* Fondo "a sangre" dentro de un contenedor centrado: la sombra extiende el
+     blanco hacia los lados y clip-path recorta lo que sobra arriba y abajo. */
+  box-shadow: 0 0 0 100vmax var(--color-surface);
+  clip-path: inset(0 -100vmax);
+}
+
+.heroText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.title {
+  font-size: clamp(var(--text-2xl), 3.5vw, var(--text-3xl));
+  font-weight: var(--weight-extrabold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  max-width: 56ch;
+  font-size: var(--text-base);
+  color: var(--color-muted);
+}
+
+/* El placeholder llena la columna derecha de arriba abajo. */
+.heroMedia {
+  min-height: 220px;
+}
+
+/* ---- Espacios destacados ---- */
+.featured {
+  padding-top: var(--space-8);
+}
+
+.featuredHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.sectionTitle {
+  font-size: var(--text-xl);
+  color: var(--color-primary);
+}
+
+.catalogLink {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+.catalogLink:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+/* 4 columnas en escritorio; baja a 3, 2 y 1 sin media queries. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ---- Cierre ---- */
+.strip {
+  margin-block: var(--space-8);
+}
+
+/* ---- Pantallas angostas ---- */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    padding-block: var(--space-8);
+  }
+
+  .heroMedia {
+    min-height: 180px;
+  }
+}
