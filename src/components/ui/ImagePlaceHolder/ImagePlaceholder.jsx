@@ -1,4 +1,4 @@
-// src/components/ui/ImagePlaceholder/ImagePlaceholder.jsx
+// src/components/ui/ImagePlaceholder/ImagePlaceHolder.jsx
 
 import styles from './ImagePlaceholder.module.css';
 

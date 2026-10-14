@@ -1,4 +1,4 @@
-// src/components/ui/PasswordField/Passwordfield.jsx 
+// src/components/ui/PasswordField/PasswordField.jsx 
 
 import { forwardRef, useId, useState } from 'react';
 import TextField from '../TextField/TextField';

@@ -2,22 +2,14 @@
 
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import PantallaCarga from './PantallaCarga';
 
 export const RutaProtegida = ({ rolesPermitidos, children }) => {
   const { usuario, cargando } = useAuth();
   const location = useLocation();
 
   // 1. Mientras se verifica la sesión persistida, prevenimos redirecciones falsas
-  if (cargando) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-gray-600 font-medium text-sm">Cargando sesión...</p>
-        </div>
-      </div>
-    );
-  }
+  if (cargando) return <PantallaCarga mensaje="Cargando sesión…" />;
 
   // 2. Si no hay usuario autenticado, redirige a /login guardando la ruta intentada
   if (!usuario) {

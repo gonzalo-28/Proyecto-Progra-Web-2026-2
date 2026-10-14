@@ -3,25 +3,16 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { obtenerRutaInicioPorRol } from './rutasPorRol';
+import PantallaCarga from './PantallaCarga';
 
 export const RutaPublica = ({ children }) => {
   const { usuario, cargando } = useAuth();
 
-  if (cargando) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p className="text-gray-600 font-medium text-sm">Cargando...</p>
-        </div>
-      </div>
-    );
-  }
+  if (cargando) return <PantallaCarga mensaje="Cargando…" />;
 
   // Si ya tiene sesión activa, redirigir a su dashboard correspondiente
   if (usuario) {
-    const rutaDestino = obtenerRutaInicioPorRol(usuario.rol);
-    return <Navigate to={rutaDestino} replace />;
+    return <Navigate to={obtenerRutaInicioPorRol(usuario.rol)} replace />;
   }
 
   return children ? children : <Outlet />;

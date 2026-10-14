@@ -1,4 +1,4 @@
-// src/components/ui/Spinner/Spineer.jsx
+// src/components/ui/Spinner/Spinner.jsx
 
 import styles from './Spinner.module.css';
 

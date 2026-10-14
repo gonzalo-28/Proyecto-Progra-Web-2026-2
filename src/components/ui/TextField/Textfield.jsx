@@ -1,7 +1,7 @@
-// src/components/ui/TextField/Textfield.jsx
+// src/components/ui/TextField/TextField.jsx
 
 import { forwardRef, useId } from 'react';
-import styles from './Textfield.module.css';
+import styles from './TextField.module.css';
 
 const cx = (...classes) => classes.filter(Boolean).join(' ');
 
