@@ -8,13 +8,13 @@ import ForbiddenPage from '../../pages/ForbiddenPage/ForbiddenPage';
 import NotFoundPage from '../../pages/NotFoundPage/NotFoundPage';
 import Login from '../../pages/LoginPage/LoginPage';
 import LandingPage from '../../pages/LandingPage/LandingPage';
+import ProfilePage from '../../pages/ProfilePage/ProfilePage';
 import RecoverPasswordPage from '../../pages/RecoverPasswordPage/RecoverPasswordPage';
 import RegisterManagerPage from '../../pages/RegisterManagerPage/RegisterManagerPage';
 import RegisterStudentPage from '../../pages/RegisterStudentPage/RegisterStudentPage';
 
-// Marcadores de vistas que aún no existen (se reemplaza en la fase E).
-const Perfil = () => <VistaPendiente titulo="Mi cuenta" screen="account" />;
-// Dashboards: pertenecen a otras HU; solo existen para que la redirección por rol tenga destino.
+// Marcadores de vistas que pertenecen a otras HU (los dashboards).
+// Solo existen para que la redirección por rol tenga destino.
 const EstudianteDashboard = () => <VistaPendiente titulo="Panel del estudiante" />;
 const EncargadoDashboard = () => <VistaPendiente titulo="Panel del encargado" />;
 
@@ -36,7 +36,7 @@ export const AppRouter = () => {
 
         {/* Rutas privadas compartidas (cualquier usuario autenticado) */}
         <Route element={<RutaProtegida />}>
-          <Route path="/perfil" element={<Perfil />} />
+          <Route path="/perfil" element={<ProfilePage />} />
         </Route>
 
         {/* Rutas privadas exclusivas para estudiantes */}

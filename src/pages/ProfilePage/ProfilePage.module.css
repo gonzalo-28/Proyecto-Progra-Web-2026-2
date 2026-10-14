@@ -1,0 +1,26 @@
+/* src/pages/ProfilePage/ProfilePage.module.css */
+/* Solo composición: título y grilla de dos columnas. */
+
+.title {
+  margin-bottom: var(--space-5);
+  font-size: var(--text-2xl);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-5);
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
