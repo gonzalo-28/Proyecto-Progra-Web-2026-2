@@ -32,6 +32,13 @@ const CICLOS = [
   'Décimo',
 ];
 
+/* El valor es el id de sede del contrato de datos (sedeAsignadaId / sedeId).
+   Por ahora el contrato solo define 'sede_central'. */
+const SEDES = [{ value: 'sede_central', label: 'Campus Monterrico' }];
+
+/** @returns {{value: string, label: string}[]} */
+export const obtenerSedes = () => SEDES.map((sede) => ({ ...sede }));
+
 /** @returns {{value: string, label: string}[]} */
 export const obtenerCarreras = () => CARRERAS.map((nombre) => ({ value: nombre, label: nombre }));
 

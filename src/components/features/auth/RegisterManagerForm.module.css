@@ -1,0 +1,13 @@
+/* src/components/features/auth/RegisterManagerForm.module.css */
+
+.header {
+  margin-bottom: var(--space-4);
+}
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.alert {
+  margin-bottom: var(--space-4);
+}
