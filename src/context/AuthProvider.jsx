@@ -1,128 +1,137 @@
 // src/context/AuthProvider.jsx
+//
+// Estado de sesión para toda la app. No guarda datos ni reglas: delega todo en
+// authService. `cargando` es SOLO la restauración inicial de la sesión; las
+// operaciones (login, registro…) no lo tocan, porque RutaPublica/RutaProtegida
+// muestran un spinner de pantalla completa mientras `cargando` es true y
+// desmontarían el formulario (perdiendo el botón "Verificando…" y los errores).
+// Cada formulario maneja su propio estado de envío.
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import * as authService from '../services/authService';
 import { AuthContext } from './AuthContext';
-
-const SESSION_KEY = 'app_session_user';
 
 export const AuthProvider = ({ children }) => {
   const [usuario, setUsuario] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
-  // Helper para resetear errores antes de cada operación
-  const limpiarError = () => setError(null);
+  const limpiarError = useCallback(() => setError(null), []);
 
-  // 3. Verificación inicial de la sesión al montar el componente
+  // Restaura la sesión guardada al abrir la app.
   useEffect(() => {
-    const verificarSesion = async () => {
-      try {
-        // Verifica si authService ofrece un método explícito o lee localStorage
-        const sesionGuardada = authService.obtenerSesionActual 
-          ? await authService.obtenerSesionActual()
-          : JSON.parse(localStorage.getItem(SESSION_KEY));
-
-        if (sesionGuardada) {
-          setUsuario(sesionGuardada);
-        }
-      } catch (err) {
-        console.error('Error al restaurar la sesión:', err);
-        localStorage.removeItem(SESSION_KEY);
-      } finally {
-        setCargando(false);
-      }
+    let activo = true;
+    authService
+      .obtenerSesionActual()
+      .then((sesion) => {
+        if (activo) setUsuario(sesion);
+      })
+      .catch((err) => console.error('Error al restaurar la sesión:', err))
+      .finally(() => {
+        if (activo) setCargando(false);
+      });
+    return () => {
+      activo = false;
     };
-
-    verificarSesion();
   }, []);
 
-  // 4. Funciones asíncronas para el manejo del estado
-  const login = useCallback(async (correo, contrasena) => {
-    limpiarError();
-    setCargando(true);
+  /** Ejecuta una operación del servicio, guarda el mensaje de error y lo relanza. */
+  const ejecutar = useCallback(async (operacion) => {
+    setError(null);
     try {
-      const user = await authService.login(correo, contrasena);
-      setUsuario(user);
-      localStorage.setItem(SESSION_KEY, JSON.stringify(user));
-      return user;
+      return await operacion();
     } catch (err) {
-      const mensaje = err.response?.data?.message || err.message || 'Error al iniciar sesión';
-      setError(mensaje);
-      throw err;
-    } finally {
-      setCargando(false);
+      setError(err.message || 'Ocurrió un error inesperado.');
+      throw err; // el formulario decide cómo mostrar errores por campo
     }
   }, []);
+
+  const login = useCallback(
+    (correo, contrasena, recordar = false) =>
+      ejecutar(async () => {
+        const user = await authService.login(correo, contrasena, recordar);
+        setUsuario(user);
+        return user;
+      }),
+    [ejecutar]
+  );
 
   const logout = useCallback(async () => {
-    limpiarError();
-    setCargando(true);
-    try {
-      if (typeof authService.logout === 'function') {
-        await authService.logout();
-      }
-    } catch (err) {
-      console.warn('Error en logout del servidor:', err);
-    } finally {
-      localStorage.removeItem(SESSION_KEY);
-      setUsuario(null);
-      setCargando(false);
-    }
+    setError(null);
+    await authService.logout();
+    setUsuario(null);
   }, []);
 
-  const registro = useCallback(async (datosUsuario) => {
-    limpiarError();
-    setCargando(true);
-    try {
-      // Registrar e iniciar sesión automáticamente con los datos devueltos
-      const newUser = await authService.registro(datosUsuario);
-      setUsuario(newUser);
-      localStorage.setItem(SESSION_KEY, JSON.stringify(newUser));
-      return newUser;
-    } catch (err) {
-      const mensaje = err.response?.data?.message || err.message || 'Error al registrar el usuario';
-      setError(mensaje);
-      throw err;
-    } finally {
-      setCargando(false);
-    }
-  }, []);
-
-  const actualizarPerfil = useCallback(async (nuevosDatos) => {
-    limpiarError();
-    setCargando(true);
-    try {
-      const usuarioActualizado = await authService.actualizarPerfil(nuevosDatos);
-      setUsuario(usuarioActualizado);
-      localStorage.setItem(SESSION_KEY, JSON.stringify(usuarioActualizado));
-      return usuarioActualizado;
-    } catch (err) {
-      const mensaje = err.response?.data?.message || err.message || 'Error al actualizar perfil';
-      setError(mensaje);
-      throw err;
-    } finally {
-      setCargando(false);
-    }
-  }, []);
-
-  const value = {
-    usuario,
-    cargando,
-    error,
-    login,
-    logout,
-    registro,
-    actualizarPerfil,
-    limpiarError
-  };
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+  /** Crea la cuenta pero NO inicia sesión: el flujo sigue en "Ir a iniciar sesión". */
+  const registro = useCallback(
+    (datos) => ejecutar(() => authService.registro(datos)),
+    [ejecutar]
   );
-};
 
+  const actualizarPerfil = useCallback(
+    (nuevosDatos) =>
+      ejecutar(async () => {
+        const actualizado = await authService.actualizarPerfil(usuario.id, nuevosDatos);
+        setUsuario(actualizado);
+        return actualizado;
+      }),
+    [ejecutar, usuario]
+  );
+
+  const cambiarContrasena = useCallback(
+    (contrasenaActual, contrasenaNueva) =>
+      ejecutar(() => authService.cambiarContrasena(usuario.id, contrasenaActual, contrasenaNueva)),
+    [ejecutar, usuario]
+  );
+
+  const solicitarRecuperacion = useCallback(
+    (correo) => ejecutar(() => authService.solicitarRecuperacion(correo)),
+    [ejecutar]
+  );
+
+  const verificarTokenRecuperacion = useCallback(
+    (token) => ejecutar(() => authService.verificarTokenRecuperacion(token)),
+    [ejecutar]
+  );
+
+  const restablecerContrasena = useCallback(
+    (token, contrasenaNueva) =>
+      ejecutar(() => authService.restablecerContrasena(token, contrasenaNueva)),
+    [ejecutar]
+  );
+
+  const value = useMemo(
+    () => ({
+      usuario,
+      cargando,
+      error,
+      login,
+      logout,
+      registro,
+      actualizarPerfil,
+      cambiarContrasena,
+      solicitarRecuperacion,
+      verificarTokenRecuperacion,
+      restablecerContrasena,
+      limpiarError,
+    }),
+    [
+      usuario,
+      cargando,
+      error,
+      login,
+      logout,
+      registro,
+      actualizarPerfil,
+      cambiarContrasena,
+      solicitarRecuperacion,
+      verificarTokenRecuperacion,
+      restablecerContrasena,
+      limpiarError,
+    ]
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
 
 export default AuthProvider;

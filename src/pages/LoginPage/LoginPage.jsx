@@ -8,8 +8,8 @@ import SplitAuthLayout from '../../components/layout/SplitAuthLayout/SplitAuthLa
 import ImagePlaceholder from '../../components/ui/ImagePlaceholder/ImagePlaceholder';
 import Alert from '../../components/ui/Alert/Alert';
 import Button from '../../components/ui/Button/Button';
-import TextField from '../../components/ui/TextField/Textfield';
-import PasswordField from '../../components/ui/PasswordField/Passwordfield';
+import TextField from '../../components/ui/TextField/TextField';
+import PasswordField from '../../components/ui/PasswordField/PasswordField';
 
 import styles from './LoginPage.module.css';
 

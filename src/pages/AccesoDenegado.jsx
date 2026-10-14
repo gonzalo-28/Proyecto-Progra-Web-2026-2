@@ -2,7 +2,7 @@
 
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { obtenerRutaInicioPorRol } from '../components/routes/RutaPublica';
+import { obtenerRutaInicioPorRol } from '../components/routes/rutasPorRol';
 
 export const AccesoDenegado = () => {
   const { usuario } = useAuth();

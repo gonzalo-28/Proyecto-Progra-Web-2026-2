@@ -2,20 +2,7 @@
 
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-
-/**
- * Helper para resolver el dashboard por defecto de acuerdo con el rol del usuario
- */
-export const obtenerRutaInicioPorRol = (rol) => {
-  switch (rol) {
-    case 'estudiante':
-      return '/estudiante/dashboard';
-    case 'encargado':
-      return '/encargado/dashboard';
-    default:
-      return '/perfil';
-  }
-};
+import { obtenerRutaInicioPorRol } from './rutasPorRol';
 
 export const RutaPublica = ({ children }) => {
   const { usuario, cargando } = useAuth();
