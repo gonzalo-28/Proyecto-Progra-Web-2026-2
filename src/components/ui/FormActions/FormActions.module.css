@@ -1,0 +1,22 @@
+/* src/components/ui/FormActions/FormActions.module.css */
+
+.root {
+  display: flex;
+  margin-top: var(--space-4);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.end {
+  justify-content: flex-end;
+}
+
+.start {
+  justify-content: flex-start;
+}
+
+.divider {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}

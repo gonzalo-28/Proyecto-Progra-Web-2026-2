@@ -1,0 +1,44 @@
+/* src/components/ui/StatusIcon/StatusIcon.module.css */
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border-radius: var(--radius-pill);
+}
+
+.sm {
+  width: 40px;
+  height: 40px;
+}
+
+.md {
+  width: 64px;
+  height: 64px;
+}
+
+.sm svg {
+  width: 20px;
+  height: 20px;
+}
+
+.md svg {
+  width: 30px;
+  height: 30px;
+}
+
+.success {
+  background-color: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.danger {
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.pending {
+  background-color: var(--color-warning-soft);
+  color: var(--color-warning);
+}

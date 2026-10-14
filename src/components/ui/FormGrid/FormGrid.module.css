@@ -1,0 +1,24 @@
+/* src/components/ui/FormGrid/FormGrid.module.css */
+
+.grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.cols1 {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.cols2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 560px) {
+  .cols2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

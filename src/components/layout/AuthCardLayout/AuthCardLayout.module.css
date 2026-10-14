@@ -1,0 +1,24 @@
+/* src/components/layout/AuthCardLayout/AuthCardLayout.module.css */
+
+.stage {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-10) var(--gutter) var(--space-12);
+}
+
+.card,
+.slot {
+  width: 100%;
+}
+
+/* Anchos aproximados de los mockups; ajustar AQUÍ si el diseño real difiere. */
+.sm {
+  max-width: 440px;
+}
+
+.md {
+  max-width: 720px;
+}

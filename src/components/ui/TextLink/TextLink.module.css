@@ -1,0 +1,23 @@
+/* src/components/ui/TextLink/TextLink.module.css */
+
+.root {
+  color: var(--color-primary);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.root:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+/* Versión <button>: sin caja, hereda el tamaño del texto que la rodea. */
+.button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+}
