@@ -1,0 +1,23 @@
+/* src/components/features/auth/StatusCard.module.css */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+}
+
+.title {
+  font-size: var(--text-lg);
+}
+
+.message {
+  font-size: var(--text-md);
+  color: var(--color-muted);
+}
+
+.action {
+  width: 100%;
+  margin-top: var(--space-2);
+}

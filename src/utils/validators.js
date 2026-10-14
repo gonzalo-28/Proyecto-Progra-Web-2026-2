@@ -26,6 +26,32 @@ export const passwordRules = (password) => {
   ];
 };
 
+const joinList = (items) =>
+  items.length <= 1
+    ? items.join('')
+    : `${items.slice(0, -1).join(', ')} y ${items[items.length - 1]}`;
+
+/**
+ * Resumen de las reglas de contraseña para pintar el feedback del campo.
+ * successText sale de la MISMA lista que passwordRules: si la regla cambia,
+ * el mensaje cambia solo ("Cumple los 8 caracteres, una mayúscula y un número.").
+ */
+export const describePasswordRules = (password) => {
+  const rules = passwordRules(password);
+  return {
+    allOk: rules.every((rule) => rule.ok),
+    successText: `Cumple los ${joinList(rules.map((rule) => rule.label))}.`,
+  };
+};
+
+/** Mensaje de error del correo institucional, o null si es válido. */
+export const getInstitutionalEmailError = (value) => {
+  if (isBlank(value)) return 'Ingresa tu correo institucional.';
+  if (!isValidEmail(value)) return 'Ingresa un correo válido.';
+  if (!isInstitutionalEmail(value)) return `El correo debe terminar en ${INSTITUTIONAL_DOMAIN}`;
+  return null;
+};
+
 export const isPasswordValid = (password) =>
   passwordRules(password).every((rule) => rule.ok);
 

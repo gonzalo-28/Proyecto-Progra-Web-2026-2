@@ -1,0 +1,19 @@
+/* src/components/features/auth/RegisterStudentForm.module.css */
+
+.header {
+  margin-bottom: var(--space-5);
+}
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.subtitle {
+  margin-top: var(--space-1);
+  font-size: var(--text-md);
+  color: var(--color-muted);
+}
+
+.alert {
+  margin-bottom: var(--space-4);
+}

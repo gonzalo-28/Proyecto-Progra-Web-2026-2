@@ -8,9 +8,9 @@ import ForbiddenPage from '../../pages/ForbiddenPage/ForbiddenPage';
 import NotFoundPage from '../../pages/NotFoundPage/NotFoundPage';
 import Login from '../../pages/LoginPage/LoginPage';
 import LandingPage from '../../pages/LandingPage/LandingPage';
+import RegisterStudentPage from '../../pages/RegisterStudentPage/RegisterStudentPage';
 
-// Marcadores de vistas que aún no existen (se reemplazan en las fases B–E).
-const Registro = () => <VistaPendiente titulo="Registro de estudiante" screen="registerStudent" />;
+// Marcadores de vistas que aún no existen (se reemplazan en las fases C–E).
 const Recuperar = () => <VistaPendiente titulo="Recuperar contraseña" screen="recover" />;
 const Perfil = () => <VistaPendiente titulo="Mi cuenta" screen="account" />;
 // Dashboards: pertenecen a otras HU; solo existen para que la redirección por rol tenga destino.
@@ -28,7 +28,7 @@ export const AppRouter = () => {
         {/* Rutas públicas (solo accesibles sin sesión activa) */}
         <Route element={<RutaPublica />}>
           <Route path="/login" element={<Login />} />
-          <Route path="/registro" element={<Registro />} />
+          <Route path="/registro" element={<RegisterStudentPage />} />
           <Route path="/recuperar" element={<Recuperar />} />
         </Route>
 
