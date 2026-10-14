@@ -6,11 +6,11 @@ import styles from './StatusCard.module.css';
 
 /**
  * Resultado de un flujo dentro de la card: icono + título + texto + acción.
- * "Cuenta creada" (success). La variante 'pending' queda lista para la
- * pantalla de aprobación del encargado (fase C).
+ * "Cuenta creada" (success), aprobación pendiente del encargado y
+ * "verificando" (pending), y enlace de recuperación inválido (danger).
  *
  * Props:
- *  - variant: 'success' | 'pending'
+ *  - variant: 'success' | 'pending' | 'danger'
  *  - title, message (nodo o texto), action (nodo con el botón)
  */
 export default function StatusCard({ variant = 'success', title, message, action }) {

@@ -1,0 +1,17 @@
+/* src/components/features/auth/RecoverForms.module.css */
+/* Estilos compartidos por RecoverEmailForm y ResetPasswordForm (encabezado de la card). */
+
+.title {
+  font-size: var(--text-xl);
+}
+
+.description {
+  margin-top: var(--space-1);
+  margin-bottom: var(--space-4);
+  font-size: var(--text-md);
+  color: var(--color-muted);
+}
+
+.alert {
+  margin-bottom: var(--space-4);
+}
