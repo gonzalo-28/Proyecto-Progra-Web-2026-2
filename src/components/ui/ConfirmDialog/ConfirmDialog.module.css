@@ -1,0 +1,7 @@
+/* src/components/ui/ConfirmDialog/ConfirmDialog.module.css */
+
+.message {
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--color-text);
+}

@@ -73,6 +73,27 @@
   background-color: var(--color-primary-soft);
 }
 
+/* Acciones destructivas (HU-5): "Marcar inasistencia", "Cancelar la reserva" */
+.danger {
+  background-color: var(--color-danger);
+  border-color: var(--color-danger);
+  color: var(--color-surface);
+}
+
+.danger:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+.dangerOutline {
+  background-color: var(--color-surface);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.dangerOutline:hover:not(:disabled) {
+  background-color: var(--color-danger-soft);
+}
+
 /* ---- Estados ---- */
 /* Deshabilitado "normal": se atenúa. */
 .root:disabled:not(.loading) {

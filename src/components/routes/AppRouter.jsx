@@ -12,11 +12,14 @@ import ProfilePage from '../../pages/ProfilePage/ProfilePage';
 import RecoverPasswordPage from '../../pages/RecoverPasswordPage/RecoverPasswordPage';
 import RegisterManagerPage from '../../pages/RegisterManagerPage/RegisterManagerPage';
 import RegisterStudentPage from '../../pages/RegisterStudentPage/RegisterStudentPage';
+import DailyTrayPage from '../../pages/DailyTrayPage/DailyTrayPage';
+import NewBlockPage from '../../pages/NewBlockPage/NewBlockPage';
+import ReservationSearchPage from '../../pages/ReservationSearchPage/ReservationSearchPage';
+import { RUTAS_ENCARGADO } from './rutasEncargado';
 
-// Marcadores de vistas que pertenecen a otras HU (los dashboards).
-// Solo existen para que la redirección por rol tenga destino.
+// Marcador de una vista que pertenece a otra HU (el dashboard del estudiante).
+// Solo existe para que la redirección por rol tenga destino.
 const EstudianteDashboard = () => <VistaPendiente titulo="Panel del estudiante" />;
-const EncargadoDashboard = () => <VistaPendiente titulo="Panel del encargado" />;
 
 export const AppRouter = () => {
   return (
@@ -46,7 +49,15 @@ export const AppRouter = () => {
 
         {/* Rutas privadas exclusivas para encargados */}
         <Route element={<RutaProtegida rolesPermitidos={['encargado']} />}>
-          <Route path="/encargado/dashboard" element={<EncargadoDashboard />} />
+          {/* HU-5 · Operación diaria */}
+          <Route path={RUTAS_ENCARGADO.bandeja} element={<DailyTrayPage />} />
+          <Route path={RUTAS_ENCARGADO.bloqueos} element={<NewBlockPage />} />
+          <Route path={RUTAS_ENCARGADO.busqueda} element={<ReservationSearchPage />} />
+          {/* Ruta antigua: se mantiene para no romper enlaces guardados */}
+          <Route
+            path="/encargado/dashboard"
+            element={<Navigate to={RUTAS_ENCARGADO.bandeja} replace />}
+          />
         </Route>
 
         <Route path="/acceso-denegado" element={<ForbiddenPage />} />
