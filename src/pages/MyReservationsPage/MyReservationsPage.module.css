@@ -1,0 +1,79 @@
+/* src/pages/MyReservationsPage/MyReservationsPage.module.css */
+/* Solo composición de la página: encabezado, secciones y grilla. */
+
+.header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.title {
+    margin: 0;
+    font-size: var(--text-2xl);
+}
+
+.subtitle {
+    margin: var(--space-1) 0 0;
+    color: var(--color-muted);
+}
+
+.aviso {
+    margin-bottom: var(--space-4);
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    margin-top: var(--space-4);
+}
+
+/* Línea que separa "Próximas" de "Históricas" (mockup 4.2) */
+.section+.section {
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+}
+
+/* Mientras recarga con datos previos, se atenúa en lugar de parpadear */
+.content[aria-busy='true'] {
+    opacity: 0.6;
+    transition: opacity var(--transition-fast);
+}
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-12) 0;
+    color: var(--color-muted);
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.sectionTitle {
+    margin: 0;
+    font-size: var(--text-xl);
+    font-weight: var(--weight-bold);
+    color: var(--color-primary);
+}
+
+/* Dos columnas como en el mockup 4.2; una sola en pantallas angostas */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+}
+
+@media (max-width: 860px) {
+    .grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
