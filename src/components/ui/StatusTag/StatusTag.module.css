@@ -1,0 +1,41 @@
+/* src/components/ui/StatusTag/StatusTag.module.css */
+
+/* Los colores info y neutral no existen en tokens.css; se usan con un valor
+   por defecto para no modificar ese archivo. Si el grupo los agrega a tokens
+   (--color-info, --color-info-soft…), se toman automáticamente. */
+
+.root {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-normal);
+    white-space: nowrap;
+}
+
+.success {
+    background-color: var(--color-success-soft);
+    color: var(--color-success);
+}
+
+.info {
+    background-color: var(--color-info-soft, #e6eef7);
+    color: var(--color-info, #3b6fa8);
+}
+
+.warning {
+    background-color: var(--color-warning-soft);
+    color: var(--color-warning);
+}
+
+.danger {
+    background-color: var(--color-danger-soft);
+    color: var(--color-danger);
+}
+
+.neutral {
+    background-color: var(--color-readonly-bg);
+    color: var(--color-muted);
+}
