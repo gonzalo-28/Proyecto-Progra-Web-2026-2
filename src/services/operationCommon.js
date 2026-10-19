@@ -123,4 +123,3 @@ export const conEvento = (reserva, tipo, fecha, encargado) => [
   ...(reserva.historial ?? []),
   { tipo, fecha, actor: nombreCompleto(encargado) },
 ];
-

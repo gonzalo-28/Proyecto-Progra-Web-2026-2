@@ -28,6 +28,7 @@ import {
   simularLatencia,
   vistaDe,
 } from './operationCommon';
+import { construirHistorialDelDia } from './operationLog';
 import {
   EARLY_ARRIVAL_MINUTES,
   formatTime,
@@ -56,7 +57,8 @@ const CLAVE_CONTADOR = {
  * @param {{ sedeId: string, fecha: string }} filtros  fecha 'YYYY-MM-DD'
  * @returns {Promise<{
  *   contadores: { total, confirmadas, atendidas, inasistencias, canceladas },
- *   grupos: { espacio: { id, nombre, ubicacion }, reservas: Object[] }[]
+ *   grupos: { espacio: { id, nombre, ubicacion }, reservas: Object[] }[],
+ *   historial: Object[]   // operación del día (ver operationLog.js)
  * }>}
  */
 export const obtenerBandejaDelDia = async ({ sedeId, fecha }) => {
@@ -87,7 +89,7 @@ export const obtenerBandejaDelDia = async ({ sedeId, fecha }) => {
     }))
     .filter((grupo) => grupo.reservas.length > 0);
 
-  return { contadores, grupos };
+  return { contadores, grupos, historial: construirHistorialDelDia(base, { sedeId, fecha }) };
 };
 
 /* ------------------------------ Escrituras -------------------------------- */
@@ -343,4 +345,3 @@ export const buscarReservas = async ({ sedeId, texto = '', espacioId = '', estad
     truncado: encontradas.length > MAX_RESULTADOS,
   };
 };
-

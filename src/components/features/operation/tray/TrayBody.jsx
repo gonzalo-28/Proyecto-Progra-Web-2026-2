@@ -8,6 +8,7 @@ import SpaceGroup from './SpaceGroup';
 import EmptyDay from './EmptyDay';
 import AbsenceConfirmDialog from './AbsenceConfirmDialog';
 import TrayCancelDialog from './TrayCancelDialog';
+import OperationLog from './OperationLog';
 import { useDailyTray } from '../../../../context/DailyTrayContext';
 import styles from './TrayBody.module.css';
 
@@ -45,7 +46,13 @@ export default function TrayBody({ onGoToDate }) {
   }
 
   if (!bandeja || bandeja.contadores.total === 0) {
-    return <EmptyDay date={date} isToday={isToday} onGoToDate={onGoToDate} />;
+    // Un día sin reservas puede tener movimientos (p. ej., un bloqueo creado hoy).
+    return (
+      <div className={styles.root}>
+        <EmptyDay date={date} isToday={isToday} onGoToDate={onGoToDate} />
+        {bandeja?.historial?.length > 0 && <OperationLog />}
+      </div>
+    );
   }
 
   return (
@@ -69,6 +76,8 @@ export default function TrayBody({ onGoToDate }) {
       {bandeja.grupos.map((grupo) => (
         <SpaceGroup key={grupo.espacio.id} espacio={grupo.espacio} reservas={grupo.reservas} />
       ))}
+
+      <OperationLog />
 
       <AbsenceConfirmDialog />
       <TrayCancelDialog />

@@ -232,4 +232,3 @@ export const eliminarBloqueo = async (bloqueoId, { encargadoId }) => {
   }
   saveStoredData({ ...db, bloqueos: db.bloqueos.filter((b) => b.id !== bloqueoId) });
 };
-
