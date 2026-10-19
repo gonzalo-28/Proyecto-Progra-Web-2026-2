@@ -1,5 +1,6 @@
 // src/data/db.js
 import reservasSemilla from './reservasSemilla.js';
+import { estudiantesOperacion, reservasOperacion } from './operacionSemilla.js'; // HU-5
 export const initialDb = {
   usuarios: [
     {
@@ -25,7 +26,8 @@ export const initialDb = {
       ciclo: null,
       sedeAsignadaId: "sede_central",
       estado: "activo"
-    }
+    },
+    ...estudiantesOperacion, // HU-5: estudiantes de los mockups 5.x
   ],
   espacios: [
     {
@@ -95,7 +97,7 @@ export const initialDb = {
       etiqueta: "11:00 AM - 12:00 PM"
     }
   ],
-  reservas: reservasSemilla,
+  reservas: [...reservasSemilla, ...reservasOperacion], // HU-4 + jornada de prueba de la HU-5
   incidencias: []
 };
 

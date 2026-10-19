@@ -6,9 +6,11 @@
 // esperar el reloj y no dependen de cómo se guarde la reserva.
 
 import { parseISODate } from './dates';
+import { TOLERANCIA_LLEGADA_MIN } from './reglas';
 
-/** Minutos de espera desde el inicio del bloque antes de poder marcar inasistencia. */
-export const TOLERANCE_MINUTES = 15;
+/** Minutos de espera desde el inicio del bloque antes de poder marcar inasistencia.
+    El valor vive en reglas.js (HU-4) para que todo el sistema use el mismo. */
+export const TOLERANCE_MINUTES = TOLERANCIA_LLEGADA_MIN;
 
 /** Desde cuántos minutos antes del inicio se acepta registrar la llegada. */
 export const EARLY_ARRIVAL_MINUTES = 15;
@@ -40,6 +42,7 @@ export function formatTime(date) {
  *   minutesToStart: number,   // > 0 solo en 'upcoming'
  *   minutesLeft: number,      // > 0 solo en 'grace'  → "Faltan 7 min"
  *   minutesLate: number,      // ≥ TOLERANCE_MINUTES solo en 'expired' → "+16 min"
+ *   startLabel: string,       // "10:00" (inicio del bloque)
  *   deadlineLabel: string,    // "10:15" → "Podrás marcar la inasistencia a las 10:15."
  *   canRegisterArrival: boolean,
  *   canMarkAbsence: boolean,
@@ -66,10 +69,26 @@ export function getToleranceStatus({ fecha, horaInicio, horaFin }, now = new Dat
     minutesToStart: phase === 'upcoming' ? -elapsed : 0,
     minutesLeft: phase === 'grace' ? TOLERANCE_MINUTES - elapsed : 0,
     minutesLate: phase === 'expired' ? elapsed : 0,
+    startLabel: formatTime(start),
     deadlineLabel: formatTime(deadline),
     canRegisterArrival: elapsed >= -EARLY_ARRIVAL_MINUTES && !hasEnded,
     canMarkAbsence: phase === 'expired',
     isLateArrival: phase === 'expired',
     hasEnded,
   };
+}
+
+const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+/**
+ * Devuelve `now` con la hora cambiada a 'HH:MM' (mismo día). Si `time` no es
+ * una hora válida, devuelve `now` sin tocar. Sirve para simular la hora en
+ * desarrollo (?hora=10:08) y probar la tolerancia sin esperar al reloj.
+ */
+export function withTimeOfDay(now, time) {
+  if (!TIME_RE.test(String(time ?? ''))) return now;
+  const [hours, minutes] = time.split(':').map(Number);
+  const date = new Date(now);
+  date.setHours(hours, minutes, 0, 0);
+  return date;
 }
