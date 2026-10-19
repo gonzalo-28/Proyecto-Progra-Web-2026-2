@@ -1,18 +1,19 @@
 // src/utils/exportCsv.js
 //
 // HU-5 · "Historial de la operación del día, exportable como listado".
-// Genera un CSV que Excel en español abre bien a la primera:
-//   - separador ';' (Excel con configuración regional de Perú usa ';', no ',')
+// Genera un CSV que Excel abre bien con doble clic en una PC de Perú:
+//   - separador ',' (en Perú el separador de listas de Excel es la coma;
+//     con ';' el archivo se abría todo en la columna A)
 //   - BOM UTF-8 al inicio, para que las tildes y la ñ se vean correctas
 // No sabe nada de reservas: recibe filas y columnas.
 
-const SEPARATOR = ';';
-const BOM = '﻿';
+const SEPARATOR = ',';
+const BOM = '\uFEFF'; // marca UTF-8 (se escribe así para que sea visible)
 
-/** Encierra el valor entre comillas si trae separador, comillas o saltos de línea. */
+/** Encierra el valor entre comillas si trae coma, punto y coma, comillas o saltos de línea. */
 function escapeCell(value) {
   const text = value === null || value === undefined ? '' : String(value);
-  return /[";\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  return /[",;\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
 
 /**
