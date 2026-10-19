@@ -51,7 +51,6 @@ export default function ReservationDetail({ reserva }) {
           <Field label="Cancelación" wide>
             Cancelada por {CANCEL_LABEL[reserva.cancelacion.porRol] ?? reserva.cancelacion.porRol}
             {reserva.cancelacion.motivo && ` · ${reserva.cancelacion.motivo}`}
-            {reserva.cancelacion.detalle && ` · ${reserva.cancelacion.detalle}`}
           </Field>
         )}
         {reserva.operadaPor && (

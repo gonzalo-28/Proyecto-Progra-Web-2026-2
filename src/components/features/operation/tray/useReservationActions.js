@@ -12,7 +12,8 @@ import { getTrayStatus } from '../../../../utils/trayStatus';
  * @param {Object} reserva  vista de la reserva (operationService)
  */
 export default function useReservationActions(reserva) {
-  const { now, isToday, procesandoId, registrarLlegada, solicitarInasistencia } = useDailyTray();
+  const { now, isToday, procesandoId, registrarLlegada, solicitarInasistencia, solicitarCancelacion } =
+    useDailyTray();
 
   const tolerance = getToleranceStatus(reserva, now);
   const isConfirmed = reserva.estado === 'confirmada';
@@ -36,7 +37,13 @@ export default function useReservationActions(reserva) {
     showAbsence: isConfirmed && tolerance.phase !== 'upcoming',
     canMarkAbsence: isConfirmed && tolerance.canMarkAbsence,
 
+    // Cancelar (encargado): mientras el bloque no termine, hoy o días futuros.
+    // En la fila solo aparece antes del inicio (mockup 5.1); en el detalle, siempre.
+    canCancel: isConfirmed && !tolerance.hasEnded,
+    showCancelInRow: isConfirmed && tolerance.phase === 'upcoming',
+
     onArrive: () => registrarLlegada(reserva),
+    onCancel: () => solicitarCancelacion(reserva),
     onMarkAbsence: () => solicitarInasistencia(reserva),
   };
 }

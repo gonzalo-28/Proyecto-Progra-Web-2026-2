@@ -33,11 +33,18 @@ export default function RowActions({ reserva }) {
   if (!actions.isConfirmed) {
     return <span className={styles.note}>{outcomeText(reserva)}</span>;
   }
-  if (actions.isFutureDay) {
-    return <span className={styles.note}>Programada</span>;
-  }
 
   const { tolerance } = actions;
+
+  const cancelButton = actions.showCancelInRow && (
+    <Button size="sm" variant="dangerOutline" disabled={actions.anyBusy} onClick={actions.onCancel}>
+      Cancelar
+    </Button>
+  );
+
+  if (actions.isFutureDay) {
+    return <div className={styles.root}>{cancelButton}</div>;
+  }
 
   return (
     <div className={styles.root}>
@@ -68,6 +75,8 @@ export default function RowActions({ reserva }) {
           Inasistencia
         </Button>
       )}
+
+      {cancelButton}
     </div>
   );
 }

@@ -6,6 +6,7 @@
 //
 //   - Registrar llegada   → estado 'atendida', llegadaRegistradaEn, historial 'llegada_registrada'
 //   - Marcar inasistencia → estado 'inasistencia', historial 'inasistencia_marcada'
+//   - Cancelar            → estado 'cancelada', cancelacion { porRol: 'encargado', motivo, … }, historial 'cancelada'
 //
 // No usa reservationService (de la HU-4): así ninguna historia escribe a
 // través del código de otra. Los componentes no conocen la forma guardada:
@@ -25,6 +26,7 @@ import {
 } from '../utils/tolerance';
 import { toISODate } from '../utils/dates';
 import { ESTADOS_RESERVA } from '../utils/reglas';
+import { etiquetaMotivo, validarCancelacion } from '../utils/reglasOperacion';
 
 /* ------------------------------ Configuración ----------------------------- */
 
@@ -33,6 +35,7 @@ const NETWORK_LATENCY_MS = 300;
 const HISTORIAL = {
   llegada: 'llegada_registrada',
   inasistencia: 'inasistencia_marcada',
+  cancelada: 'cancelada',
 };
 
 /* -------------------------------- Utilidades ------------------------------ */
@@ -100,7 +103,6 @@ function aVistaReserva(reserva, { espacio, bloque, usuario, inasistencias }) {
       ? {
           porRol: reserva.cancelacion.porRol ?? 'estudiante',
           motivo: reserva.cancelacion.motivo ?? null,
-          detalle: reserva.cancelacion.detalle ?? null,
         }
       : null,
     espacio: { id: espacio?.id, nombre: espacio?.nombre ?? 'Espacio' },
@@ -307,6 +309,66 @@ export const marcarInasistencia = async (reservaId, { encargadoId, ahora = new D
     ...reserva,
     estado: ESTADOS_RESERVA.inasistencia,
     historial: conEvento(reserva, HISTORIAL.inasistencia, marca, encargado),
+  });
+
+  const usuario = (db.usuarios ?? []).find((u) => String(u.id) === String(reserva.usuarioId));
+  return { codigo: reserva.codigo, estudiante: nombreCompleto(usuario) };
+};
+
+/**
+ * Cancela una reserva como encargado (mockup 5.6) → estado 'cancelada'.
+ * - Motivo obligatorio (lista de reglasOperacion.js); detalle opcional, salvo
+ *   con "Otro".
+ * - Se puede cancelar mientras el bloque no haya terminado (hoy o días futuros).
+ * - No genera inasistencia (tardia: false).
+ *
+ * El texto de `cancelacion.motivo` ya incluye el detalle ("Corte programado de
+ * energía: …") porque es lo que el estudiante ve en "Mis reservas" (HU-4).
+ * Además se guardan `motivoCodigo` y `detalle` por separado.
+ *
+ * @param {string} reservaId
+ * @param {{ encargadoId: string, motivo: string, detalle?: string, ahora?: Date }} datos
+ *        motivo = código ('corte_energia', 'otro'…)
+ * @returns {Promise<{ codigo: string, estudiante: string }>}
+ */
+export const cancelarPorEncargado = async (
+  reservaId,
+  { encargadoId, motivo, detalle = '', ahora = new Date() }
+) => {
+  await simularLatencia();
+
+  const campos = validarCancelacion({ motivo, detalle });
+  if (Object.keys(campos).length > 0) {
+    throw crearError('Revisa los campos marcados.', { code: 'VALIDACION', campos });
+  }
+
+  const db = getStoredData();
+  const { reserva, bloque, encargado } = obtenerReservaOperable(db, reservaId, encargadoId);
+
+  const fin = toDateTime(reserva.fecha, bloque.horaFin);
+  if (ahora.getTime() >= fin.getTime()) {
+    throw crearError('El bloque ya terminó: esta reserva ya no se puede cancelar.', {
+      code: 'NO_CANCELABLE',
+    });
+  }
+
+  const textoDetalle = String(detalle).trim();
+  const etiqueta = etiquetaMotivo(motivo);
+  const marca = ahora.toISOString();
+
+  guardarReserva(db, {
+    ...reserva,
+    estado: ESTADOS_RESERVA.cancelada,
+    cancelacion: {
+      fecha: marca,
+      porUsuarioId: encargado.id,
+      porRol: 'encargado',
+      motivo: textoDetalle ? `${etiqueta}: ${textoDetalle}` : etiqueta,
+      motivoCodigo: motivo,
+      detalle: textoDetalle || null,
+      tardia: false, // la cancelación del encargado nunca suma inasistencia
+    },
+    historial: conEvento(reserva, HISTORIAL.cancelada, marca, encargado),
   });
 
   const usuario = (db.usuarios ?? []).find((u) => String(u.id) === String(reserva.usuarioId));

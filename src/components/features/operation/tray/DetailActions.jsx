@@ -17,11 +17,20 @@ export default function DetailActions({ reserva }) {
 
   if (!actions.isConfirmed) return null;
 
+  const cancelButton = actions.canCancel && (
+    <Button fullWidth variant="dangerOutline" disabled={actions.anyBusy} onClick={actions.onCancel}>
+      Cancelar la reserva
+    </Button>
+  );
+
   if (actions.isFutureDay) {
     return (
-      <p className={styles.hint}>
-        Reserva programada. La llegada se registra el mismo día, desde 15 min antes del inicio.
-      </p>
+      <div className={styles.root}>
+        <p className={styles.hint}>
+          Reserva programada. La llegada se registra el mismo día, desde 15 min antes del inicio.
+        </p>
+        {cancelButton}
+      </div>
     );
   }
 
@@ -60,6 +69,8 @@ export default function DetailActions({ reserva }) {
           Marcar inasistencia
         </Button>
       )}
+
+      {cancelButton}
     </div>
   );
 }

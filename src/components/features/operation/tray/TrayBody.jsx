@@ -7,6 +7,7 @@ import StatusCounters from './StatusCounters';
 import SpaceGroup from './SpaceGroup';
 import EmptyDay from './EmptyDay';
 import AbsenceConfirmDialog from './AbsenceConfirmDialog';
+import TrayCancelDialog from './TrayCancelDialog';
 import { useDailyTray } from '../../../../context/DailyTrayContext';
 import styles from './TrayBody.module.css';
 
@@ -70,6 +71,7 @@ export default function TrayBody({ onGoToDate }) {
       ))}
 
       <AbsenceConfirmDialog />
+      <TrayCancelDialog />
     </div>
   );
 }

@@ -77,6 +77,7 @@ export const DailyTrayProvider = ({ date, children }) => {
   const [procesandoId, setProcesandoId] = useState(null);
   const [aviso, setAviso] = useState(null); // { variant, text, fecha }
   const [pendienteInasistencia, setPendienteInasistencia] = useState(null);
+  const [pendienteCancelacion, setPendienteCancelacion] = useState(null);
 
   const toggleExpanded = useCallback(
     (id) => setExpandedId((actual) => (actual === id ? null : id)),
@@ -132,6 +133,44 @@ export const DailyTrayProvider = ({ date, children }) => {
     setPendienteInasistencia(null);
   }, [pendienteInasistencia, ejecutar, encargadoId, now]);
 
+  /** Abre / cierra el modal de cancelación (mockup 5.6). */
+  const solicitarCancelacion = useCallback((reserva) => setPendienteCancelacion(reserva), []);
+  const cerrarCancelacion = useCallback(() => setPendienteCancelacion(null), []);
+
+  /**
+   * Cancela la reserva abierta en el modal. Si falla, relanza el error para
+   * que el modal lo muestre junto al campo (o arriba del formulario).
+   */
+  const confirmarCancelacion = useCallback(
+    async ({ motivo, detalle }) => {
+      const reserva = pendienteCancelacion;
+      if (!reserva) return;
+      setProcesandoId(reserva.id);
+      setAviso(null);
+      try {
+        const r = await operationService.cancelarPorEncargado(reserva.id, {
+          encargadoId,
+          motivo,
+          detalle,
+          ahora: now,
+        });
+        setAviso({
+          variant: 'success',
+          text: `Reserva ${r.codigo} cancelada. El motivo quedó visible para ${r.estudiante}.`,
+          fecha: date,
+        });
+        setPendienteCancelacion(null);
+        refrescar();
+      } catch (err) {
+        if (err?.code !== 'VALIDACION') refrescar(); // el estado de la reserva pudo cambiar
+        throw err;
+      } finally {
+        setProcesandoId(null);
+      }
+    },
+    [pendienteCancelacion, encargadoId, now, date, refrescar]
+  );
+
   const value = useMemo(
     () => ({
       date,
@@ -152,6 +191,10 @@ export const DailyTrayProvider = ({ date, children }) => {
       solicitarInasistencia,
       cancelarInasistencia,
       confirmarInasistencia,
+      pendienteCancelacion,
+      solicitarCancelacion,
+      cerrarCancelacion,
+      confirmarCancelacion,
     }),
     [
       date,
@@ -173,6 +216,10 @@ export const DailyTrayProvider = ({ date, children }) => {
       solicitarInasistencia,
       cancelarInasistencia,
       confirmarInasistencia,
+      pendienteCancelacion,
+      solicitarCancelacion,
+      cerrarCancelacion,
+      confirmarCancelacion,
     ]
   );
 
