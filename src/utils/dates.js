@@ -23,3 +23,57 @@ export function getWeekRangeLabel(date = new Date()) {
   const format = (d) => `${pad2(d.getDate())}/${pad2(d.getMonth() + 1)}`;
   return `${format(monday)} – ${format(saturday)}`;
 }
+
+/* ---------------------------------------------------------------------------
+   HU-5 · Operación diaria. Todas trabajan con fechas ISO locales 'YYYY-MM-DD'
+   (las mismas que produce toISODate) para no mezclar zonas horarias.
+   ------------------------------------------------------------------------- */
+
+const WEEKDAYS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** 'YYYY-MM-DD' → Date local a las 00:00 (sin el desfase de new Date('YYYY-MM-DD'), que es UTC). */
+export function parseISODate(iso) {
+  const [year, month, day] = String(iso).split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+/** true si el texto es una fecha 'YYYY-MM-DD' que existe (rechaza '2026-02-31'). */
+export function isISODate(value) {
+  if (!ISO_DATE_RE.test(String(value ?? ''))) return false;
+  return toISODate(parseISODate(value)) === value;
+}
+
+/** Suma (o resta, con n negativo) días a una fecha ISO. */
+export function addDays(iso, days) {
+  const date = parseISODate(iso);
+  date.setDate(date.getDate() + days);
+  return toISODate(date);
+}
+
+/** 'lunes', 'martes'… */
+export function getWeekdayName(iso) {
+  return WEEKDAYS[parseISODate(iso).getDay()];
+}
+
+/** true si la fecha cae domingo. */
+export function isSunday(iso) {
+  return parseISODate(iso).getDay() === 0;
+}
+
+/** '2026-09-14' → '14/09' */
+export function formatShortDate(iso) {
+  const date = parseISODate(iso);
+  return `${pad2(date.getDate())}/${pad2(date.getMonth() + 1)}`;
+}
+
+/** '2026-09-14' → '14/09/2026' */
+export function formatDate(iso) {
+  return `${formatShortDate(iso)}/${parseISODate(iso).getFullYear()}`;
+}
+
+/** '2026-09-14' → 'Lunes 14/09/2026' (como el subtítulo de la bandeja) */
+export function formatDayLabel(iso) {
+  const weekday = getWeekdayName(iso);
+  return `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} ${formatDate(iso)}`;
+}
