@@ -1,97 +1,115 @@
 // src/components/ui/Modal/Modal.jsx
 
 import { useEffect, useId, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './Modal.module.css';
 
 const cx = (...classes) => classes.filter(Boolean).join(' ');
 
 /**
- * Ventana modal sobre <dialog> nativo: el navegador ya resuelve el foco
- * atrapado dentro del modal, la tecla Escape y devolver el foco al cerrar.
+ * Ventana modal genérica (mockups 4.5 y 5.6). Solo dibuja el "marco":
+ * fondo oscuro, caja blanca, título, botón × y pie con acciones. Lo que va
+ * adentro lo decide quien la usa.
  *
  * Props:
- *  - open:            boolean controlado por el padre
- *  - onClose():       se llama con la X, Escape o clic fuera del panel
- *  - title:           "Cancelar la reserva RSV-2026-0455"
- *  - footer:          nodo con los botones (va alineado a la derecha con línea superior)
- *  - size:            'sm' | 'md'
- *  - closeOnBackdrop: si un clic fuera del panel cierra (por defecto true)
- *  - children:        contenido
+ *  - open:      boolean. Si es false no se dibuja nada.
+ *  - title:     texto del encabezado ("Reservar bloque")
+ *  - onClose:   se llama con la ×, con Escape o al hacer clic fuera de la caja
+ *  - footer:    nodos para el pie (normalmente los botones)
+ *  - size:      'sm' | 'md' | 'lg'   (ancho máximo de la caja)
+ *  - closeOnOverlay: si false, el clic fuera NO cierra (útil mientras se guarda)
+ *  - children:  contenido del cuerpo
  *
- * El contenido se desmonta al cerrar, así un formulario dentro del modal
- * empieza limpio cada vez que se abre.
+ * Accesibilidad: role="dialog" + aria-modal, el título se enlaza con
+ * aria-labelledby, el foco entra al modal al abrirse y vuelve al botón que lo
+ * abrió al cerrarse, y la página de fondo no hace scroll mientras está abierto.
  */
 export default function Modal({
-  open,
-  onClose,
-  title,
-  footer,
-  size = 'md',
-  closeOnBackdrop = true,
-  className,
-  children,
+    open,
+    title,
+    onClose,
+    footer,
+    size = 'md',
+    closeOnOverlay = true,
+    className,
+    children,
 }) {
-  const dialogRef = useRef(null);
-  const titleId = useId();
+    const titleId = useId();
+    const boxRef = useRef(null);
 
-  // Sincroniza el estado de React con el <dialog> del navegador.
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
-    if (!open && dialog.open) dialog.close();
-  }, [open]);
+    // Se guarda onClose en una ref para que el efecto de abajo dependa SOLO de
+    // "open". Si dependiera de onClose (que el padre recrea en cada render), el
+    // foco saltaría al primer campo cada vez que el usuario escribe algo.
+    const onCloseRef = useRef(onClose);
+    useEffect(() => {
+        onCloseRef.current = onClose;
+    });
 
-  // Evita que la página de fondo haga scroll mientras el modal está abierto.
-  useEffect(() => {
-    if (!open) return undefined;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = previous;
+    useEffect(() => {
+        if (!open) return undefined;
+
+        const anterior = document.activeElement;
+        const overflowAnterior = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        // Lleva el foco al primer elemento enfocable del modal.
+        const primero = boxRef.current?.querySelector(
+            'input, textarea, select, button:not([data-close]), [href], [tabindex]:not([tabindex="-1"])'
+        );
+        (primero ?? boxRef.current)?.focus();
+
+        const onKeyDown = (event) => {
+            if (event.key === 'Escape') onCloseRef.current?.();
+        };
+        document.addEventListener('keydown', onKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', onKeyDown);
+            document.body.style.overflow = overflowAnterior;
+            anterior?.focus?.();
+        };
+    }, [open]);
+
+    if (!open) return null;
+
+    const onOverlayMouseDown = (event) => {
+        if (closeOnOverlay && event.target === event.currentTarget) onClose?.();
     };
-  }, [open]);
 
-  // Escape dispara "cancel": lo frenamos para que el padre decida si cierra.
-  const handleCancel = (event) => {
-    event.preventDefault();
-    onClose?.();
-  };
-
-  // El <dialog> ocupa toda la pantalla; si el clic no cayó en el panel, fue fuera.
-  const handleClick = (event) => {
-    if (closeOnBackdrop && event.target === dialogRef.current) onClose?.();
-  };
-
-  return (
-    <dialog
-      ref={dialogRef}
-      className={styles.root}
-      aria-labelledby={titleId}
-      onCancel={handleCancel}
-      onClick={handleClick}
-    >
-      {open && (
-        <div className={cx(styles.panel, styles[size], className)}>
-          <header className={styles.header}>
-            <h2 id={titleId} className={styles.title}>
-              {title}
-            </h2>
-            <button
-              type="button"
-              className={styles.close}
-              onClick={onClose}
-              aria-label="Cerrar"
+    return createPortal(
+        <div className={styles.overlay} onMouseDown={onOverlayMouseDown}>
+            <div
+                ref={boxRef}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={title ? titleId : undefined}
+                tabIndex={-1}
+                className={cx(styles.box, styles[size], className)}
             >
-              ×
-            </button>
-          </header>
+                <header className={styles.header}>
+                    {title && (
+                        <h2 id={titleId} className={styles.title}>
+                            {title}
+                        </h2>
+                    )}
+                    {onClose && (
+                        <button
+                            type="button"
+                            data-close
+                            className={styles.close}
+                            onClick={onClose}
+                            aria-label="Cerrar"
+                        >
+                            ×
+                        </button>
+                    )}
+                </header>
 
-          <div className={styles.body}>{children}</div>
+                <div className={styles.body}>{children}</div>
 
-          {footer && <footer className={styles.footer}>{footer}</footer>}
-        </div>
-      )}
-    </dialog>
-  );
+                {footer && <footer className={styles.footer}>{footer}</footer>}
+            </div>
+        </div>,
+        document.body
+    );
 }

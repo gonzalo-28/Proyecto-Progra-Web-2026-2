@@ -12,6 +12,7 @@ import ProfilePage from '../../pages/ProfilePage/ProfilePage';
 import RecoverPasswordPage from '../../pages/RecoverPasswordPage/RecoverPasswordPage';
 import RegisterManagerPage from '../../pages/RegisterManagerPage/RegisterManagerPage';
 import RegisterStudentPage from '../../pages/RegisterStudentPage/RegisterStudentPage';
+import MyReservationsPage from '../../pages/MyReservationsPage/MyReservationsPage';
 import DailyTrayPage from '../../pages/DailyTrayPage/DailyTrayPage';
 import NewBlockPage from '../../pages/NewBlockPage/NewBlockPage';
 import ReservationSearchPage from '../../pages/ReservationSearchPage/ReservationSearchPage';
@@ -45,6 +46,7 @@ export const AppRouter = () => {
         {/* Rutas privadas exclusivas para estudiantes */}
         <Route element={<RutaProtegida rolesPermitidos={['estudiante']} />}>
           <Route path="/estudiante/dashboard" element={<EstudianteDashboard />} />
+          <Route path="/mis-reservas" element={<MyReservationsPage />} />   {/* ← nueva */}
         </Route>
 
         {/* Rutas privadas exclusivas para encargados */}

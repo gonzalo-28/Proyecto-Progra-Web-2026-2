@@ -1,0 +1,1921 @@
+diff --git a/src/components/features/operation/tray/AbsenceConfirmDialog.jsx b/src/components/features/operation/tray/AbsenceConfirmDialog.jsx
+new file mode 100644
+index 0000000..83d3755
+--- /dev/null
++++ b/src/components/features/operation/tray/AbsenceConfirmDialog.jsx
+@@ -0,0 +1,48 @@
++// src/components/features/operation/tray/AbsenceConfirmDialog.jsx
++
++import ConfirmDialog from '../../../ui/ConfirmDialog/ConfirmDialog';
++import { useDailyTray } from '../../../../context/DailyTrayContext';
++import { DIAS_BLOQUEO_POR_INASISTENCIAS, UMBRAL_INASISTENCIAS } from '../../../../utils/reglas';
++import styles from './AbsenceConfirmDialog.module.css';
++
++/**
++ * Confirmación antes de marcar una inasistencia (acción destructiva: suma
++ * una inasistencia al estudiante). Se abre desde cualquier fila o detalle.
++ * Si con esta inasistencia el estudiante llega al umbral (reglas.js), lo avisa.
++ */
++export default function AbsenceConfirmDialog() {
++  const { pendienteInasistencia, procesandoId, confirmarInasistencia, cancelarInasistencia } =
++    useDailyTray();
++  const reserva = pendienteInasistencia;
++  const total = reserva ? reserva.estudiante.inasistencias + 1 : 0;
++  const llegaAlUmbral = total >= UMBRAL_INASISTENCIAS;
++
++  return (
++    <ConfirmDialog
++      open={Boolean(reserva)}
++      title="¿Marcar inasistencia?"
++      tone="danger"
++      confirmText="Marcar inasistencia"
++      cancelText="Volver"
++      loadingText="Marcando…"
++      isLoading={Boolean(reserva) && procesandoId === reserva.id}
++      onConfirm={confirmarInasistencia}
++      onCancel={cancelarInasistencia}
++    >
++      {reserva && (
++        <div className={styles.body}>
++          <p>
++            Se registrará una inasistencia a <strong>{reserva.estudiante.nombreCompleto}</strong> por
++            la reserva {reserva.codigo} ({reserva.horaInicio}–{reserva.horaFin},{' '}
++            {reserva.espacio.nombre}) y el bloque quedará libre.
++          </p>
++          <p className={llegaAlUmbral ? styles.warning : styles.note}>
++            Pasará a tener {total} {total === 1 ? 'inasistencia acumulada' : 'inasistencias acumuladas'}.
++            {llegaAlUmbral &&
++              ` Al llegar a ${UMBRAL_INASISTENCIAS}, sus reservas quedan bloqueadas por ${DIAS_BLOQUEO_POR_INASISTENCIAS} días.`}
++          </p>
++        </div>
++      )}
++    </ConfirmDialog>
++  );
++}
+diff --git a/src/components/features/operation/tray/AbsenceConfirmDialog.module.css b/src/components/features/operation/tray/AbsenceConfirmDialog.module.css
+new file mode 100644
+index 0000000..4f56d85
+--- /dev/null
++++ b/src/components/features/operation/tray/AbsenceConfirmDialog.module.css
+@@ -0,0 +1,25 @@
++/* src/components/features/operation/tray/AbsenceConfirmDialog.module.css */
++
++.body {
++  display: flex;
++  flex-direction: column;
++  gap: var(--space-3);
++  font-size: var(--text-md);
++  line-height: var(--leading-normal);
++}
++
++.body p {
++  margin: 0;
++}
++
++.note {
++  color: var(--color-muted);
++}
++
++.warning {
++  padding: var(--space-2) var(--space-3);
++  border: 1px solid var(--color-warning);
++  border-radius: var(--radius-sm);
++  background-color: var(--color-warning-soft);
++  color: var(--color-warning);
++}
+diff --git a/src/components/features/operation/tray/DetailActions.jsx b/src/components/features/operation/tray/DetailActions.jsx
+new file mode 100644
+index 0000000..f45bdb4
+--- /dev/null
++++ b/src/components/features/operation/tray/DetailActions.jsx
+@@ -0,0 +1,65 @@
++// src/components/features/operation/tray/DetailActions.jsx
++
++import Button from '../../../ui/Button/Button';
++import ToleranceBox from './ToleranceBox';
++import useReservationActions from './useReservationActions';
++import styles from './DetailActions.module.css';
++
++/**
++ * Columna derecha del detalle expandido (mockup 5.3): recuadro de tolerancia
++ * y botones de ancho completo. Misma lógica que RowActions (useReservationActions).
++ *
++ * Props:
++ *  - reserva: vista de la reserva
++ */
++export default function DetailActions({ reserva }) {
++  const actions = useReservationActions(reserva);
++
++  if (!actions.isConfirmed) return null;
++
++  if (actions.isFutureDay) {
++    return (
++      <p className={styles.hint}>
++        Reserva programada. La llegada se registra el mismo día, desde 15 min antes del inicio.
++      </p>
++    );
++  }
++
++  const { tolerance } = actions;
++
++  return (
++    <div className={styles.root}>
++      {actions.isOperableToday ? (
++        <ToleranceBox tolerance={tolerance} />
++      ) : (
++        <p className={styles.hint}>
++          La jornada ya pasó y la llegada no se registró. Solo puedes marcar la inasistencia.
++        </p>
++      )}
++
++      {actions.showArrival && (
++        <Button
++          fullWidth
++          variant={tolerance.phase === 'grace' ? 'primary' : 'outline'}
++          disabled={!actions.canArrive || actions.anyBusy}
++          isLoading={actions.busy}
++          loadingText="Registrando…"
++          onClick={actions.onArrive}
++        >
++          {actions.arrivalLabel}
++        </Button>
++      )}
++
++      {actions.showAbsence && (
++        <Button
++          fullWidth
++          variant={actions.canMarkAbsence ? 'danger' : 'outline'}
++          disabled={!actions.canMarkAbsence || actions.anyBusy}
++          onClick={actions.onMarkAbsence}
++        >
++          Marcar inasistencia
++        </Button>
++      )}
++    </div>
++  );
++}
+diff --git a/src/components/features/operation/tray/DetailActions.module.css b/src/components/features/operation/tray/DetailActions.module.css
+new file mode 100644
+index 0000000..6f0ad50
+--- /dev/null
++++ b/src/components/features/operation/tray/DetailActions.module.css
+@@ -0,0 +1,13 @@
++/* src/components/features/operation/tray/DetailActions.module.css */
++
++.root {
++  display: flex;
++  flex-direction: column;
++  gap: var(--space-3);
++}
++
++.hint {
++  margin: 0;
++  font-size: var(--text-sm);
++  color: var(--color-muted);
++}
+diff --git a/src/components/features/operation/tray/ReservationDetail.jsx b/src/components/features/operation/tray/ReservationDetail.jsx
+new file mode 100644
+index 0000000..a4378f6
+--- /dev/null
++++ b/src/components/features/operation/tray/ReservationDetail.jsx
+@@ -0,0 +1,69 @@
++// src/components/features/operation/tray/ReservationDetail.jsx
++
++import DetailActions from './DetailActions';
++import { UMBRAL_INASISTENCIAS } from '../../../../utils/reglas';
++import styles from './ReservationDetail.module.css';
++
++/** Un dato del detalle: label en mayúscula pequeña + valor. */
++function Field({ label, children, wide = false }) {
++  return (
++    <div className={wide ? styles.wide : undefined}>
++      <dt className={styles.label}>{label}</dt>
++      <dd className={styles.value}>{children}</dd>
++    </div>
++  );
++}
++
++const CANCEL_LABEL = { estudiante: 'el estudiante', encargado: 'el encargado' };
++
++/**
++ * Contenido de la fila expandida (mockup 5.3): datos de la reserva y del
++ * estudiante a la izquierda; tolerancia y acciones a la derecha.
++ *
++ * Props:
++ *  - reserva: vista de la reserva
++ */
++export default function ReservationDetail({ reserva }) {
++  const { estudiante } = reserva;
++  const { inasistencias } = estudiante;
++
++  return (
++    <div className={styles.root}>
++      <dl className={styles.fields}>
++        <Field label="Reserva">
++          <span className={styles.code}>{reserva.codigo}</span>
++        </Field>
++        <Field label="Código de estudiante">{estudiante.codigo ?? '—'}</Field>
++        <Field label="Correo">{estudiante.correo || '—'}</Field>
++        <Field label="Inasistencias acumuladas">
++          <span className={inasistencias >= UMBRAL_INASISTENCIAS ? styles.alert : undefined}>
++            {inasistencias}
++            {inasistencias >= UMBRAL_INASISTENCIAS && ' · alcanzó el umbral'}
++          </span>
++        </Field>
++        <Field label="Motivo" wide>
++          {reserva.motivo || '—'}
++        </Field>
++        <Field label="Invitados" wide>
++          {reserva.invitados.length > 0 ? reserva.invitados.join(' · ') : 'Sin invitados'}
++        </Field>
++        {reserva.cancelacion && (
++          <Field label="Cancelación" wide>
++            Cancelada por {CANCEL_LABEL[reserva.cancelacion.porRol] ?? reserva.cancelacion.porRol}
++            {reserva.cancelacion.motivo && ` · ${reserva.cancelacion.motivo}`}
++            {reserva.cancelacion.detalle && ` · ${reserva.cancelacion.detalle}`}
++          </Field>
++        )}
++        {reserva.operadaPor && (
++          <Field label="Registrado por" wide>
++            {reserva.operadaPor}
++          </Field>
++        )}
++      </dl>
++
++      <div className={styles.side}>
++        <DetailActions reserva={reserva} />
++      </div>
++    </div>
++  );
++}
+diff --git a/src/components/features/operation/tray/ReservationDetail.module.css b/src/components/features/operation/tray/ReservationDetail.module.css
+new file mode 100644
+index 0000000..2356097
+--- /dev/null
++++ b/src/components/features/operation/tray/ReservationDetail.module.css
+@@ -0,0 +1,62 @@
++/* src/components/features/operation/tray/ReservationDetail.module.css */
++
++.root {
++  display: grid;
++  grid-template-columns: minmax(0, 1fr) 320px;
++  gap: var(--space-6);
++  padding: var(--space-5);
++  background-color: var(--color-surface);
++}
++
++.fields {
++  display: grid;
++  grid-template-columns: repeat(2, minmax(0, 1fr));
++  align-content: start;
++  gap: var(--space-4) var(--space-6);
++  margin: 0;
++}
++
++.wide {
++  grid-column: 1 / -1;
++}
++
++.label {
++  font-size: var(--text-xs);
++  font-weight: var(--weight-semibold);
++  letter-spacing: var(--tracking-label);
++  text-transform: uppercase;
++  color: var(--color-muted);
++}
++
++.value {
++  margin: var(--space-1) 0 0;
++  font-size: var(--text-md);
++  color: var(--color-text);
++  overflow-wrap: anywhere;
++}
++
++.code {
++  letter-spacing: 0.04em;
++}
++
++/* Umbral de inasistencias alcanzado (UMBRAL_INASISTENCIAS en reglas.js). */
++.alert {
++  font-weight: var(--weight-bold);
++  color: var(--color-danger);
++}
++
++.side {
++  min-width: 0;
++}
++
++@media (max-width: 860px) {
++  .root {
++    grid-template-columns: minmax(0, 1fr);
++  }
++}
++
++@media (max-width: 520px) {
++  .fields {
++    grid-template-columns: minmax(0, 1fr);
++  }
++}
+diff --git a/src/components/features/operation/tray/ReservationRow.jsx b/src/components/features/operation/tray/ReservationRow.jsx
+new file mode 100644
+index 0000000..7ac9b0c
+--- /dev/null
++++ b/src/components/features/operation/tray/ReservationRow.jsx
+@@ -0,0 +1,65 @@
++// src/components/features/operation/tray/ReservationRow.jsx
++
++import { useDailyTray } from '../../../../context/DailyTrayContext';
++import { getTrayStatus } from '../../../../utils/trayStatus';
++import ReservationStatusTag from '../../reservations/ReservationStatusTag';
++import RowActions from './RowActions';
++import ReservationDetail from './ReservationDetail';
++import styles from './SpaceGroup.module.css';
++
++const cx = (...classes) => classes.filter(Boolean).join(' ');
++
++/** Columnas de la tabla (ver SpaceGroup): la fila expandida ocupa todas. */
++const TRAY_COLUMNS = 7;
++
++/**
++ * Una reserva de la bandeja (mockup 5.1) y, si está expandida, su detalle
++ * (mockup 5.3) en una segunda fila que ocupa todo el ancho.
++ *
++ * Props:
++ *  - reserva: vista de la reserva
++ */
++export default function ReservationRow({ reserva }) {
++  const { now, expandedId, toggleExpanded } = useDailyTray();
++  const isExpanded = expandedId === reserva.id;
++  const detailId = `detalle-${reserva.id}`;
++
++  return (
++    <>
++      <tr className={cx(styles.row, isExpanded && styles.rowExpanded)}>
++        <td className={styles.block}>
++          {reserva.horaInicio}–{reserva.horaFin}
++        </td>
++        <td className={styles.student}>{reserva.estudiante.nombreCompleto}</td>
++        <td className={styles.muted}>{reserva.motivo}</td>
++        <td>{reserva.asistentes}</td>
++        <td>
++          <ReservationStatusTag estado={getTrayStatus(reserva, now)} />
++        </td>
++        <td>
++          <RowActions reserva={reserva} />
++        </td>
++        <td className={styles.toggleCell}>
++          <button
++            type="button"
++            className={styles.toggle}
++            onClick={() => toggleExpanded(reserva.id)}
++            aria-expanded={isExpanded}
++            aria-controls={detailId}
++            aria-label={`${isExpanded ? 'Ocultar' : 'Ver'} detalle de ${reserva.codigo}`}
++          >
++            {isExpanded ? '▴' : '▾'}
++          </button>
++        </td>
++      </tr>
++
++      {isExpanded && (
++        <tr id={detailId} className={styles.detailRow}>
++          <td colSpan={TRAY_COLUMNS}>
++            <ReservationDetail reserva={reserva} />
++          </td>
++        </tr>
++      )}
++    </>
++  );
++}
+diff --git a/src/components/features/operation/tray/RowActions.jsx b/src/components/features/operation/tray/RowActions.jsx
+new file mode 100644
+index 0000000..eaafded
+--- /dev/null
++++ b/src/components/features/operation/tray/RowActions.jsx
+@@ -0,0 +1,73 @@
++// src/components/features/operation/tray/RowActions.jsx
++
++import Button from '../../../ui/Button/Button';
++import useReservationActions from './useReservationActions';
++import styles from './RowActions.module.css';
++
++/** Texto de la columna ACCIONES cuando la reserva ya no es operable. */
++function outcomeText(reserva) {
++  switch (reserva.estado) {
++    case 'atendida':
++      return reserva.llegada ? `Llegada ${reserva.llegada}` : 'Atendida';
++    case 'inasistencia':
++      return reserva.inasistenciaMarcada
++        ? `Marcada a las ${reserva.inasistenciaMarcada}`
++        : 'Inasistencia registrada';
++    case 'cancelada':
++      return `Cancelada por el ${reserva.cancelacion?.porRol ?? 'estudiante'}`;
++    default:
++      return null;
++  }
++}
++
++/**
++ * Columna ACCIONES de una fila de la bandeja (mockup 5.1).
++ * Toma las acciones del contexto con useReservationActions: no recibe callbacks.
++ *
++ * Props:
++ *  - reserva: vista de la reserva
++ */
++export default function RowActions({ reserva }) {
++  const actions = useReservationActions(reserva);
++
++  if (!actions.isConfirmed) {
++    return <span className={styles.note}>{outcomeText(reserva)}</span>;
++  }
++  if (actions.isFutureDay) {
++    return <span className={styles.note}>Programada</span>;
++  }
++
++  const { tolerance } = actions;
++
++  return (
++    <div className={styles.root}>
++      {actions.showArrival && (
++        <Button
++          size="sm"
++          // Dentro de la tolerancia es la acción principal (verde sólido).
++          variant={tolerance.phase === 'grace' ? 'primary' : 'outline'}
++          disabled={!actions.canArrive || actions.anyBusy}
++          isLoading={actions.busy}
++          onClick={actions.onArrive}
++          title={
++            actions.canArrive ? undefined : `Disponible desde 15 min antes de las ${tolerance.startLabel}`
++          }
++        >
++          {tolerance.isLateArrival ? 'Llegada tardía' : 'Registrar llegada'}
++        </Button>
++      )}
++
++      {actions.showAbsence && (
++        <Button
++          size="sm"
++          variant={actions.canMarkAbsence ? 'danger' : 'outline'}
++          disabled={!actions.canMarkAbsence || actions.anyBusy}
++          onClick={actions.onMarkAbsence}
++          title={actions.canMarkAbsence ? undefined : `Disponible a las ${tolerance.deadlineLabel}`}
++        >
++          Inasistencia
++        </Button>
++      )}
++    </div>
++  );
++}
+diff --git a/src/components/features/operation/tray/RowActions.module.css b/src/components/features/operation/tray/RowActions.module.css
+new file mode 100644
+index 0000000..4236ac2
+--- /dev/null
++++ b/src/components/features/operation/tray/RowActions.module.css
+@@ -0,0 +1,14 @@
++/* src/components/features/operation/tray/RowActions.module.css */
++
++.root {
++  display: flex;
++  flex-wrap: nowrap;
++  align-items: center;
++  gap: var(--space-2);
++}
++
++.note {
++  white-space: nowrap;
++  font-size: var(--text-sm);
++  color: var(--color-muted);
++}
+diff --git a/src/components/features/operation/tray/SpaceGroup.jsx b/src/components/features/operation/tray/SpaceGroup.jsx
+new file mode 100644
+index 0000000..04d8000
+--- /dev/null
++++ b/src/components/features/operation/tray/SpaceGroup.jsx
+@@ -0,0 +1,64 @@
++// src/components/features/operation/tray/SpaceGroup.jsx
++
++import ReservationRow from './ReservationRow';
++import styles from './SpaceGroup.module.css';
++
++/**
++ * Bloque de la bandeja para un espacio: encabezado verde claro con el nombre
++ * y la tabla de sus reservas ordenadas por hora (mockup 5.1).
++ *
++ * Props:
++ *  - espacio:  { id, nombre, ubicacion }
++ *  - reservas: vistas de reserva de ese espacio
++ */
++export default function SpaceGroup({ espacio, reservas }) {
++  const titleId = `espacio-${espacio.id}`;
++  const count = `${reservas.length} ${reservas.length === 1 ? 'reserva' : 'reservas'}`;
++
++  return (
++    <section className={styles.root} aria-labelledby={titleId}>
++      <header className={styles.header}>
++        <h2 id={titleId} className={styles.title}>
++          {espacio.nombre}
++        </h2>
++        <p className={styles.meta}>
++          {count}
++          {espacio.ubicacion && ` · ${espacio.ubicacion}`}
++        </p>
++      </header>
++
++      <div className={styles.scroll}>
++        <table className={styles.table}>
++          {/* Anchos fijos: así las columnas quedan alineadas entre todos los espacios. */}
++          <colgroup>
++            <col className={styles.colBlock} />
++            <col className={styles.colStudent} />
++            <col />
++            <col className={styles.colAttendees} />
++            <col className={styles.colStatus} />
++            <col className={styles.colActions} />
++            <col className={styles.colToggle} />
++          </colgroup>
++          <thead>
++            <tr>
++              <th scope="col">Bloque</th>
++              <th scope="col">Estudiante</th>
++              <th scope="col">Motivo</th>
++              <th scope="col">Asist.</th>
++              <th scope="col">Estado</th>
++              <th scope="col">Acciones</th>
++              <th scope="col">
++                <span className={styles.srOnly}>Detalle</span>
++              </th>
++            </tr>
++          </thead>
++          <tbody>
++            {reservas.map((reserva) => (
++              <ReservationRow key={reserva.id} reserva={reserva} />
++            ))}
++          </tbody>
++        </table>
++      </div>
++    </section>
++  );
++}
+diff --git a/src/components/features/operation/tray/SpaceGroup.module.css b/src/components/features/operation/tray/SpaceGroup.module.css
+new file mode 100644
+index 0000000..4c96d19
+--- /dev/null
++++ b/src/components/features/operation/tray/SpaceGroup.module.css
+@@ -0,0 +1,147 @@
++/* src/components/features/operation/tray/SpaceGroup.module.css */
++/* Estilos del grupo por espacio y de sus filas (ReservationRow los comparte). */
++
++.root {
++  overflow: hidden;
++  background-color: var(--color-surface);
++  border: 1px solid var(--color-border);
++  border-radius: var(--radius-md);
++}
++
++.header {
++  display: flex;
++  flex-wrap: wrap;
++  align-items: baseline;
++  justify-content: space-between;
++  gap: var(--space-2) var(--space-4);
++  padding: var(--space-3) var(--space-5);
++  background-color: var(--color-primary-soft);
++  border-bottom: 1px solid var(--color-border);
++}
++
++.title {
++  font-size: var(--text-base);
++  font-weight: var(--weight-bold);
++  color: var(--color-ink);
++}
++
++.meta {
++  margin: 0;
++  font-size: var(--text-sm);
++  color: var(--color-muted);
++}
++
++/* En pantallas angostas la tabla se desplaza dentro de su caja, no la página. */
++.scroll {
++  position: relative; /* contiene al texto oculto (.srOnly) dentro del scroll */
++  overflow-x: auto;
++}
++
++.table {
++  width: 100%;
++  min-width: 960px;
++  table-layout: fixed;
++  border-collapse: collapse;
++  font-size: var(--text-md);
++}
++
++.colBlock {
++  width: 130px;
++}
++
++.colStudent {
++  width: 22%;
++}
++
++.colAttendees {
++  width: 72px;
++}
++
++.colStatus {
++  width: 124px;
++}
++
++.colActions {
++  width: 280px;
++}
++
++.colToggle {
++  width: 56px;
++}
++
++.table th {
++  padding: var(--space-3) var(--space-5);
++  background-color: var(--color-bg);
++  border-bottom: 1px solid var(--color-border);
++  font-size: var(--text-xs);
++  font-weight: var(--weight-semibold);
++  letter-spacing: var(--tracking-label);
++  text-align: left;
++  text-transform: uppercase;
++  color: var(--color-muted);
++  white-space: nowrap;
++}
++
++.table td {
++  padding: var(--space-3) var(--space-5);
++  vertical-align: middle;
++}
++
++.row + .row td,
++.detailRow + .row td {
++  border-top: 1px solid var(--color-border);
++}
++
++.rowExpanded td {
++  background-color: var(--color-bg);
++}
++
++.block {
++  font-weight: var(--weight-bold);
++  white-space: nowrap;
++}
++
++.student {
++  overflow-wrap: anywhere;
++}
++
++.muted {
++  color: var(--color-muted);
++}
++
++.toggleCell {
++  text-align: right;
++}
++
++.toggle {
++  padding: var(--space-1) var(--space-2);
++  border: 0;
++  border-radius: var(--radius-sm);
++  background: transparent;
++  font-size: var(--text-sm);
++  color: var(--color-primary);
++}
++
++.toggle:hover {
++  background-color: var(--color-primary-soft);
++}
++
++.toggle:focus-visible {
++  outline: 2px solid var(--color-primary);
++  outline-offset: 2px;
++}
++
++/* La fila de detalle ocupa todo el ancho y no lleva padding propio. */
++.detailRow > td {
++  padding: 0;
++  border-top: 1px solid var(--color-border);
++}
++
++.srOnly {
++  position: absolute;
++  width: 1px;
++  height: 1px;
++  overflow: hidden;
++  clip: rect(0 0 0 0);
++  white-space: nowrap;
++}
+diff --git a/src/components/features/operation/tray/ToleranceBox.jsx b/src/components/features/operation/tray/ToleranceBox.jsx
+new file mode 100644
+index 0000000..c41cd27
+--- /dev/null
++++ b/src/components/features/operation/tray/ToleranceBox.jsx
+@@ -0,0 +1,56 @@
++// src/components/features/operation/tray/ToleranceBox.jsx
++
++import { TOLERANCE_MINUTES } from '../../../../utils/tolerance';
++import styles from './ToleranceBox.module.css';
++
++const cx = (...classes) => classes.filter(Boolean).join(' ');
++
++/** 16 → '16 min' · 75 → '1 h 15 min' */
++function formatMinutes(minutes) {
++  if (minutes < 60) return `${minutes} min`;
++  const hours = Math.floor(minutes / 60);
++  const rest = minutes % 60;
++  return rest ? `${hours} h ${rest} min` : `${hours} h`;
++}
++
++/**
++ * Recuadro de tolerancia del detalle (mockup 5.3).
++ *  - antes del inicio:   gris  · "Empieza a las 10:00"
++ *  - dentro de los 15':  ámbar · "Faltan 7 min" · "Podrás marcar la inasistencia a las 10:15."
++ *  - vencida:            rojo  · "+16 min"
++ *
++ * Props:
++ *  - tolerance: resultado de getToleranceStatus
++ */
++export default function ToleranceBox({ tolerance }) {
++  const { phase } = tolerance;
++
++  const content = {
++    upcoming: {
++      tone: 'neutral',
++      label: 'Inicio del bloque',
++      value: `En ${formatMinutes(tolerance.minutesToStart)}`,
++      note: `Empieza a las ${tolerance.startLabel}. La tolerancia es de ${TOLERANCE_MINUTES} min.`,
++    },
++    grace: {
++      tone: 'warning',
++      label: 'Tolerancia',
++      value: `Faltan ${formatMinutes(tolerance.minutesLeft)}`,
++      note: `Podrás marcar la inasistencia a las ${tolerance.deadlineLabel}.`,
++    },
++    expired: {
++      tone: 'danger',
++      label: 'Tolerancia vencida',
++      value: `+${formatMinutes(tolerance.minutesLate)}`,
++      note: tolerance.hasEnded ? 'El bloque ya terminó.' : null,
++    },
++  }[phase];
++
++  return (
++    <div className={cx(styles.root, styles[content.tone])} role="status">
++      <p className={styles.label}>{content.label}</p>
++      <p className={styles.value}>{content.value}</p>
++      {content.note && <p className={styles.note}>{content.note}</p>}
++    </div>
++  );
++}
+diff --git a/src/components/features/operation/tray/ToleranceBox.module.css b/src/components/features/operation/tray/ToleranceBox.module.css
+new file mode 100644
+index 0000000..36d14d6
+--- /dev/null
++++ b/src/components/features/operation/tray/ToleranceBox.module.css
+@@ -0,0 +1,45 @@
++/* src/components/features/operation/tray/ToleranceBox.module.css */
++
++.root {
++  padding: var(--space-3) var(--space-4);
++  border: 1px solid transparent;
++  border-radius: var(--radius-sm);
++}
++
++.label {
++  margin: 0;
++  font-size: var(--text-xs);
++  font-weight: var(--weight-bold);
++  letter-spacing: var(--tracking-label);
++  text-transform: uppercase;
++}
++
++.value {
++  margin: var(--space-1) 0 0;
++  font-size: var(--text-xl);
++  font-weight: var(--weight-extrabold);
++  line-height: var(--leading-tight);
++}
++
++.note {
++  margin: var(--space-1) 0 0;
++  font-size: var(--text-sm);
++}
++
++.neutral {
++  background-color: var(--color-readonly-bg);
++  border-color: var(--color-border);
++  color: var(--color-text);
++}
++
++.warning {
++  background-color: var(--color-warning-soft);
++  border-color: var(--color-warning);
++  color: var(--color-warning);
++}
++
++.danger {
++  background-color: var(--color-danger-soft);
++  border-color: var(--color-danger);
++  color: var(--color-danger);
++}
+diff --git a/src/components/features/operation/tray/TrayBody.jsx b/src/components/features/operation/tray/TrayBody.jsx
+new file mode 100644
+index 0000000..961ab62
+--- /dev/null
++++ b/src/components/features/operation/tray/TrayBody.jsx
+@@ -0,0 +1,75 @@
++// src/components/features/operation/tray/TrayBody.jsx
++
++import Alert from '../../../ui/Alert/Alert';
++import Button from '../../../ui/Button/Button';
++import Spinner from '../../../ui/Spinner/Spinner';
++import StatusCounters from './StatusCounters';
++import SpaceGroup from './SpaceGroup';
++import EmptyDay from './EmptyDay';
++import AbsenceConfirmDialog from './AbsenceConfirmDialog';
++import { useDailyTray } from '../../../../context/DailyTrayContext';
++import styles from './TrayBody.module.css';
++
++/**
++ * Contenido de la bandeja según su estado: cargando, error, vacía o con
++ * reservas (contadores + un grupo por espacio). Lee todo del contexto.
++ *
++ * Props:
++ *  - onGoToDate: (iso) => void   para el estado vacío ("Ver el lunes…")
++ */
++export default function TrayBody({ onGoToDate }) {
++  const { date, isToday, cargando, error, bandeja, reintentar, aviso, cerrarAviso, horaSimulada } =
++    useDailyTray();
++
++  if (cargando) {
++    return (
++      <div className={styles.loading} role="status" aria-live="polite">
++        <Spinner />
++        <span>Cargando la bandeja…</span>
++      </div>
++    );
++  }
++
++  if (error) {
++    return (
++      <Alert variant="error">
++        <div className={styles.errorContent}>
++          <span>{error}</span>
++          <Button size="sm" variant="outline" onClick={reintentar}>
++            Reintentar
++          </Button>
++        </div>
++      </Alert>
++    );
++  }
++
++  if (!bandeja || bandeja.contadores.total === 0) {
++    return <EmptyDay date={date} isToday={isToday} onGoToDate={onGoToDate} />;
++  }
++
++  return (
++    <div className={styles.root}>
++      {horaSimulada && (
++        <Alert variant="info">
++          Modo desarrollo: hora simulada <strong>{horaSimulada}</strong>. Quita <code>?hora=</code>{' '}
++          de la URL para usar la hora real.
++        </Alert>
++      )}
++
++      {aviso && (
++        <Alert variant={aviso.variant} onClose={cerrarAviso}>
++          {aviso.variant === 'success' ? '✓ ' : ''}
++          {aviso.text}
++        </Alert>
++      )}
++
++      <StatusCounters counts={bandeja.contadores} />
++
++      {bandeja.grupos.map((grupo) => (
++        <SpaceGroup key={grupo.espacio.id} espacio={grupo.espacio} reservas={grupo.reservas} />
++      ))}
++
++      <AbsenceConfirmDialog />
++    </div>
++  );
++}
+diff --git a/src/components/features/operation/tray/TrayBody.module.css b/src/components/features/operation/tray/TrayBody.module.css
+new file mode 100644
+index 0000000..25727c3
+--- /dev/null
++++ b/src/components/features/operation/tray/TrayBody.module.css
+@@ -0,0 +1,29 @@
++/* src/components/features/operation/tray/TrayBody.module.css */
++
++.root {
++  display: flex;
++  flex-direction: column;
++  gap: var(--space-4);
++}
++
++/* Los contadores traen su propio margen inferior; dentro del flex sobra. */
++.root > dl {
++  margin-bottom: 0;
++}
++
++.loading {
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  gap: var(--space-3);
++  padding: var(--space-16) 0;
++  color: var(--color-muted);
++}
++
++.errorContent {
++  display: flex;
++  flex-wrap: wrap;
++  align-items: center;
++  justify-content: space-between;
++  gap: var(--space-3);
++}
+diff --git a/src/components/features/operation/tray/TrayHeader.jsx b/src/components/features/operation/tray/TrayHeader.jsx
+new file mode 100644
+index 0000000..20d424f
+--- /dev/null
++++ b/src/components/features/operation/tray/TrayHeader.jsx
+@@ -0,0 +1,41 @@
++// src/components/features/operation/tray/TrayHeader.jsx
++
++import PageHeader from '../../../ui/PageHeader/PageHeader';
++import ButtonLink from '../../../ui/Button/ButtonLink';
++import DayNavigator from './DayNavigator';
++import { useDailyTray } from '../../../../context/DailyTrayContext';
++import { RUTAS_ENCARGADO } from '../../../routes/rutasEncargado';
++import { formatDayLabel } from '../../../../utils/dates';
++
++/**
++ * Encabezado de la bandeja: "Bandeja del día", fecha + total de reservas,
++ * navegación ‹ Hoy › y "Buscar reserva" (mockup 5.1).
++ *
++ * Props:
++ *  - today:        hoy, 'YYYY-MM-DD'
++ *  - onChangeDate: (iso) => void
++ */
++export default function TrayHeader({ today, onChangeDate }) {
++  const { date, bandeja } = useDailyTray();
++  const total = bandeja?.contadores.total ?? 0;
++
++  const subtitle =
++    total > 0
++      ? `${formatDayLabel(date)} · ${total} ${total === 1 ? 'reserva' : 'reservas'} en los espacios a mi cargo`
++      : formatDayLabel(date);
++
++  return (
++    <PageHeader
++      title="Bandeja del día"
++      subtitle={subtitle}
++      actions={
++        <>
++          <DayNavigator date={date} today={today} onChange={onChangeDate} />
++          <ButtonLink to={RUTAS_ENCARGADO.busqueda} variant="outline">
++            Buscar reserva
++          </ButtonLink>
++        </>
++      }
++    />
++  );
++}
+diff --git a/src/components/features/operation/tray/useReservationActions.js b/src/components/features/operation/tray/useReservationActions.js
+new file mode 100644
+index 0000000..a13c424
+--- /dev/null
++++ b/src/components/features/operation/tray/useReservationActions.js
+@@ -0,0 +1,42 @@
++// src/components/features/operation/tray/useReservationActions.js
++
++import { useDailyTray } from '../../../../context/DailyTrayContext';
++import { getToleranceStatus } from '../../../../utils/tolerance';
++import { getTrayStatus } from '../../../../utils/trayStatus';
++
++/**
++ * Reglas de qué se puede hacer con una reserva de la bandeja AHORA.
++ * La usan la fila (RowActions) y el detalle expandido (DetailActions), así la
++ * lógica vive en un solo lugar y cada componente solo decide cómo mostrarla.
++ *
++ * @param {Object} reserva  vista de la reserva (operationService)
++ */
++export default function useReservationActions(reserva) {
++  const { now, isToday, procesandoId, registrarLlegada, solicitarInasistencia } = useDailyTray();
++
++  const tolerance = getToleranceStatus(reserva, now);
++  const isConfirmed = reserva.estado === 'confirmada';
++  const isOperableToday = isConfirmed && isToday;
++
++  return {
++    tolerance,
++    displayStatus: getTrayStatus(reserva, now),
++    isConfirmed,
++    isOperableToday,
++    isFutureDay: isConfirmed && !isToday && tolerance.phase === 'upcoming',
++    busy: procesandoId === reserva.id,
++    anyBusy: procesandoId !== null,
++
++    // Registrar llegada: solo hoy y mientras el bloque no termine.
++    showArrival: isOperableToday && !tolerance.hasEnded,
++    canArrive: isOperableToday && tolerance.canRegisterArrival,
++    arrivalLabel: tolerance.isLateArrival ? 'Registrar llegada tardía' : 'Registrar llegada',
++
++    // Inasistencia: hoy (aunque aún no venza, se muestra deshabilitada) o jornadas pasadas.
++    showAbsence: isConfirmed && tolerance.phase !== 'upcoming',
++    canMarkAbsence: isConfirmed && tolerance.canMarkAbsence,
++
++    onArrive: () => registrarLlegada(reserva),
++    onMarkAbsence: () => solicitarInasistencia(reserva),
++  };
++}
+diff --git a/src/context/DailyTrayContext.jsx b/src/context/DailyTrayContext.jsx
+new file mode 100644
+index 0000000..2374897
+--- /dev/null
++++ b/src/context/DailyTrayContext.jsx
+@@ -0,0 +1,17 @@
++// src/context/DailyTrayContext.jsx
++// Contexto y hook de la bandeja del día (HU-5). El proveedor vive en
++// DailyTrayProvider.jsx (react-refresh exige separar componentes y utilidades,
++// igual que AuthContext / AuthProvider).
++
++import { createContext, useContext } from 'react';
++
++export const DailyTrayContext = createContext(null);
++
++/** Estado y acciones de la bandeja. Solo funciona dentro de <DailyTrayProvider>. */
++export const useDailyTray = () => {
++  const context = useContext(DailyTrayContext);
++  if (!context) {
++    throw new Error('useDailyTray debe usarse dentro de un DailyTrayProvider');
++  }
++  return context;
++};
+diff --git a/src/context/DailyTrayProvider.jsx b/src/context/DailyTrayProvider.jsx
+new file mode 100644
+index 0000000..b6e47ad
+--- /dev/null
++++ b/src/context/DailyTrayProvider.jsx
+@@ -0,0 +1,182 @@
++// src/context/DailyTrayProvider.jsx
++//
++// Estado de la bandeja del día (HU-5). Evita el prop-drilling: las filas y
++// sus botones toman las acciones con useDailyTray() en lugar de recibirlas
++// desde la página a través de 3 niveles de componentes.
++//
++// No guarda reglas de negocio: delega en operationService. Envuelve SOLO la
++// página de la bandeja, no toda la app.
++
++import { useCallback, useEffect, useMemo, useState } from 'react';
++import { useSearchParams } from 'react-router-dom';
++import { useAuth } from './AuthContext';
++import { DailyTrayContext } from './DailyTrayContext';
++import * as operationService from '../services/operationService';
++import useNow from '../hooks/useNow';
++import { toISODate } from '../utils/dates';
++import { withTimeOfDay } from '../utils/tolerance';
++
++const ERROR_CARGA = 'No se pudo cargar la bandeja del día.';
++const ERROR_OPERACION = 'No se pudo completar la operación. Inténtalo otra vez.';
++
++/**
++ * Props:
++ *  - date: día que se muestra, 'YYYY-MM-DD' (lo controla la página por la URL)
++ */
++export const DailyTrayProvider = ({ date, children }) => {
++  const { usuario } = useAuth();
++  const sedeId = usuario?.sedeAsignadaId ?? null;
++
++  // Reloj: la hora real avanza sola; en desarrollo se puede fijar con ?hora=HH:MM.
++  const [searchParams] = useSearchParams();
++  const horaSimulada = import.meta.env.DEV ? searchParams.get('hora') : null;
++  const relojReal = useNow(30000);
++  const now = useMemo(() => withTimeOfDay(relojReal, horaSimulada), [relojReal, horaSimulada]);
++  const isToday = date === toISODate(now);
++
++  /* ---------------------------- Carga de datos ---------------------------- */
++  // `clave` identifica qué se está mostrando; si cambia (otro día o reintento),
++  // la carga anterior queda obsoleta y `cargando` es true hasta que llegue la nueva.
++  const [intento, setIntento] = useState(0);
++  const clave = `${sedeId}|${date}|${intento}`;
++  const [resultado, setResultado] = useState({ clave: null, bandeja: null, error: null });
++
++  useEffect(() => {
++    let activo = true;
++    operationService
++      .obtenerBandejaDelDia({ sedeId, fecha: date })
++      .then((bandeja) => {
++        if (activo) setResultado({ clave, bandeja, error: null });
++      })
++      .catch((err) => {
++        if (activo) setResultado({ clave, bandeja: null, error: err.message || ERROR_CARGA });
++      });
++    return () => {
++      activo = false;
++    };
++  }, [clave, sedeId, date]);
++
++  const cargando = resultado.clave !== clave;
++  const bandeja = cargando ? null : resultado.bandeja;
++  const error = cargando ? null : resultado.error;
++
++  const reintentar = useCallback(() => setIntento((n) => n + 1), []);
++
++  /** Vuelve a leer la bandeja sin mostrar el spinner (después de una acción). */
++  const refrescar = useCallback(async () => {
++    try {
++      const nueva = await operationService.obtenerBandejaDelDia({ sedeId, fecha: date });
++      setResultado({ clave, bandeja: nueva, error: null });
++    } catch {
++      /* se mantiene la bandeja anterior */
++    }
++  }, [sedeId, date, clave]);
++
++  /* ------------------------- Estado de la interfaz ------------------------ */
++  const [expandedId, setExpandedId] = useState(null);
++  const [procesandoId, setProcesandoId] = useState(null);
++  const [aviso, setAviso] = useState(null); // { variant, text, fecha }
++  const [pendienteInasistencia, setPendienteInasistencia] = useState(null);
++
++  const toggleExpanded = useCallback(
++    (id) => setExpandedId((actual) => (actual === id ? null : id)),
++    []
++  );
++  const cerrarAviso = useCallback(() => setAviso(null), []);
++
++  /** Ejecuta una escritura: marca la fila como ocupada, avisa el resultado y refresca la bandeja. */
++  const ejecutar = useCallback(
++    async (reserva, operacion, mensajeExito) => {
++      setProcesandoId(reserva.id);
++      setAviso(null);
++      try {
++        const respuesta = await operacion();
++        setAviso({ variant: 'success', text: mensajeExito(respuesta), fecha: date });
++      } catch (err) {
++        setAviso({ variant: 'error', text: err.message || ERROR_OPERACION, fecha: date });
++      } finally {
++        setProcesandoId(null);
++      }
++      // Se refresca en segundo plano (también tras un error: el estado pudo cambiar).
++      refrescar();
++    },
++    [date, refrescar]
++  );
++
++  // El servicio vuelve a leer al encargado de la base (rol y sede): no confía en la interfaz.
++  const encargadoId = usuario?.id;
++
++  /* -------------------------------- Acciones ------------------------------ */
++  const registrarLlegada = useCallback(
++    (reserva) =>
++      ejecutar(
++        reserva,
++        () => operationService.registrarLlegada(reserva.id, { encargadoId, ahora: now }),
++        (r) => `Llegada${r.tardia ? ' tardía' : ''} registrada a las ${r.hora} para ${r.codigo}.`
++      ),
++    [ejecutar, encargadoId, now]
++  );
++
++  /** Marcar inasistencia es destructivo: primero se pide confirmación. */
++  const solicitarInasistencia = useCallback((reserva) => setPendienteInasistencia(reserva), []);
++  const cancelarInasistencia = useCallback(() => setPendienteInasistencia(null), []);
++
++  const confirmarInasistencia = useCallback(async () => {
++    const reserva = pendienteInasistencia;
++    if (!reserva) return;
++    await ejecutar(
++      reserva,
++      () => operationService.marcarInasistencia(reserva.id, { encargadoId, ahora: now }),
++      (r) => `Inasistencia registrada para ${r.codigo} (${r.estudiante}). El bloque quedó libre.`
++    );
++    setPendienteInasistencia(null);
++  }, [pendienteInasistencia, ejecutar, encargadoId, now]);
++
++  const value = useMemo(
++    () => ({
++      date,
++      now,
++      isToday,
++      horaSimulada: horaSimulada && now !== relojReal ? horaSimulada : null,
++      cargando,
++      error,
++      bandeja,
++      reintentar,
++      expandedId,
++      toggleExpanded,
++      procesandoId,
++      aviso: aviso?.fecha === date ? aviso : null,
++      cerrarAviso,
++      registrarLlegada,
++      pendienteInasistencia,
++      solicitarInasistencia,
++      cancelarInasistencia,
++      confirmarInasistencia,
++    }),
++    [
++      date,
++      now,
++      isToday,
++      horaSimulada,
++      relojReal,
++      cargando,
++      error,
++      bandeja,
++      reintentar,
++      expandedId,
++      toggleExpanded,
++      procesandoId,
++      aviso,
++      cerrarAviso,
++      registrarLlegada,
++      pendienteInasistencia,
++      solicitarInasistencia,
++      cancelarInasistencia,
++      confirmarInasistencia,
++    ]
++  );
++
++  return <DailyTrayContext.Provider value={value}>{children}</DailyTrayContext.Provider>;
++};
++
++export default DailyTrayProvider;
+diff --git a/src/data/db.js b/src/data/db.js
+index e19c985..045a0c4 100644
+--- a/src/data/db.js
++++ b/src/data/db.js
+@@ -1,5 +1,6 @@
+ // src/data/db.js
+ import reservasSemilla from './reservasSemilla.js';
++import { estudiantesOperacion, reservasOperacion } from './operacionSemilla.js'; // HU-5
+ export const initialDb = {
+   usuarios: [
+     {
+@@ -25,7 +26,8 @@ export const initialDb = {
+       ciclo: null,
+       sedeAsignadaId: "sede_central",
+       estado: "activo"
+-    }
++    },
++    ...estudiantesOperacion, // HU-5: estudiantes de los mockups 5.x
+   ],
+   espacios: [
+     {
+@@ -95,7 +97,7 @@ export const initialDb = {
+       etiqueta: "11:00 AM - 12:00 PM"
+     }
+   ],
+-  reservas: reservasSemilla,
++  reservas: [...reservasSemilla, ...reservasOperacion], // HU-4 + jornada de prueba de la HU-5
+   incidencias: []
+ };
+ 
+diff --git a/src/data/operacionSemilla.js b/src/data/operacionSemilla.js
+new file mode 100644
+index 0000000..785fd2f
+--- /dev/null
++++ b/src/data/operacionSemilla.js
+@@ -0,0 +1,177 @@
++// src/data/operacionSemilla.js
++//
++// Datos de prueba de la HU-5 (operación diaria del encargado).
++// Usa el CONTRATO DE RESERVAS de la HU-4 (ver src/data/reservasSemilla.js);
++// solo agrega reservas de OTROS estudiantes para que la bandeja del día tenga
++// una jornada completa que operar (mockup 5.1: 14 reservas, 6 confirmadas,
++// 5 atendidas, 2 inasistencias, 1 cancelada).
++//
++// - Usa solo los bloques que ya existen (bloque_001…004 = 08:00…12:00), así
++//   no se modifican datos de otras historias.
++// - Ids 'res_6xx' y códigos 'RSV-2026-06xx' para no chocar con los de la HU-4.
++// - Fechas RELATIVAS A HOY. La base se guarda en localStorage la primera vez:
++//   otro día, borrar 'app_db' (DevTools → Application → Local Storage) y recargar.
++
++const pad2 = (n) => String(n).padStart(2, '0');
++const aISO = (d) => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
++
++const HOY = new Date();
++HOY.setHours(0, 0, 0, 0);
++
++/** 'YYYY-MM-DD' de hoy + n días (n negativo = pasado). */
++const dia = (n) => aISO(new Date(HOY.getFullYear(), HOY.getMonth(), HOY.getDate() + n));
++
++/** 'YYYY-MM-DDTHH:mm:00' (mismo formato que la semilla de la HU-4). */
++const momento = (fechaISO, hora) => `${fechaISO}T${hora}:00`;
++
++/** Hora de inicio de cada bloque existente. */
++const INICIO = { bloque_001: '08:00', bloque_002: '09:00', bloque_003: '10:00', bloque_004: '11:00' };
++
++const sumarMinutos = (hora, minutos) => {
++  const [h, m] = hora.split(':').map(Number);
++  const total = h * 60 + m + minutos;
++  return `${pad2(Math.floor(total / 60))}:${pad2(total % 60)}`;
++};
++
++const ENCARGADO = 'Carlos Ruiz'; // usr_201, encargado de sede_central
++
++/* ------------------------------ Estudiantes ---------------------------------
++   Estudiantes de los mockups 5.x. `codigo` (código de estudiante) es un campo
++   PROPUESTO para el contrato de usuario: la ficha del mockup 5.3 lo muestra. */
++
++const estudiante = (id, codigo, nombres, apellidos, correo, carrera, ciclo) => ({
++  id,
++  codigo,
++  nombres,
++  apellidos,
++  correo,
++  contrasena: 'Aa1234',
++  rol: 'estudiante',
++  carrera,
++  ciclo,
++  sedeAsignadaId: null,
++  estado: 'activo',
++});
++
++export const estudiantesOperacion = [
++  estudiante('usr_102', '20221534', 'Camila', 'Rojas Quispe', 'camila.rojas@ulima.edu.pe', 'Ingeniería de Sistemas', 7),
++  estudiante('usr_103', '20210477', 'Diego', 'Salazar Mendoza', 'diego.salazar@ulima.edu.pe', 'Ingeniería de Sistemas', 8),
++  estudiante('usr_104', '20220912', 'Lucía', 'Ferreyra Ocampo', 'lucia.ferreyra@ulima.edu.pe', 'Ingeniería Industrial', 6),
++  estudiante('usr_105', '20230155', 'Valeria', 'Chávez Ríos', 'valeria.chavez@ulima.edu.pe', 'Marketing', 5),
++  estudiante('usr_106', '20211830', 'Sebastián', 'Loayza Prado', 'sebastian.loayza@ulima.edu.pe', 'Administración', 7),
++  estudiante('usr_107', '20200642', 'Mariana', 'Tello Bustamante', 'mariana.tello@ulima.edu.pe', 'Psicología', 10),
++  estudiante('usr_108', '20219087', 'Andrea', 'Villanueva Soto', 'andrea.villanueva@ulima.edu.pe', 'Ingeniería de Sistemas', 9),
++  estudiante('usr_109', '20222210', 'Renzo', 'Paredes Núñez', 'renzo.paredes@ulima.edu.pe', 'Ingeniería de Sistemas', 7),
++  estudiante('usr_110', '20231378', 'Gabriela', 'Ñahui Ccama', 'gabriela.nahui@ulima.edu.pe', 'Comunicación', 4),
++];
++
++const NOMBRE = Object.fromEntries(
++  estudiantesOperacion.map((u) => [u.id, `${u.nombres} ${u.apellidos}`])
++);
++
++/* -------------------------------- Reservas ---------------------------------- */
++
++/**
++ * Arma una reserva con la forma del contrato de la HU-4.
++ *  - llegada:     minutos tras el inicio en que llegó (estado 'atendida')
++ *  - cancelacion: { porRol, motivo } (estado 'cancelada')
++ */
++function reserva({
++  num,
++  usuarioId,
++  espacioId,
++  bloqueId,
++  fecha = dia(0),
++  motivo,
++  asistentes,
++  invitados = [],
++  estado = 'confirmada',
++  llegada = 0,
++  cancelacion = null,
++}) {
++  const creada = momento(dia(-3), '12:00');
++  const inicio = INICIO[bloqueId];
++  const historial = [{ tipo: 'creada', fecha: creada, actor: NOMBRE[usuarioId] }];
++  let llegadaRegistradaEn = null;
++
++  if (estado === 'atendida') {
++    llegadaRegistradaEn = momento(fecha, sumarMinutos(inicio, llegada));
++    historial.push({ tipo: 'llegada_registrada', fecha: llegadaRegistradaEn, actor: ENCARGADO });
++  }
++  if (estado === 'inasistencia') {
++    historial.push({ tipo: 'inasistencia_marcada', fecha: momento(fecha, sumarMinutos(inicio, 16)), actor: ENCARGADO });
++  }
++  let cancelacionFinal = null;
++  if (estado === 'cancelada') {
++    const fechaCancelacion = momento(dia(-1), '20:10');
++    cancelacionFinal = {
++      fecha: fechaCancelacion,
++      porUsuarioId: usuarioId,
++      porRol: 'estudiante',
++      motivo: null,
++      tardia: false,
++      ...cancelacion,
++    };
++    historial.push({ tipo: 'cancelada', fecha: fechaCancelacion, actor: NOMBRE[usuarioId] });
++  }
++
++  return {
++    id: `res_${num}`,
++    codigo: `RSV-2026-0${num}`,
++    usuarioId,
++    espacioId,
++    bloqueId,
++    fecha,
++    motivo,
++    asistentes,
++    invitados,
++    estado,
++    creadaEn: creada,
++    llegadaRegistradaEn,
++    cancelacion: cancelacionFinal,
++    historial,
++  };
++}
++
++const invitado = (nombre, correo) => ({ nombre, correo });
++
++export const reservasOperacion = [
++  /* ---- HOY · Laboratorio de Cómputo L1 (esp_001) ---- */
++  reserva({ num: 601, usuarioId: 'usr_103', espacioId: 'esp_001', bloqueId: 'bloque_001', motivo: 'Práctica de laboratorio', asistentes: 2, estado: 'atendida', llegada: 3 }),
++  reserva({ num: 602, usuarioId: 'usr_104', espacioId: 'esp_001', bloqueId: 'bloque_002', motivo: 'Taller de bases de datos', asistentes: 12, estado: 'atendida', llegada: 1 }),
++  reserva({
++    num: 603, usuarioId: 'usr_102', espacioId: 'esp_001', bloqueId: 'bloque_003',
++    motivo: 'Avance del proyecto final de Programación Web', asistentes: 4,
++    invitados: [
++      invitado('Diego Salazar', 'diego.salazar@ulima.edu.pe'),
++      invitado('Valeria Chávez', 'valeria.chavez@ulima.edu.pe'),
++      invitado('Renzo Paredes', 'renzo.paredes@ulima.edu.pe'),
++    ],
++  }),
++  reserva({ num: 604, usuarioId: 'usr_108', espacioId: 'esp_001', bloqueId: 'bloque_004', motivo: 'Laboratorio de sistemas operativos', asistentes: 20 }),
++
++  /* ---- HOY · Sala de Estudio Grupal E-201 (esp_002) ---- */
++  reserva({ num: 605, usuarioId: 'usr_110', espacioId: 'esp_002', bloqueId: 'bloque_001', motivo: 'Estudio para el parcial', asistentes: 3, estado: 'inasistencia' }),
++  reserva({ num: 606, usuarioId: 'usr_105', espacioId: 'esp_002', bloqueId: 'bloque_002', motivo: 'Trabajo grupal de Marketing', asistentes: 5, estado: 'atendida', llegada: 5 }),
++  reserva({ num: 607, usuarioId: 'usr_106', espacioId: 'esp_002', bloqueId: 'bloque_003', motivo: 'Preparación de exposición', asistentes: 4, estado: 'cancelada', cancelacion: { motivo: 'El grupo cambió de horario' } }),
++  reserva({ num: 608, usuarioId: 'usr_107', espacioId: 'esp_002', bloqueId: 'bloque_004', motivo: 'Asesoría de tesis', asistentes: 3 }),
++
++  /* ---- HOY · Cabina de Grabación N-105 (esp_003) ---- */
++  reserva({ num: 609, usuarioId: 'usr_109', espacioId: 'esp_003', bloqueId: 'bloque_001', motivo: 'Locución para video institucional', asistentes: 1, estado: 'inasistencia' }),
++  reserva({ num: 610, usuarioId: 'usr_102', espacioId: 'esp_003', bloqueId: 'bloque_002', motivo: 'Grabación de podcast', asistentes: 2, estado: 'atendida', llegada: 2 }),
++  reserva({ num: 611, usuarioId: 'usr_104', espacioId: 'esp_003', bloqueId: 'bloque_004', motivo: 'Edición de audio del curso', asistentes: 2 }),
++
++  /* ---- HOY · Auditorio Q-101 (esp_004) ---- */
++  reserva({ num: 612, usuarioId: 'usr_106', espacioId: 'esp_004', bloqueId: 'bloque_001', motivo: 'Charla de inducción del centro de estudiantes', asistentes: 80, estado: 'atendida', llegada: 0 }),
++  reserva({ num: 613, usuarioId: 'usr_105', espacioId: 'esp_004', bloqueId: 'bloque_003', motivo: 'Ensayo de exposición final', asistentes: 25 }),
++  reserva({ num: 614, usuarioId: 'usr_109', espacioId: 'esp_004', bloqueId: 'bloque_004', motivo: 'Simulacro de sustentación', asistentes: 15 }),
++
++  /* ---- MAÑANA: para navegar entre días y para la cancelación del Paso 4 ---- */
++  reserva({ num: 615, usuarioId: 'usr_102', espacioId: 'esp_003', bloqueId: 'bloque_001', fecha: dia(1), motivo: 'Repaso para el parcial', asistentes: 2 }),
++  reserva({ num: 616, usuarioId: 'usr_108', espacioId: 'esp_004', bloqueId: 'bloque_003', fecha: dia(1), motivo: 'Práctica calificada', asistentes: 18 }),
++
++  /* ---- DÍAS PASADOS: inasistencias acumuladas (Camila 1, Andrea 2) ---- */
++  reserva({ num: 617, usuarioId: 'usr_108', espacioId: 'esp_002', bloqueId: 'bloque_002', fecha: dia(-4), motivo: 'Reunión de equipo', asistentes: 4, estado: 'inasistencia' }),
++  reserva({ num: 618, usuarioId: 'usr_108', espacioId: 'esp_001', bloqueId: 'bloque_001', fecha: dia(-10), motivo: 'Práctica de redes', asistentes: 10, estado: 'inasistencia' }),
++  reserva({ num: 619, usuarioId: 'usr_102', espacioId: 'esp_003', bloqueId: 'bloque_004', fecha: dia(-7), motivo: 'Grabación de entrevista', asistentes: 2, estado: 'inasistencia' }),
++];
+diff --git a/src/pages/DailyTrayPage/DailyTrayPage.jsx b/src/pages/DailyTrayPage/DailyTrayPage.jsx
+index 77aed3e..57c87ae 100644
+--- a/src/pages/DailyTrayPage/DailyTrayPage.jsx
++++ b/src/pages/DailyTrayPage/DailyTrayPage.jsx
+@@ -1,39 +1,26 @@
+ // src/pages/DailyTrayPage/DailyTrayPage.jsx
+ //
+ // HU-5 · Bandeja del día (mockups 5.1, 5.2 y 5.3).
+-// Paso 2: navegación entre días (en la URL, ?fecha=YYYY-MM-DD) y estado vacío.
+-// Los contadores y las reservas agrupadas por espacio se conectan en el
+-// Paso 3, cuando esté acordado el contrato de la reserva con la HU-4.
++// La página solo compone: el día vive en la URL (useDateParam) y el estado
++// de la bandeja en DailyTrayProvider, que los componentes leen con
++// useDailyTray() sin pasar props por varios niveles.
++// En desarrollo se puede simular la hora: /encargado/bandeja?hora=10:08
+ 
+ import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
+-import PageHeader from '../../components/ui/PageHeader/PageHeader';
+-import ButtonLink from '../../components/ui/Button/ButtonLink';
+-import DayNavigator from '../../components/features/operation/tray/DayNavigator';
+-import EmptyDay from '../../components/features/operation/tray/EmptyDay';
+-import { RUTAS_ENCARGADO } from '../../components/routes/rutasEncargado';
++import TrayHeader from '../../components/features/operation/tray/TrayHeader';
++import TrayBody from '../../components/features/operation/tray/TrayBody';
++import { DailyTrayProvider } from '../../context/DailyTrayProvider';
+ import useDateParam from '../../hooks/useDateParam';
+-import { formatDayLabel } from '../../utils/dates';
+ 
+ export default function DailyTrayPage() {
+-  const { date, today, isToday, setDate } = useDateParam();
++  const { date, today, setDate } = useDateParam();
+ 
+   return (
+     <ContentLayout screen="managerTray">
+-      <PageHeader
+-        title="Bandeja del día"
+-        subtitle={formatDayLabel(date)}
+-        actions={
+-          <>
+-            <DayNavigator date={date} today={today} onChange={setDate} />
+-            <ButtonLink to={RUTAS_ENCARGADO.busqueda} variant="outline">
+-              Buscar reserva
+-            </ButtonLink>
+-          </>
+-        }
+-      />
+-
+-      {/* TODO(Paso 3): si hay reservas → <StatusCounters /> + grupos por espacio. */}
+-      <EmptyDay date={date} isToday={isToday} onGoToDate={setDate} />
++      <DailyTrayProvider date={date}>
++        <TrayHeader today={today} onChangeDate={setDate} />
++        <TrayBody onGoToDate={setDate} />
++      </DailyTrayProvider>
+     </ContentLayout>
+   );
+ }
+diff --git a/src/services/operationService.js b/src/services/operationService.js
+new file mode 100644
+index 0000000..c9d0269
+--- /dev/null
++++ b/src/services/operationService.js
+@@ -0,0 +1,314 @@
++// src/services/operationService.js
++//
++// Servicio de la HU-5 (operación diaria del encargado). Es la ÚNICA capa de
++// la HU-5 que lee o escribe reservas en la base local (vía storageService),
++// siguiendo el contrato de reservas de la HU-4 (src/data/reservasSemilla.js):
++//
++//   - Registrar llegada   → estado 'atendida', llegadaRegistradaEn, historial 'llegada_registrada'
++//   - Marcar inasistencia → estado 'inasistencia', historial 'inasistencia_marcada'
++//
++// No usa reservationService (de la HU-4): así ninguna historia escribe a
++// través del código de otra. Los componentes no conocen la forma guardada:
++// reciben la "vista" que arma aVistaReserva. En la Entrega 2 se reemplaza el
++// cuerpo por llamadas a la API manteniendo las mismas firmas.
++//
++// Errores: como authService, rechaza con Error { message, code }.
++// Las validaciones se repiten aquí aunque la interfaz ya oculte los botones
++// ("las validaciones se repiten en el servidor").
++
++import { getStoredData, saveStoredData } from './storageService';
++import {
++  EARLY_ARRIVAL_MINUTES,
++  formatTime,
++  getToleranceStatus,
++  toDateTime,
++} from '../utils/tolerance';
++import { toISODate } from '../utils/dates';
++import { ESTADOS_RESERVA } from '../utils/reglas';
++
++/* ------------------------------ Configuración ----------------------------- */
++
++const NETWORK_LATENCY_MS = 300;
++
++const HISTORIAL = {
++  llegada: 'llegada_registrada',
++  inasistencia: 'inasistencia_marcada',
++};
++
++/* -------------------------------- Utilidades ------------------------------ */
++
++const simularLatencia = (ms = NETWORK_LATENCY_MS) =>
++  new Promise((resolve) => setTimeout(resolve, ms));
++
++const crearError = (message, extra = {}) => Object.assign(new Error(message), extra);
++
++const indexarPorId = (lista = []) => new Map(lista.map((item) => [String(item.id), item]));
++
++const nombreCompleto = (usuario) =>
++  [usuario?.nombres, usuario?.apellidos].filter(Boolean).join(' ') || 'Usuario';
++
++/** Fecha guardada (ISO o 'YYYY-MM-DDTHH:mm:00') → 'HH:MM' local, o null. */
++const horaDe = (valor) => (valor ? formatTime(new Date(valor)) : null);
++
++/** Última entrada del historial de un tipo dado, o null. */
++const ultimoEvento = (reserva, tipo) =>
++  [...(reserva.historial ?? [])].reverse().find((evento) => evento.tipo === tipo) ?? null;
++
++/**
++ * Inasistencias acumuladas por usuario. Misma regla que la HU-4
++ * (calcularInasistencias en reservationService): inasistencias marcadas +
++ * cancelaciones tardías.
++ */
++function contarInasistencias(reservas) {
++  const conteo = new Map();
++  reservas
++    .filter(
++      (r) =>
++        r.estado === ESTADOS_RESERVA.inasistencia ||
++        (r.estado === ESTADOS_RESERVA.cancelada && r.cancelacion?.tardia)
++    )
++    .forEach((r) => conteo.set(r.usuarioId, (conteo.get(r.usuarioId) ?? 0) + 1));
++  return conteo;
++}
++
++/** Invitados del contrato: [{ nombre, correo }] (tolera strings sueltos). */
++const nombresInvitados = (invitados = []) =>
++  invitados.map((i) => (typeof i === 'string' ? i : i?.nombre)).filter(Boolean);
++
++/* ------------------------- Mapeo: base → vista ---------------------------- */
++/* ÚNICO lugar que conoce los nombres de campo guardados. Si el contrato de la
++   HU-4 cambia, se ajusta aquí. */
++
++function aVistaReserva(reserva, { espacio, bloque, usuario, inasistencias }) {
++  const eventoLlegada = ultimoEvento(reserva, HISTORIAL.llegada);
++  const eventoInasistencia = ultimoEvento(reserva, HISTORIAL.inasistencia);
++
++  return {
++    id: reserva.id,
++    codigo: reserva.codigo,
++    fecha: reserva.fecha,
++    horaInicio: bloque?.horaInicio ?? '--:--',
++    horaFin: bloque?.horaFin ?? '--:--',
++    estado: reserva.estado,
++    motivo: reserva.motivo ?? '',
++    asistentes: reserva.asistentes ?? 0,
++    invitados: nombresInvitados(reserva.invitados),
++    llegada: horaDe(reserva.llegadaRegistradaEn),
++    inasistenciaMarcada: horaDe(eventoInasistencia?.fecha),
++    operadaPor: (eventoLlegada ?? eventoInasistencia)?.actor ?? null,
++    cancelacion: reserva.cancelacion
++      ? {
++          porRol: reserva.cancelacion.porRol ?? 'estudiante',
++          motivo: reserva.cancelacion.motivo ?? null,
++          detalle: reserva.cancelacion.detalle ?? null,
++        }
++      : null,
++    espacio: { id: espacio?.id, nombre: espacio?.nombre ?? 'Espacio' },
++    estudiante: {
++      id: usuario?.id,
++      nombreCompleto: nombreCompleto(usuario),
++      codigo: usuario?.codigo ?? null,
++      correo: usuario?.correo ?? '',
++      inasistencias: inasistencias ?? 0,
++    },
++  };
++}
++
++/** Índices de lectura que comparten las consultas. */
++function leerBase() {
++  const db = getStoredData();
++  return {
++    db,
++    espacios: indexarPorId(db.espacios),
++    bloques: indexarPorId(db.bloquesHorarios),
++    usuarios: indexarPorId(db.usuarios),
++    inasistencias: contarInasistencias(db.reservas ?? []),
++  };
++}
++
++function vistaDe(reserva, base) {
++  return aVistaReserva(reserva, {
++    espacio: base.espacios.get(String(reserva.espacioId)),
++    bloque: base.bloques.get(String(reserva.bloqueId)),
++    usuario: base.usuarios.get(String(reserva.usuarioId)),
++    inasistencias: base.inasistencias.get(reserva.usuarioId),
++  });
++}
++
++/* --------------------------- Bandeja del día ------------------------------ */
++
++const CONTADORES_VACIOS = { total: 0, confirmadas: 0, atendidas: 0, inasistencias: 0, canceladas: 0 };
++
++const CLAVE_CONTADOR = {
++  [ESTADOS_RESERVA.confirmada]: 'confirmadas',
++  [ESTADOS_RESERVA.atendida]: 'atendidas',
++  [ESTADOS_RESERVA.inasistencia]: 'inasistencias',
++  [ESTADOS_RESERVA.cancelada]: 'canceladas',
++};
++
++/**
++ * Reservas de un día en los espacios de una sede, agrupadas por espacio y
++ * ordenadas por hora, con contadores por estado.
++ *
++ * @param {{ sedeId: string, fecha: string }} filtros  fecha 'YYYY-MM-DD'
++ * @returns {Promise<{
++ *   contadores: { total, confirmadas, atendidas, inasistencias, canceladas },
++ *   grupos: { espacio: { id, nombre, ubicacion }, reservas: Object[] }[]
++ * }>}
++ */
++export const obtenerBandejaDelDia = async ({ sedeId, fecha }) => {
++  await simularLatencia();
++  const base = leerBase();
++
++  const espaciosDeLaSede = (base.db.espacios ?? []).filter(
++    (espacio) => !sedeId || espacio.sedeId === sedeId
++  );
++  const idsEspacios = new Set(espaciosDeLaSede.map((espacio) => String(espacio.id)));
++
++  const reservasDelDia = (base.db.reservas ?? [])
++    .filter((r) => r.fecha === fecha && idsEspacios.has(String(r.espacioId)))
++    .map((r) => vistaDe(r, base))
++    .sort((a, b) => a.horaInicio.localeCompare(b.horaInicio));
++
++  const contadores = { ...CONTADORES_VACIOS, total: reservasDelDia.length };
++  reservasDelDia.forEach((r) => {
++    const clave = CLAVE_CONTADOR[r.estado];
++    if (clave) contadores[clave] += 1;
++  });
++
++  // Un grupo por espacio que tenga reservas, en el orden del catálogo.
++  const grupos = espaciosDeLaSede
++    .map((espacio) => ({
++      espacio: { id: espacio.id, nombre: espacio.nombre, ubicacion: espacio.ubicacion ?? '' },
++      reservas: reservasDelDia.filter((r) => String(r.espacio.id) === String(espacio.id)),
++    }))
++    .filter((grupo) => grupo.reservas.length > 0);
++
++  return { contadores, grupos };
++};
++
++/* ------------------------------ Escrituras -------------------------------- */
++
++/**
++ * Busca la reserva y verifica que sea operable por este encargado:
++ * existe, está confirmada y su espacio pertenece a la sede del encargado.
++ */
++function obtenerReservaOperable(db, reservaId, encargadoId) {
++  const encargado = (db.usuarios ?? []).find((u) => String(u.id) === String(encargadoId));
++  if (!encargado || encargado.rol !== 'encargado') {
++    throw crearError('Solo un encargado puede operar reservas.', { code: 'SIN_PERMISO' });
++  }
++
++  const reserva = (db.reservas ?? []).find((r) => String(r.id) === String(reservaId));
++  if (!reserva) throw crearError('La reserva no existe.', { code: 'NO_ENCONTRADA' });
++
++  const espacio = (db.espacios ?? []).find((e) => String(e.id) === String(reserva.espacioId));
++  if (encargado.sedeAsignadaId && espacio?.sedeId !== encargado.sedeAsignadaId) {
++    throw crearError('Esta reserva no pertenece a tu sede.', { code: 'SIN_PERMISO' });
++  }
++  if (reserva.estado !== ESTADOS_RESERVA.confirmada) {
++    throw crearError('La reserva ya no está confirmada. Actualiza la bandeja.', {
++      code: 'ESTADO_INVALIDO',
++    });
++  }
++
++  const bloque = (db.bloquesHorarios ?? []).find((b) => String(b.id) === String(reserva.bloqueId));
++  if (!bloque) throw crearError('El bloque de la reserva no existe.', { code: 'BLOQUE_INVALIDO' });
++
++  return { reserva, bloque, encargado };
++}
++
++function guardarReserva(db, actualizada) {
++  saveStoredData({
++    ...db,
++    reservas: db.reservas.map((r) => (r.id === actualizada.id ? actualizada : r)),
++  });
++}
++
++const conEvento = (reserva, tipo, fecha, encargado) => [
++  ...(reserva.historial ?? []),
++  { tipo, fecha, actor: nombreCompleto(encargado) },
++];
++
++/**
++ * Registra la llegada del estudiante (reserva → 'atendida').
++ * Solo en la jornada de hoy, desde 15 min antes del inicio hasta el fin del bloque.
++ *
++ * @param {string} reservaId
++ * @param {{ encargadoId: string, ahora?: Date }} opciones
++ * @returns {Promise<{ codigo: string, hora: string, tardia: boolean }>}
++ */
++export const registrarLlegada = async (reservaId, { encargadoId, ahora = new Date() }) => {
++  await simularLatencia();
++  const db = getStoredData();
++  const { reserva, bloque, encargado } = obtenerReservaOperable(db, reservaId, encargadoId);
++
++  if (reserva.fecha !== toISODate(ahora)) {
++    throw crearError('Solo puedes registrar llegadas de la jornada de hoy.', {
++      code: 'FUERA_DE_JORNADA',
++    });
++  }
++
++  const tolerancia = getToleranceStatus(
++    { fecha: reserva.fecha, horaInicio: bloque.horaInicio, horaFin: bloque.horaFin },
++    ahora
++  );
++  if (!tolerancia.canRegisterArrival) {
++    if (tolerancia.hasEnded) {
++      throw crearError('El bloque ya terminó: ya no se puede registrar la llegada.', {
++        code: 'BLOQUE_TERMINADO',
++      });
++    }
++    const desde = new Date(
++      toDateTime(reserva.fecha, bloque.horaInicio).getTime() - EARLY_ARRIVAL_MINUTES * 60000
++    );
++    throw crearError(`Aún es temprano: podrás registrar la llegada desde las ${formatTime(desde)}.`, {
++      code: 'MUY_TEMPRANO',
++    });
++  }
++
++  const marca = ahora.toISOString();
++  guardarReserva(db, {
++    ...reserva,
++    estado: ESTADOS_RESERVA.atendida,
++    llegadaRegistradaEn: marca,
++    historial: conEvento(reserva, HISTORIAL.llegada, marca, encargado),
++  });
++
++  return { codigo: reserva.codigo, hora: formatTime(ahora), tardia: tolerancia.isLateArrival };
++};
++
++/**
++ * Marca la inasistencia (reserva → 'inasistencia') y libera el bloque.
++ * Solo una vez vencida la tolerancia; sirve también para jornadas pasadas.
++ *
++ * @param {string} reservaId
++ * @param {{ encargadoId: string, ahora?: Date }} opciones
++ * @returns {Promise<{ codigo: string, estudiante: string }>}
++ */
++export const marcarInasistencia = async (reservaId, { encargadoId, ahora = new Date() }) => {
++  await simularLatencia();
++  const db = getStoredData();
++  const { reserva, bloque, encargado } = obtenerReservaOperable(db, reservaId, encargadoId);
++
++  const tolerancia = getToleranceStatus(
++    { fecha: reserva.fecha, horaInicio: bloque.horaInicio, horaFin: bloque.horaFin },
++    ahora
++  );
++  if (!tolerancia.canMarkAbsence) {
++    throw crearError(
++      `Todavía no vence la tolerancia: podrás marcar la inasistencia a las ${tolerancia.deadlineLabel}.`,
++      { code: 'TOLERANCIA_VIGENTE' }
++    );
++  }
++
++  const marca = ahora.toISOString();
++  guardarReserva(db, {
++    ...reserva,
++    estado: ESTADOS_RESERVA.inasistencia,
++    historial: conEvento(reserva, HISTORIAL.inasistencia, marca, encargado),
++  });
++
++  const usuario = (db.usuarios ?? []).find((u) => String(u.id) === String(reserva.usuarioId));
++  return { codigo: reserva.codigo, estudiante: nombreCompleto(usuario) };
++};
+diff --git a/src/utils/tolerance.js b/src/utils/tolerance.js
+index ff905a3..875e036 100644
+--- a/src/utils/tolerance.js
++++ b/src/utils/tolerance.js
+@@ -6,9 +6,11 @@
+ // esperar el reloj y no dependen de cómo se guarde la reserva.
+ 
+ import { parseISODate } from './dates';
++import { TOLERANCIA_LLEGADA_MIN } from './reglas';
+ 
+-/** Minutos de espera desde el inicio del bloque antes de poder marcar inasistencia. */
+-export const TOLERANCE_MINUTES = 15;
++/** Minutos de espera desde el inicio del bloque antes de poder marcar inasistencia.
++    El valor vive en reglas.js (HU-4) para que todo el sistema use el mismo. */
++export const TOLERANCE_MINUTES = TOLERANCIA_LLEGADA_MIN;
+ 
+ /** Desde cuántos minutos antes del inicio se acepta registrar la llegada. */
+ export const EARLY_ARRIVAL_MINUTES = 15;
+@@ -40,6 +42,7 @@ export function formatTime(date) {
+  *   minutesToStart: number,   // > 0 solo en 'upcoming'
+  *   minutesLeft: number,      // > 0 solo en 'grace'  → "Faltan 7 min"
+  *   minutesLate: number,      // ≥ TOLERANCE_MINUTES solo en 'expired' → "+16 min"
++ *   startLabel: string,       // "10:00" (inicio del bloque)
+  *   deadlineLabel: string,    // "10:15" → "Podrás marcar la inasistencia a las 10:15."
+  *   canRegisterArrival: boolean,
+  *   canMarkAbsence: boolean,
+@@ -66,6 +69,7 @@ export function getToleranceStatus({ fecha, horaInicio, horaFin }, now = new Dat
+     minutesToStart: phase === 'upcoming' ? -elapsed : 0,
+     minutesLeft: phase === 'grace' ? TOLERANCE_MINUTES - elapsed : 0,
+     minutesLate: phase === 'expired' ? elapsed : 0,
++    startLabel: formatTime(start),
+     deadlineLabel: formatTime(deadline),
+     canRegisterArrival: elapsed >= -EARLY_ARRIVAL_MINUTES && !hasEnded,
+     canMarkAbsence: phase === 'expired',
+@@ -73,3 +77,18 @@ export function getToleranceStatus({ fecha, horaInicio, horaFin }, now = new Dat
+     hasEnded,
+   };
+ }
++
++const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
++
++/**
++ * Devuelve `now` con la hora cambiada a 'HH:MM' (mismo día). Si `time` no es
++ * una hora válida, devuelve `now` sin tocar. Sirve para simular la hora en
++ * desarrollo (?hora=10:08) y probar la tolerancia sin esperar al reloj.
++ */
++export function withTimeOfDay(now, time) {
++  if (!TIME_RE.test(String(time ?? ''))) return now;
++  const [hours, minutes] = time.split(':').map(Number);
++  const date = new Date(now);
++  date.setHours(hours, minutes, 0, 0);
++  return date;
++}
+diff --git a/src/utils/trayStatus.js b/src/utils/trayStatus.js
+new file mode 100644
+index 0000000..d4227ff
+--- /dev/null
++++ b/src/utils/trayStatus.js
+@@ -0,0 +1,27 @@
++// src/utils/trayStatus.js
++//
++// HU-5 · Estado que se MUESTRA en la bandeja del día.
++//
++// Difiere del `estadoVisible` de la HU-4 (reservationService) a propósito:
++// en los mockups de la bandeja (5.1) "En curso" es una reserva ATENDIDA cuyo
++// bloque aún no termina (ya llegó: "Llegada 09:02"); una reserva confirmada
++// dentro de su bloque sigue mostrándose "Confirmada" mientras se espera la
++// llegada (Camila 10:00–11:00 a las 10:08). Los textos y colores salen de
++// ESTADO_RESERVA_UI (reglas.js), así que la etiqueta se ve igual en todo el sistema.
++
++import { ESTADOS_RESERVA } from './reglas';
++import { toDateTime } from './tolerance';
++
++/**
++ * @param {{ estado: string, fecha: string, horaFin: string }} reserva
++ * @param {Date} now
++ * @returns {string} clave de ESTADO_RESERVA_UI: 'confirmada' | 'en_curso' | 'atendida' | 'inasistencia' | 'cancelada'
++ */
++export function getTrayStatus(reserva, now = new Date()) {
++  if (reserva.estado === ESTADOS_RESERVA.atendida && reserva.horaFin) {
++    if (now.getTime() < toDateTime(reserva.fecha, reserva.horaFin).getTime()) {
++      return ESTADOS_RESERVA.enCurso;
++    }
++  }
++  return reserva.estado;
++}

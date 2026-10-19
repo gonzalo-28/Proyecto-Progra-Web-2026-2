@@ -1,7 +1,27 @@
 /* src/components/ui/ConfirmDialog/ConfirmDialog.module.css */
 
-.message {
-  font-size: var(--text-md);
-  line-height: var(--leading-normal);
-  color: var(--color-text);
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    width: 100%;
+}
+
+/* Botón rojo "Sí, cancelar". Se pinta encima del Button verde sin modificar
+   Button.module.css (dos clases = más específico que la variante primary). */
+.actions .danger {
+    background-color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+.actions .danger:hover:not(:disabled) {
+    background-color: #8f1c13;
+    border-color: #8f1c13;
+}
+
+@media (max-width: 480px) {
+    .actions {
+        flex-direction: column-reverse;
+    }
 }

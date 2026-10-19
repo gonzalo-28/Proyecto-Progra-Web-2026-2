@@ -5,55 +5,74 @@ import Button from '../Button/Button';
 import styles from './ConfirmDialog.module.css';
 
 /**
- * Confirmación genérica para acciones destructivas ("toda acción destructiva
- * pide confirmación", requerimiento no funcional del curso).
+ * Diálogo "¿Seguro?" para toda acción destructiva (requisito no funcional:
+ * "toda acción destructiva pide confirmación"). Se arma sobre Modal.
+ *
+ * Ejemplo (mockup 4.5, cancelación):
+ *   <ConfirmDialog
+ *     open={abierto}
+ *     title="¿Cancelar la reserva RSV-2026-0473?"
+ *     confirmText="Sí, cancelar"
+ *     cancelText="Mantener la reserva"
+ *     tone="danger"
+ *     isLoading={cancelando}
+ *     onConfirm={confirmar}
+ *     onCancel={() => setAbierto(false)}
+ *   >
+ *     …contenido (resumen, avisos, campo de motivo)…
+ *   </ConfirmDialog>
  *
  * Props:
- *  - open, title
- *  - children:     mensaje (texto o nodo)
- *  - confirmText:  "Marcar inasistencia"
- *  - cancelText:   "Volver"
- *  - tone:         'primary' | 'danger'  → color del botón de confirmar
- *  - isLoading:    bloquea ambos botones mientras se guarda
- *  - onConfirm(), onCancel()
+ *  - open, title, children
+ *  - confirmText / cancelText: textos de los botones
+ *  - tone:        'danger' (botón rojo) | 'primary' (botón verde)
+ *  - isLoading:   bloquea ambos botones y muestra spinner en el de confirmar
+ *  - loadingText: texto mientras carga (ej. "Cancelando…")
+ *  - confirmDisabled: deshabilita solo el botón de confirmar
+ *  - onConfirm, onCancel
  */
 export default function ConfirmDialog({
-  open,
-  title,
-  children,
-  confirmText = 'Confirmar',
-  cancelText = 'Volver',
-  tone = 'primary',
-  isLoading = false,
-  onConfirm,
-  onCancel,
+    open,
+    title,
+    confirmText = 'Confirmar',
+    cancelText = 'Cancelar',
+    tone = 'danger',
+    isLoading = false,
+    loadingText,
+    confirmDisabled = false,
+    onConfirm,
+    onCancel,
+    children,
 }) {
-  // Mientras se guarda, ni Escape ni el clic fuera cierran el diálogo.
-  const handleClose = isLoading ? undefined : onCancel;
+    // Mientras se procesa no se puede cerrar (evita dejar la acción a medias).
+    const cerrar = isLoading ? undefined : onCancel;
 
-  return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      title={title}
-      size="sm"
-      footer={
-        <>
-          <Button variant="ghost" onClick={onCancel} disabled={isLoading}>
-            {cancelText}
-          </Button>
-          <Button
-            variant={tone === 'danger' ? 'danger' : 'primary'}
-            onClick={onConfirm}
-            isLoading={isLoading}
-            loadingText="Guardando…"
-          >
-            {confirmText}
-          </Button>
-        </>
-      }
-    >
-      <div className={styles.message}>{children}</div>
-    </Modal>
-  );
+    return (
+        <Modal
+            open={open}
+            title={title}
+            onClose={cerrar}
+            closeOnOverlay={!isLoading}
+            size="sm"
+            footer={
+                <div className={styles.actions}>
+                    <Button variant="ghost" onClick={onCancel} disabled={isLoading}>
+                        {cancelText}
+                    </Button>
+                    <Button
+                        variant="primary"
+                        className={tone === 'danger' ? styles.danger : undefined}
+                        onClick={onConfirm}
+                        isLoading={isLoading}
+                        loadingText={loadingText}
+                        disabled={confirmDisabled}
+                    >
+                        {confirmText}
+                    </Button>
+                </div>
+            }
+        >
+            {children}
+        </Modal>
+    );
 }
