@@ -10,3 +10,10 @@ export const RUTAS_ENCARGADO = {
   bloqueos: '/encargado/bloqueos', // 5.4 Nuevo bloqueo por mantenimiento
   busqueda: '/encargado/reservas', // 5.5 Búsqueda de reservas
 };
+
+/**
+ * Enlace a la bandeja de un día con una reserva ya desplegada
+ * (lo usa "Detalle" en la búsqueda de reservas).
+ */
+export const rutaReservaEnBandeja = (fecha, reservaId) =>
+  `${RUTAS_ENCARGADO.bandeja}?fecha=${encodeURIComponent(fecha)}&reserva=${encodeURIComponent(reservaId)}`;

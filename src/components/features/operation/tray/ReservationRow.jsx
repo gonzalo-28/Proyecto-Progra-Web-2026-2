@@ -1,5 +1,6 @@
 // src/components/features/operation/tray/ReservationRow.jsx
 
+import { useEffect, useRef } from 'react';
 import { useDailyTray } from '../../../../context/DailyTrayContext';
 import { getTrayStatus } from '../../../../utils/trayStatus';
 import ReservationStatusTag from '../../reservations/ReservationStatusTag';
@@ -20,13 +21,20 @@ const TRAY_COLUMNS = 7;
  *  - reserva: vista de la reserva
  */
 export default function ReservationRow({ reserva }) {
-  const { now, expandedId, toggleExpanded } = useDailyTray();
+  const { now, expandedId, toggleExpanded, reservaEnfocada } = useDailyTray();
   const isExpanded = expandedId === reserva.id;
+  const isFocused = reservaEnfocada === reserva.id;
   const detailId = `detalle-${reserva.id}`;
+  const rowRef = useRef(null);
+
+  // Llegando desde "Detalle" en la búsqueda: se lleva la fila a la vista.
+  useEffect(() => {
+    if (isFocused) rowRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }, [isFocused]);
 
   return (
     <>
-      <tr className={cx(styles.row, isExpanded && styles.rowExpanded)}>
+      <tr ref={rowRef} className={cx(styles.row, isExpanded && styles.rowExpanded)}>
         <td className={styles.block}>
           {reserva.horaInicio}–{reserva.horaFin}
         </td>

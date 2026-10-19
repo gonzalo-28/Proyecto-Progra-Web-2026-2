@@ -73,7 +73,9 @@ export const DailyTrayProvider = ({ date, children }) => {
   }, [sedeId, date, clave]);
 
   /* ------------------------- Estado de la interfaz ------------------------ */
-  const [expandedId, setExpandedId] = useState(null);
+  // ?reserva=res_603 (desde "Detalle" en la búsqueda): esa fila empieza desplegada.
+  const reservaEnfocada = searchParams.get('reserva');
+  const [expandedId, setExpandedId] = useState(reservaEnfocada);
   const [procesandoId, setProcesandoId] = useState(null);
   const [aviso, setAviso] = useState(null); // { variant, text, fecha }
   const [pendienteInasistencia, setPendienteInasistencia] = useState(null);
@@ -183,6 +185,7 @@ export const DailyTrayProvider = ({ date, children }) => {
       reintentar,
       expandedId,
       toggleExpanded,
+      reservaEnfocada,
       procesandoId,
       aviso: aviso?.fecha === date ? aviso : null,
       cerrarAviso,
@@ -208,6 +211,7 @@ export const DailyTrayProvider = ({ date, children }) => {
       reintentar,
       expandedId,
       toggleExpanded,
+      reservaEnfocada,
       procesandoId,
       aviso,
       cerrarAviso,

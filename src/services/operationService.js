@@ -374,3 +374,76 @@ export const cancelarPorEncargado = async (
   const usuario = (db.usuarios ?? []).find((u) => String(u.id) === String(reserva.usuarioId));
   return { codigo: reserva.codigo, estudiante: nombreCompleto(usuario) };
 };
+
+/* ------------------------------- Búsqueda ---------------------------------- */
+
+/** Quita tildes y pasa a minúsculas: "Ñahui" ≈ "nahui", "Lucía" ≈ "lucia". */
+const normalizar = (texto) =>
+  String(texto ?? '')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .trim();
+
+/** Mínimo de caracteres para buscar por texto. */
+export const MIN_CARACTERES_BUSQUEDA = 2;
+
+/** Máximo de resultados que se devuelven (los más recientes primero). */
+const MAX_RESULTADOS = 100;
+
+/**
+ * Espacios de una sede, para el filtro "Espacio" de la búsqueda.
+ * Es síncrona porque solo lee el catálogo (no hay escritura ni latencia que simular).
+ * @returns {{ value: string, label: string }[]}
+ */
+export const obtenerEspaciosDeSede = (sedeId) =>
+  (getStoredData().espacios ?? [])
+    .filter((espacio) => !sedeId || espacio.sedeId === sedeId)
+    .map((espacio) => ({ value: espacio.id, label: espacio.nombre }));
+
+/**
+ * Búsqueda de reservas por código, espacio o usuario (mockup 5.5).
+ * El texto se busca en: código de reserva, nombre del estudiante, correo y
+ * código de estudiante (sin distinguir mayúsculas ni tildes).
+ *
+ * @param {{ sedeId: string, texto?: string, espacioId?: string, estado?: string }} filtros
+ * @returns {Promise<{ resultados: Object[], total: number, truncado: boolean }>}
+ *          resultados ordenados del más reciente al más antiguo
+ */
+export const buscarReservas = async ({ sedeId, texto = '', espacioId = '', estado = '' }) => {
+  await simularLatencia();
+
+  const consulta = normalizar(texto);
+  if (consulta && consulta.length < MIN_CARACTERES_BUSQUEDA) {
+    throw crearError(`Escribe al menos ${MIN_CARACTERES_BUSQUEDA} caracteres.`, {
+      code: 'VALIDACION',
+      campos: { texto: `Escribe al menos ${MIN_CARACTERES_BUSQUEDA} caracteres.` },
+    });
+  }
+
+  const base = leerBase();
+  const idsSede = new Set(
+    (base.db.espacios ?? [])
+      .filter((espacio) => !sedeId || espacio.sedeId === sedeId)
+      .map((espacio) => String(espacio.id))
+  );
+
+  const coincideTexto = (vista) =>
+    !consulta ||
+    [vista.codigo, vista.estudiante.nombreCompleto, vista.estudiante.correo, vista.estudiante.codigo]
+      .some((campo) => normalizar(campo).includes(consulta));
+
+  const encontradas = (base.db.reservas ?? [])
+    .filter((r) => idsSede.has(String(r.espacioId)))
+    .filter((r) => !espacioId || String(r.espacioId) === String(espacioId))
+    .filter((r) => !estado || r.estado === estado)
+    .map((r) => vistaDe(r, base))
+    .filter(coincideTexto)
+    .sort((a, b) => `${b.fecha} ${b.horaInicio}`.localeCompare(`${a.fecha} ${a.horaInicio}`));
+
+  return {
+    resultados: encontradas.slice(0, MAX_RESULTADOS),
+    total: encontradas.length,
+    truncado: encontradas.length > MAX_RESULTADOS,
+  };
+};
