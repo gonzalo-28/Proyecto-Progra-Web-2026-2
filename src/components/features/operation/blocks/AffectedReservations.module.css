@@ -1,0 +1,44 @@
+/* src/components/features/operation/blocks/AffectedReservations.module.css */
+
+.title {
+  margin-bottom: var(--space-3);
+  font-size: var(--text-lg);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-4);
+  padding: var(--space-2) 0;
+  font-size: var(--text-md);
+}
+
+.item + .item {
+  border-top: 1px solid var(--color-border);
+}
+
+.when {
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.notice {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-warning-soft);
+  font-size: var(--text-sm);
+  color: var(--color-warning);
+}
+
+.empty {
+  margin: 0;
+  color: var(--color-muted);
+}

@@ -98,6 +98,7 @@ export const initialDb = {
     }
   ],
   reservas: [...reservasSemilla, ...reservasOperacion], // HU-4 + jornada de prueba de la HU-5
+  bloqueos: [], // HU-5: bloqueos por mantenimiento (forma en services/blockService.js)
   incidencias: []
 };
 

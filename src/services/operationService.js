@@ -7,6 +7,7 @@
 //   - Registrar llegada   → estado 'atendida', llegadaRegistradaEn, historial 'llegada_registrada'
 //   - Marcar inasistencia → estado 'inasistencia', historial 'inasistencia_marcada'
 //   - Cancelar            → estado 'cancelada', cancelacion { porRol: 'encargado', motivo, … }, historial 'cancelada'
+//   (Los bloqueos por mantenimiento viven en blockService.js.)
 //
 // No usa reservationService (de la HU-4): así ninguna historia escribe a
 // través del código de otra. Los componentes no conocen la forma guardada:
@@ -19,6 +20,15 @@
 
 import { getStoredData, saveStoredData } from './storageService';
 import {
+  conEvento,
+  crearError,
+  HISTORIAL,
+  leerBase,
+  nombreCompleto,
+  simularLatencia,
+  vistaDe,
+} from './operationCommon';
+import {
   EARLY_ARRIVAL_MINUTES,
   formatTime,
   getToleranceStatus,
@@ -27,115 +37,6 @@ import {
 import { toISODate } from '../utils/dates';
 import { ESTADOS_RESERVA } from '../utils/reglas';
 import { etiquetaMotivo, validarCancelacion } from '../utils/reglasOperacion';
-
-/* ------------------------------ Configuración ----------------------------- */
-
-const NETWORK_LATENCY_MS = 300;
-
-const HISTORIAL = {
-  llegada: 'llegada_registrada',
-  inasistencia: 'inasistencia_marcada',
-  cancelada: 'cancelada',
-};
-
-/* -------------------------------- Utilidades ------------------------------ */
-
-const simularLatencia = (ms = NETWORK_LATENCY_MS) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
-const crearError = (message, extra = {}) => Object.assign(new Error(message), extra);
-
-const indexarPorId = (lista = []) => new Map(lista.map((item) => [String(item.id), item]));
-
-const nombreCompleto = (usuario) =>
-  [usuario?.nombres, usuario?.apellidos].filter(Boolean).join(' ') || 'Usuario';
-
-/** Fecha guardada (ISO o 'YYYY-MM-DDTHH:mm:00') → 'HH:MM' local, o null. */
-const horaDe = (valor) => (valor ? formatTime(new Date(valor)) : null);
-
-/** Última entrada del historial de un tipo dado, o null. */
-const ultimoEvento = (reserva, tipo) =>
-  [...(reserva.historial ?? [])].reverse().find((evento) => evento.tipo === tipo) ?? null;
-
-/**
- * Inasistencias acumuladas por usuario. Misma regla que la HU-4
- * (calcularInasistencias en reservationService): inasistencias marcadas +
- * cancelaciones tardías.
- */
-function contarInasistencias(reservas) {
-  const conteo = new Map();
-  reservas
-    .filter(
-      (r) =>
-        r.estado === ESTADOS_RESERVA.inasistencia ||
-        (r.estado === ESTADOS_RESERVA.cancelada && r.cancelacion?.tardia)
-    )
-    .forEach((r) => conteo.set(r.usuarioId, (conteo.get(r.usuarioId) ?? 0) + 1));
-  return conteo;
-}
-
-/** Invitados del contrato: [{ nombre, correo }] (tolera strings sueltos). */
-const nombresInvitados = (invitados = []) =>
-  invitados.map((i) => (typeof i === 'string' ? i : i?.nombre)).filter(Boolean);
-
-/* ------------------------- Mapeo: base → vista ---------------------------- */
-/* ÚNICO lugar que conoce los nombres de campo guardados. Si el contrato de la
-   HU-4 cambia, se ajusta aquí. */
-
-function aVistaReserva(reserva, { espacio, bloque, usuario, inasistencias }) {
-  const eventoLlegada = ultimoEvento(reserva, HISTORIAL.llegada);
-  const eventoInasistencia = ultimoEvento(reserva, HISTORIAL.inasistencia);
-
-  return {
-    id: reserva.id,
-    codigo: reserva.codigo,
-    fecha: reserva.fecha,
-    horaInicio: bloque?.horaInicio ?? '--:--',
-    horaFin: bloque?.horaFin ?? '--:--',
-    estado: reserva.estado,
-    motivo: reserva.motivo ?? '',
-    asistentes: reserva.asistentes ?? 0,
-    invitados: nombresInvitados(reserva.invitados),
-    llegada: horaDe(reserva.llegadaRegistradaEn),
-    inasistenciaMarcada: horaDe(eventoInasistencia?.fecha),
-    operadaPor: (eventoLlegada ?? eventoInasistencia)?.actor ?? null,
-    cancelacion: reserva.cancelacion
-      ? {
-          porRol: reserva.cancelacion.porRol ?? 'estudiante',
-          motivo: reserva.cancelacion.motivo ?? null,
-        }
-      : null,
-    espacio: { id: espacio?.id, nombre: espacio?.nombre ?? 'Espacio' },
-    estudiante: {
-      id: usuario?.id,
-      nombreCompleto: nombreCompleto(usuario),
-      codigo: usuario?.codigo ?? null,
-      correo: usuario?.correo ?? '',
-      inasistencias: inasistencias ?? 0,
-    },
-  };
-}
-
-/** Índices de lectura que comparten las consultas. */
-function leerBase() {
-  const db = getStoredData();
-  return {
-    db,
-    espacios: indexarPorId(db.espacios),
-    bloques: indexarPorId(db.bloquesHorarios),
-    usuarios: indexarPorId(db.usuarios),
-    inasistencias: contarInasistencias(db.reservas ?? []),
-  };
-}
-
-function vistaDe(reserva, base) {
-  return aVistaReserva(reserva, {
-    espacio: base.espacios.get(String(reserva.espacioId)),
-    bloque: base.bloques.get(String(reserva.bloqueId)),
-    usuario: base.usuarios.get(String(reserva.usuarioId)),
-    inasistencias: base.inasistencias.get(reserva.usuarioId),
-  });
-}
 
 /* --------------------------- Bandeja del día ------------------------------ */
 
@@ -226,11 +127,6 @@ function guardarReserva(db, actualizada) {
     reservas: db.reservas.map((r) => (r.id === actualizada.id ? actualizada : r)),
   });
 }
-
-const conEvento = (reserva, tipo, fecha, encargado) => [
-  ...(reserva.historial ?? []),
-  { tipo, fecha, actor: nombreCompleto(encargado) },
-];
 
 /**
  * Registra la llegada del estudiante (reserva → 'atendida').
@@ -447,3 +343,4 @@ export const buscarReservas = async ({ sedeId, texto = '', espacioId = '', estad
     truncado: encontradas.length > MAX_RESULTADOS,
   };
 };
+

@@ -77,3 +77,15 @@ export function formatDayLabel(iso) {
   const weekday = getWeekdayName(iso);
   return `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} ${formatDate(iso)}`;
 }
+
+/** Días entre dos fechas ISO, ambos incluidos: ('2026-09-16', '2026-09-18') → 3. */
+export function countDays(desde, hasta) {
+  const ms = parseISODate(hasta).getTime() - parseISODate(desde).getTime();
+  return Math.round(ms / 86400000) + 1;
+}
+
+/** Lista de fechas ISO de `desde` a `hasta`, ambos incluidos. */
+export function listDays(desde, hasta) {
+  const total = countDays(desde, hasta);
+  return Array.from({ length: Math.max(total, 0) }, (_, i) => addDays(desde, i));
+}
