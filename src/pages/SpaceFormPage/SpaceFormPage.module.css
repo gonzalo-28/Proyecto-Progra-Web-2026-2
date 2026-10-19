@@ -1,0 +1,329 @@
+.layout {
+  max-width: 1440px;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-block: var(--space-4) var(--space-10);
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+}
+
+.breadcrumbLink {
+  min-height: unset;
+  padding: 0;
+  color: var(--color-muted);
+  font-size: inherit;
+}
+
+.breadcrumb > span:last-child {
+  color: var(--color-text);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-xl);
+}
+
+.errorSummary {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-danger-ring);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+}
+
+.errorSummary strong {
+  font-weight: var(--weight-bold);
+}
+
+.draftNotice {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.28fr);
+  align-items: start;
+  gap: var(--space-5);
+}
+
+.form {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.card,
+.asideCard {
+  box-shadow: none;
+}
+
+.cardTitle {
+  margin-bottom: var(--space-4);
+  color: var(--color-primary);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.fieldGroup {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.identityRow {
+  grid-template-columns: minmax(150px, 1.45fr) minmax(250px, 5.4fr) minmax(180px, 1.85fr);
+}
+
+.locationRow {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.detailsRow {
+  grid-template-columns: minmax(150px, 1.2fr) minmax(0, 6.8fr);
+  align-items: start;
+}
+
+.descriptionField {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.fieldLabel {
+  margin-bottom: var(--space-1);
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.descriptionField textarea {
+  min-height: 64px;
+  height: 64px;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  resize: vertical;
+}
+
+.descriptionField textarea:focus {
+  border-color: var(--color-primary);
+  outline: 3px solid var(--color-primary-ring);
+}
+
+.descriptionField textarea[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.helper {
+  margin-top: var(--space-1);
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+}
+
+.fieldError {
+  margin-top: var(--space-1);
+  color: var(--color-danger);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+}
+
+.fields [role="alert"] {
+  font-weight: var(--weight-semibold);
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.photo {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 84px;
+  overflow: hidden;
+  align-items: flex-end;
+  padding: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: repeating-linear-gradient(135deg, #f3f6f4, #f3f6f4 8px, #e9eeeb 8px, #e9eeeb 16px);
+}
+
+.photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photoPlaceholder {
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+}
+
+.removePhoto {
+  position: absolute;
+  bottom: 4px;
+  right: 3px;
+  display: grid;
+  width: 16px;
+  height: 16px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--color-danger);
+  font-weight: var(--weight-bold);
+  cursor: pointer;
+}
+
+.uploadButton {
+  width: 100%;
+  height: 84px;
+  padding-inline: var(--space-2);
+  border-style: dashed;
+  background: var(--color-primary-soft);
+}
+
+.galleryHelper {
+  display: grid;
+  min-height: 84px;
+  place-items: center;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+}
+
+.fileInput {
+  display: none;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.asideCard {
+  position: sticky;
+  top: var(--space-5);
+  padding: var(--space-3);
+}
+
+.asideTitle {
+  margin-bottom: var(--space-3);
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.asideCard p {
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  line-height: 1.35;
+}
+
+.asideCard ul {
+  display: grid;
+  gap: var(--space-2);
+  margin: var(--space-3) 0;
+  padding: 0;
+  list-style: none;
+}
+
+.asideCard li {
+  display: flex;
+  justify-content: flex-start;
+  gap: var(--space-2);
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+}
+
+.asideCard .asideHint {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--text-xs);
+}
+
+@media (max-width: 900px) {
+  .columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .asideCard {
+    position: static;
+  }
+
+  .identityRow {
+    grid-template-columns: minmax(140px, 1fr) minmax(0, 2.2fr);
+  }
+
+  .identityRow > :last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .fieldGroup,
+  .identityRow,
+  .locationRow,
+  .detailsRow {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .identityRow > :last-child {
+    grid-column: auto;
+  }
+
+  .gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .galleryHelper {
+    grid-column: 1 / -1;
+  }
+
+  .actions {
+    justify-content: stretch;
+  }
+
+  .actions > * {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+}

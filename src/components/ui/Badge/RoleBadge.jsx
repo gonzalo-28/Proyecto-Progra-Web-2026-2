@@ -13,5 +13,5 @@ const ROLE_LABELS = {
  */
 export default function RoleBadge({ role }) {
   if (!role) return null;
-  return <Badge tone="role">{ROLE_LABELS[role] ?? role}</Badge>;
+  return <Badge tone={role === 'encargado' ? 'info' : 'role'}>{ROLE_LABELS[role] ?? role}</Badge>;
 }

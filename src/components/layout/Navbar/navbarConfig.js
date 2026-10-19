@@ -20,7 +20,7 @@ export const VISITOR_LINKS = [
 
 /* Links del usuario autenticado, según rol.
    estudiante: sale del mockup (Mi cuenta / Acceso denegado).
-   encargado:  PROVISIONAL, no hay mockup de su navbar. */
+   encargado: catálogo y operación diaria del mockup. */
 export const LINKS_BY_ROLE = {
   estudiante: [
     { to: '/espacios', label: 'Buscar espacios' },
@@ -29,8 +29,10 @@ export const LINKS_BY_ROLE = {
     { to: ROUTES.account, label: 'Mi cuenta' },
   ],
   encargado: [
+    { to: '/encargado/espacios', label: 'Espacios' },
     { to: '/bandeja', label: 'Bandeja del día' },
-    { to: ROUTES.account, label: 'Mi cuenta' },
+    { to: '/bloqueos', label: 'Bloqueos' },
+    { to: '/encargado/incidencias', label: 'Incidencias' },
   ],
 };
 

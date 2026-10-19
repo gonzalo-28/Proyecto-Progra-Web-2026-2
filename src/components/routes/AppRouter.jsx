@@ -12,6 +12,9 @@ import ProfilePage from '../../pages/ProfilePage/ProfilePage';
 import RecoverPasswordPage from '../../pages/RecoverPasswordPage/RecoverPasswordPage';
 import RegisterManagerPage from '../../pages/RegisterManagerPage/RegisterManagerPage';
 import RegisterStudentPage from '../../pages/RegisterStudentPage/RegisterStudentPage';
+import SpaceCatalogPage from '../../pages/SpaceCatalogPage/SpaceCatalogPage';
+import SpaceFormPage from '../../pages/SpaceFormPage/SpaceFormPage';
+import SpaceEquipmentPage from '../../pages/SpaceEquipmentPage/SpaceEquipmentPage';
 
 // Marcadores de vistas que pertenecen a otras HU (los dashboards).
 // Solo existen para que la redirección por rol tenga destino.
@@ -47,6 +50,9 @@ export const AppRouter = () => {
         {/* Rutas privadas exclusivas para encargados */}
         <Route element={<RutaProtegida rolesPermitidos={['encargado']} />}>
           <Route path="/encargado/dashboard" element={<EncargadoDashboard />} />
+          <Route path="/encargado/espacios/:spaceId/equipamiento" element={<SpaceEquipmentPage />} />
+          <Route path="/encargado/espacios/nuevo" element={<SpaceFormPage />} />
+          <Route path="/encargado/espacios" element={<SpaceCatalogPage />} />
         </Route>
 
         <Route path="/acceso-denegado" element={<ForbiddenPage />} />

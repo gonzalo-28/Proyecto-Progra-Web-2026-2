@@ -48,6 +48,15 @@ const FOOTER_MINIMAL = {
   links: [LINKS.reglamento, LINKS.contacto],
 };
 
+const FOOTER_MANAGER = {
+  showAddress: false,
+  institution: 'Universidad de Lima · Panel de encargado · Campus Monterrico',
+  links: [
+    { label: 'Manual de operación', textOnly: true },
+    { label: 'soporte.reservas@ulima.edu.pe', href: 'mailto:soporte.reservas@ulima.edu.pe' },
+  ],
+};
+
 /* ---- Una entrada por pantalla del mockup ---- */
 export const SCREEN_PRESETS = {
   // Landing pública: campus + Ingresar + Crear cuenta
@@ -90,6 +99,24 @@ export const SCREEN_PRESETS = {
   account: {
     navbar: { showCampusSelector: true, actions: [] },
     footer: FOOTER_APP,
+  },
+
+  // Catálogo de espacios del encargado (mockup 2.1).
+  spaceCatalog: {
+    navbar: { showCampusSelector: true, actions: [] },
+    footer: FOOTER_MANAGER,
+  },
+
+  // Gestión de equipamiento de un espacio (mockup 2.4).
+  spaceEquipment: {
+    navbar: { showCampusSelector: false, actions: [] },
+    footer: FOOTER_MANAGER,
+  },
+
+  // Formulario para registrar un espacio (mockup 2.3).
+  spaceForm: {
+    navbar: { showCampusSelector: false, actions: [] },
+    footer: FOOTER_MANAGER,
   },
 
   // Acceso denegado (estudiante autenticado): sin campus + usuario

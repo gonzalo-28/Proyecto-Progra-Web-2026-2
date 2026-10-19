@@ -43,6 +43,7 @@ export default function Navbar({
               value={campus}
               options={campusOptions}
               onChange={onCampusChange}
+              className={styles.campusSelect}
             />
           )}
 

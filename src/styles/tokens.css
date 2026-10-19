@@ -9,29 +9,31 @@
 
 :root {
   /* ---- Color: marca ---- */
-  --color-primary: #11705f;
-  --color-primary-hover: #0d5a4c;
-  --color-primary-soft: #e3f1ec; /* banners info, badge de rol, icono de éxito */
-  --color-primary-ring: rgba(17, 112, 95, 0.2);
+  --color-primary: #136f63;
+  --color-primary-hover: #0d5249;
+  --color-primary-soft: #e2f1ee; /* banners info, badge de rol, icono de éxito */
+  --color-primary-ring: rgba(19, 111, 99, 0.2);
 
   /* ---- Color: superficies y texto ---- */
-  --color-ink: #12231f; /* footer oscuro */
-  --color-text: #14211e;
-  --color-muted: #66736f; /* subtítulos, hints, labels */
-  --color-bg: #f5f7f6; /* fondo de página */
+  --color-ink: #152322; /* footer oscuro */
+  --color-text: #152322;
+  --color-muted: #6a7a78; /* subtítulos, hints, labels */
+  --color-bg: #f6f8f8; /* fondo de página */
   --color-surface: #ffffff; /* navbar, cards, inputs */
-  --color-border: #dbe2df;
-  --color-border-strong: #bcc7c2;
-  --color-readonly-bg: #eef1ef;
+  --color-border: #dee5e4;
+  --color-border-strong: #c5d0ce;
+  --color-readonly-bg: #f0f4f3;
 
   /* ---- Color: estados ---- */
-  --color-danger: #b42318;
+  --color-danger: #b84322;
   --color-danger-soft: #fdecea;
   --color-danger-ring: rgba(180, 35, 24, 0.18);
-  --color-warning: #9a5b00;
-  --color-warning-soft: #fcefd6;
-  --color-success: var(--color-primary);
-  --color-success-soft: var(--color-primary-soft);
+  --color-warning: #b7791f;
+  --color-warning-soft: #fbf1df;
+  --color-info: #3b6fa8;
+  --color-info-soft: #e7eff8;
+  --color-success: #1e7f4d;
+  --color-success-soft: #e2f1ee;
 
   /* ---- Tipografía ---- */
   --font-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto,
