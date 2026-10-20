@@ -2,18 +2,13 @@
 
 import { useId } from 'react';
 import { ESTADO_RESERVA_UI } from '../../../utils/reglas';
+import { hayFiltrosActivos } from './filtrosReservas';
 import styles from './ReservationFilters.module.css';
 
 const OPCIONES_ESTADO = [
     { value: 'todos', label: 'Todos' },
     ...Object.entries(ESTADO_RESERVA_UI).map(([value, { label }]) => ({ value, label })),
 ];
-
-export const FILTROS_INICIALES = { estado: 'todos', desde: '', hasta: '', texto: '' };
-
-/** true si hay algún filtro distinto del inicial. */
-export const hayFiltrosActivos = (filtros) =>
-    Object.keys(FILTROS_INICIALES).some((k) => filtros[k] !== FILTROS_INICIALES[k]);
 
 /**
  * Barra de filtros de "Mis reservas", compacta y dentro de una tarjeta
