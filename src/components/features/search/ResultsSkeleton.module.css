@@ -1,0 +1,36 @@
+/* src/components/features/search/ResultsSkeleton.module.css */
+
+/* Misma grilla que SearchResults para que nada "salte" al terminar de cargar. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: var(--space-4);
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 34% 1fr;
+  min-height: 170px;
+  overflow: hidden;
+}
+
+.photo {
+  min-height: 170px;
+}
+
+.body {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+
+.badge {
+  margin-top: var(--space-3);
+}
+
+@media (max-width: 520px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

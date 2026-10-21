@@ -1,0 +1,7 @@
+/* src/components/features/availability/WeekNavigator.module.css */
+
+.root {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}

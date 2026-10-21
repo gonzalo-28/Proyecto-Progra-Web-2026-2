@@ -1,0 +1,22 @@
+/* src/components/features/availability/FullWeekNotice.module.css */
+
+/* Ámbar del mockup 3.5. Alert (HU-1) no tiene variante warning, así que se
+   resuelve aquí con los tokens de warning sin modificar su componente. */
+.banner {
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--color-warning);
+  border-radius: var(--radius-md);
+  background-color: var(--color-warning-soft);
+  font-size: var(--text-md);
+  color: var(--color-warning);
+}
+
+.banner strong {
+  font-weight: var(--weight-bold);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
