@@ -1,0 +1,64 @@
+/* src/components/ui/Chip/Chip.module.css */
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 28px;
+  padding: 0 var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* ---- Filtro activo (mint, con ✕) ---- */
+.active {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary-hover);
+}
+
+.remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.remove:hover {
+  background-color: var(--color-surface);
+}
+
+/* ---- Opción seleccionable (equipamiento) ---- */
+.toggle {
+  min-height: var(--control-h-sm);
+  padding: 0 var(--space-3);
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.toggle:hover {
+  border-color: var(--color-primary);
+}
+
+.selected {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-surface);
+}

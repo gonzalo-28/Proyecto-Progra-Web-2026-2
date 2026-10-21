@@ -1,0 +1,138 @@
+/* src/components/ui/WeekCalendar/WeekCalendar.module.css */
+
+/* En pantallas angostas la grilla se desplaza en horizontal, no se aplasta. */
+.scroller {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: separate;
+  border-spacing: var(--space-2) 6px;
+  table-layout: fixed;
+}
+
+.caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.corner {
+  width: 56px;
+}
+
+.dayHeader {
+  padding-bottom: var(--space-1);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+  text-align: center;
+}
+
+.highlight {
+  color: var(--color-primary);
+  font-weight: var(--weight-bold);
+}
+
+/* La columna de horas queda fija al desplazar la grilla en el celular. */
+.timeHeader {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: var(--color-surface);
+  padding-right: var(--space-2);
+  font-size: var(--text-md);
+  font-weight: var(--weight-regular);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-muted);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.slot {
+  padding: 0;
+}
+
+/* ---- Celda base ---- */
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: var(--control-h-sm);
+  padding: 0 var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.button {
+  cursor: pointer;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+/* ---- Tonos (leyenda del mockup 3.4) ---- */
+.free {
+  background-color: var(--color-surface);
+  border-style: dashed;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.free.button:hover {
+  background-color: var(--color-primary-soft);
+}
+
+.busy {
+  background-color: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary-hover);
+}
+
+.mine {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-surface);
+  font-weight: var(--weight-semibold);
+}
+
+/* Mismo rayado diagonal que ImagePlaceholder: "no disponible / cerrado". */
+.unavailable {
+  background-color: var(--color-readonly-bg);
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0,
+    transparent 7px,
+    var(--color-border) 7px,
+    var(--color-border) 8px
+  );
+  color: var(--color-muted);
+}
+
+/* Para la HU-5: "Se cancela" en la vista previa del bloqueo. */
+.alert {
+  background-color: var(--color-danger-soft);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.selected,
+.selected.button:hover {
+  background-color: var(--color-primary-hover);
+  border: 2px solid var(--color-ink);
+  color: var(--color-surface);
+  font-weight: var(--weight-bold);
+}

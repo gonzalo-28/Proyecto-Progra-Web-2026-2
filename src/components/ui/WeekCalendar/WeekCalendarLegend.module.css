@@ -1,0 +1,30 @@
+/* src/components/ui/WeekCalendar/WeekCalendarLegend.module.css */
+
+.root {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-md);
+  color: var(--color-text);
+}
+
+/* La muestra toma colores y borde de la clase de tono de WeekCalendar.
+   :where() deja este borde base con especificidad 0, para que el tono
+   (borde punteado de "Libre", borde de "Ocupado") siempre gane, sin
+   importar en qué orden cargue el CSS. */
+:where(.swatch) {
+  display: inline-block;
+  width: 26px;
+  height: 16px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+}
