@@ -1,5 +1,5 @@
 // src/data/db.js
-
+import reservasSemilla from './reservasSemilla.js';
 export const initialDb = {
   usuarios: [
     {
@@ -38,7 +38,7 @@ export const initialDb = {
       equipamiento: ["Proyector", "30 PCs", "Aire acondicionado"],
       estado: "disponible"
     },
-    { 
+    {
       id: "esp_002",
       nombre: "Sala de Estudio Grupal E-201",
       tipo: "sala",
@@ -48,7 +48,7 @@ export const initialDb = {
       equipamiento: ["Pizarra"],
       estado: "disponible"
     },
-    { 
+    {
       id: "esp_003",
       nombre: "Cabina de Grabación N-105",
       tipo: "cabina",
@@ -58,7 +58,7 @@ export const initialDb = {
       equipamiento: ["Micrófono"],
       estado: "disponible"
     },
-    { 
+    {
       id: "esp_004",
       nombre: "Auditorio Q-101",
       tipo: "auditorio",
@@ -95,7 +95,7 @@ export const initialDb = {
       etiqueta: "11:00 AM - 12:00 PM"
     }
   ],
-  reservas: [],
+  reservas: reservasSemilla,
   incidencias: []
 };
 

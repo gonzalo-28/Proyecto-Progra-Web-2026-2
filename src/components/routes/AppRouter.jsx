@@ -12,6 +12,10 @@ import ProfilePage from '../../pages/ProfilePage/ProfilePage';
 import RecoverPasswordPage from '../../pages/RecoverPasswordPage/RecoverPasswordPage';
 import RegisterManagerPage from '../../pages/RegisterManagerPage/RegisterManagerPage';
 import RegisterStudentPage from '../../pages/RegisterStudentPage/RegisterStudentPage';
+import MyReservationsPage from '../../pages/MyReservationsPage/MyReservationsPage';
+import ReservationDetailPage from '../../pages/ReservationDetailPage/ReservationDetailPage';
+import ReservationConfirmationPage from '../../pages/ReservationConfirmationPage/ReservationConfirmationPage';
+import ReserveTestPage from '../../pages/ReserveTestPage/ReserveTestPage';
 
 // Marcadores de vistas que pertenecen a otras HU (los dashboards).
 // Solo existen para que la redirección por rol tenga destino.
@@ -42,6 +46,10 @@ export const AppRouter = () => {
         {/* Rutas privadas exclusivas para estudiantes */}
         <Route element={<RutaProtegida rolesPermitidos={['estudiante']} />}>
           <Route path="/estudiante/dashboard" element={<EstudianteDashboard />} />
+          <Route path="/mis-reservas" element={<MyReservationsPage />} />   {/* ← nueva */}
+          <Route path="/mis-reservas/:codigo" element={<ReservationDetailPage />} />
+          <Route path="/mis-reservas/:codigo/confirmacion" element={<ReservationConfirmationPage />} />  {/* ← NUEVA */}
+          <Route path="/dev/reservar" element={<ReserveTestPage />} />
         </Route>
 
         {/* Rutas privadas exclusivas para encargados */}
