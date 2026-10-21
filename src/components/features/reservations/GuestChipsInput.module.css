@@ -1,0 +1,78 @@
+/* src/components/features/reservations/GuestChipsInput.module.css */
+
+.root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    min-width: 0;
+}
+
+/* Misma etiqueta que TextField (mayúscula pequeña) */
+.label {
+    font-size: var(--text-xs);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-muted);
+}
+
+/* Caja con los chips y el input al final */
+.box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--control-h-md);
+    padding: var(--space-1) var(--space-2);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+}
+
+.box:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-ring);
+}
+
+.hasError {
+    border-color: var(--color-danger);
+}
+
+/* "Diego Salazar ×" */
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 2px var(--space-2);
+    background-color: var(--color-primary-soft);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--color-primary);
+}
+
+.remove {
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: var(--text-base);
+    line-height: 1;
+    color: inherit;
+    cursor: pointer;
+}
+
+.input {
+    flex: 1 1 160px;
+    min-width: 120px;
+    height: 30px;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    outline: none;
+}
+
+.error {
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--color-danger);
+}

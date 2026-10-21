@@ -13,9 +13,8 @@ import ButtonLink from '../../components/ui/Button/ButtonLink';
 import Alert from '../../components/ui/Alert/Alert';
 import Spinner from '../../components/ui/Spinner/Spinner';
 import ReservationCard from '../../components/features/reservations/ReservationCard';
-import ReservationFilters, {
-    FILTROS_INICIALES,
-} from '../../components/features/reservations/ReservationFilters';
+import ReservationFilters from '../../components/features/reservations/ReservationFilters';
+import { FILTROS_INICIALES } from '../../components/features/reservations/filtrosReservas';
 import ReservationsEmptyState from '../../components/features/reservations/ReservationsEmptyState';
 import CancelReservationDialog from '../../components/features/reservations/CancelReservationDialog';
 import styles from './MyReservationsPage.module.css';

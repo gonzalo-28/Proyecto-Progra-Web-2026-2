@@ -414,7 +414,7 @@ export const crearReserva = async (datos) => {
     const marca = ahora.toISOString();
     const historial = [{ tipo: 'creada', fecha: marca, actor: nombreCompleto(usuario) }];
     if (invitados.length) historial.push({ tipo: 'invitados_notificados', fecha: marca, actor: 'Sistema' });
-
+    historial.push({ tipo: 'confirmada', fecha: marca, actor: 'Sistema' }); // "Estado: confirmada" (mockup 4.4)
     const nueva = {
         id: `res_${Date.now()}`,
         codigo: siguienteCodigo(base.reservas, aFecha(datos.fecha).getFullYear()),
@@ -532,4 +532,19 @@ export const cancelarReserva = async (reservaId, usuarioId, motivo = '') => {
 
     guardarReservas(base.reservas.map((r) => (r.id === reservaId ? cancelada : r)));
     return enriquecer(cancelada, leerBase(), ahora);
+};
+
+/* ------------------------- Apoyo para elegir bloque ----------------------- */
+
+/**
+ * Espacios disponibles y bloques horarios (solo lectura), para la página de
+ * prueba que hace de calendario mientras no exista el de la HU-3.
+ * @returns {Promise<{ espacios: Object[], bloques: Object[] }>}
+ */
+export const obtenerEspaciosYBloques = async () => {
+    const { espacios, bloques } = leerBase();
+    return {
+        espacios: espacios.filter((e) => e.estado === 'disponible'),
+        bloques,
+    };
 };

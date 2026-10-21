@@ -1,0 +1,105 @@
+/* src/components/features/reservations/ReservationModal.module.css */
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-8) 0;
+    color: var(--color-muted);
+}
+
+/* Recuadro verde claro: espacio a la izquierda, hora y día a la derecha */
+.summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    background-color: var(--color-primary-soft);
+    border-radius: var(--radius-sm);
+}
+
+.space,
+.hour {
+    margin: 0;
+    font-size: var(--text-base);
+    font-weight: var(--weight-bold);
+    color: var(--color-text);
+}
+
+.meta {
+    margin: var(--space-1) 0 0;
+    font-size: var(--text-sm);
+    color: var(--color-primary);
+}
+
+.when {
+    text-align: right;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+/* Asistentes (angosto) + Invitados (el resto) */
+.row {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-3);
+}
+
+/* "Tope semanal restante   3 de 8 horas" */
+.quota {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-md);
+}
+
+.quotaOk {
+    color: var(--color-primary);
+}
+
+.quotaNone {
+    color: var(--color-danger);
+}
+
+/* Avisos: rojo (tope, bloque ocupado…) y ámbar (solapamiento) */
+.danger,
+.warning {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+}
+
+.danger {
+    background-color: var(--color-danger-soft);
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+}
+
+.warning {
+    background-color: var(--color-warning-soft);
+    border-color: var(--color-warning);
+    color: var(--color-warning);
+}
+
+@media (max-width: 520px) {
+    .row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .when {
+        text-align: left;
+    }
+}

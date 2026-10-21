@@ -2,10 +2,11 @@
 
 import { Link } from 'react-router-dom';
 import ReservationStatusTag from './ReservationStatusTag';
+import { formatearMomento } from '../../../utils/fechasReserva';
 import styles from './ReservationCard.module.css';
 
-/** 'YYYY-MM-DDTHH:mm…' → 'HH:mm' */
-const hora = (marca) => (marca ? marca.slice(11, 16) : '');
+/** Marca de tiempo → 'HH:MM' en hora local */
+const hora = (marca) => formatearMomento(marca).hora;
 
 /**
  * Segunda línea de la tarjeta. En las próximas muestra código y asistentes;

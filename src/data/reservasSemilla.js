@@ -37,17 +37,37 @@ const proximaSemana = (n) =>
 /** 'YYYY-MM-DDTHH:mm:00' */
 const momento = (fechaISO, hora) => `${fechaISO}T${hora}:00`;
 
-/** Arma una reserva con los valores por defecto del contrato. */
-const reserva = ({ creada, ...datos }) => ({
-    usuarioId: 'usr_101',
-    invitados: [],
-    estado: 'confirmada',
-    creadaEn: creada,
-    llegadaRegistradaEn: null,
-    cancelacion: null,
-    historial: [{ tipo: 'creada', fecha: creada, actor: 'Ana Gómez' }],
-    ...datos,
-});
+/** Marca 'YYYY-MM-DDTHH:mm:00' + n minutos (para ordenar los eventos del historial). */
+const masMinutos = (marca, n) => {
+    const d = new Date(marca);
+    d.setMinutes(d.getMinutes() + n);
+    return `${aISO(d)}T${pad2(d.getHours())}:${pad2(d.getMinutes())}:00`;
+};
+
+/**
+ * Arma una reserva con los valores por defecto del contrato. Al historial le
+ * agrega "Estado: confirmada · Sistema" 2 minutos después de crearse, como en
+ * el mockup 4.4 (Reserva creada → Invitados notificados → Estado: confirmada).
+ */
+const reserva = ({ creada, historial, ...datos }) => {
+    const eventos = historial ?? [{ tipo: 'creada', fecha: creada, actor: 'Ana Gómez' }];
+    const confirmada = { tipo: 'confirmada', fecha: masMinutos(creada, 2), actor: 'Sistema' };
+    return {
+        usuarioId: 'usr_101',
+        invitados: [],
+        estado: 'confirmada',
+        creadaEn: creada,
+        llegadaRegistradaEn: null,
+        cancelacion: null,
+        ...datos,
+        // creada (e invitados) → confirmada → lo que pasó después (llegada, cancelación…)
+        historial: [
+            ...eventos.filter((e) => e.fecha <= creada || e.tipo === 'invitados_notificados'),
+            confirmada,
+            ...eventos.filter((e) => e.fecha > creada && e.tipo !== 'invitados_notificados'),
+        ],
+    };
+};
 
 export const reservasSemilla = [
     /* ------------------------- Próximas (semana que viene) ------------------- */

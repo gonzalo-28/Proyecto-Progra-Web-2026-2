@@ -17,6 +17,9 @@ import DailyTrayPage from '../../pages/DailyTrayPage/DailyTrayPage';
 import NewBlockPage from '../../pages/NewBlockPage/NewBlockPage';
 import ReservationSearchPage from '../../pages/ReservationSearchPage/ReservationSearchPage';
 import { RUTAS_ENCARGADO } from './rutasEncargado';
+import ReservationDetailPage from '../../pages/ReservationDetailPage/ReservationDetailPage';
+import ReservationConfirmationPage from '../../pages/ReservationConfirmationPage/ReservationConfirmationPage';
+import ReserveTestPage from '../../pages/ReserveTestPage/ReserveTestPage';
 
 // Marcador de una vista que pertenece a otra HU (el dashboard del estudiante).
 // Solo existe para que la redirección por rol tenga destino.
@@ -47,6 +50,9 @@ export const AppRouter = () => {
         <Route element={<RutaProtegida rolesPermitidos={['estudiante']} />}>
           <Route path="/estudiante/dashboard" element={<EstudianteDashboard />} />
           <Route path="/mis-reservas" element={<MyReservationsPage />} />   {/* ← nueva */}
+          <Route path="/mis-reservas/:codigo" element={<ReservationDetailPage />} />
+          <Route path="/mis-reservas/:codigo/confirmacion" element={<ReservationConfirmationPage />} />  {/* ← NUEVA */}
+          <Route path="/dev/reservar" element={<ReserveTestPage />} />
         </Route>
 
         {/* Rutas privadas exclusivas para encargados */}
