@@ -102,6 +102,12 @@ export const SCREEN_PRESETS = {
     footer: FOOTER_APP,
   },
 
+  // Catálogo público y ficha del espacio (mockup 2.6).
+  publicSpaces: {
+    navbar: { showCampusSelector: true, actions: ['login', 'register'] },
+    footer: FOOTER_APP,
+  },
+
   // Catálogo de espacios del encargado (mockup 2.1).
   spaceCatalog: {
     navbar: { showCampusSelector: true, actions: [] },

@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import Badge from '../../components/ui/Badge/Badge';
 import Button from '../../components/ui/Button/Button';
 import Card from '../../components/ui/Card/Card';
@@ -7,6 +7,7 @@ import Select from '../../components/ui/Select/Select';
 import TextField from '../../components/ui/TextField/Textfield';
 import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
 import { getCatalogSpaces, saveCatalogSpaceEquipment } from '../../services/spaceCatalogService';
+import SpaceStatusModal from '../../components/features/spaces/SpaceStatusModal';
 import styles from './SpaceEquipmentPage.module.css';
 
 const H304_EQUIPMENT = [
@@ -37,17 +38,26 @@ function normalizeEquipment(space) {
 
 export default function SpaceEquipmentPage() {
   const { spaceId } = useParams();
+  const location = useLocation();
   const space = useMemo(() => getCatalogSpaces().find((item) => item.id === spaceId), [spaceId]);
   const originalEquipment = useMemo(() => (space ? normalizeEquipment(space) : []), [space]);
   const [equipment, setEquipment] = useState(originalEquipment);
+  const [spaceStatus, setSpaceStatus] = useState(space?.estado ?? 'disponible');
+  const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [newItem, setNewItem] = useState('Micrófonos');
   const [quantity, setQuantity] = useState('2');
   const [notice, setNotice] = useState('');
   const [saveError, setSaveError] = useState(false);
 
+  useEffect(() => {
+    if (location.state?.abrirEstado) setStatusModalOpen(true);
+  }, [location.state]);
+
   if (!space) {
     return <Navigate to="/encargado/espacios" replace />;
   }
+
+  const statusLabels = { disponible: 'Disponible', mantenimiento: 'Mantenimiento', baja: 'De baja' };
 
   const addEquipment = (event) => {
     event.preventDefault();
@@ -90,9 +100,9 @@ export default function SpaceEquipmentPage() {
 
         <nav className={styles.tabs} aria-label="Secciones del espacio">
           <span className={styles.activeTab} aria-current="page">Equipamiento</span>
-          <span>Datos generales</span>
-          <span>Horario de atención</span>
-          <span>Estado</span>
+          <Link to={`/encargado/espacios/${space.id}/datos-generales`}>Datos generales</Link>
+          <Link to={`/encargado/espacios/${space.id}/horario`}>Horario de atención</Link>
+          <button type="button" className={styles.tabButton} onClick={() => setStatusModalOpen(true)}>Estado</button>
         </nav>
 
         <div className={styles.columns}>
@@ -155,8 +165,8 @@ export default function SpaceEquipmentPage() {
               <span className={styles.eyebrow}>Espacio</span>
               <h2>{space.nombre}</h2>
               <p>{space.ubicacion || `${space.pabellon}, piso ${space.piso}`} · Aforo {space.capacidad}</p>
-              <Badge tone={space.estado === 'disponible' ? 'success' : space.estado === 'mantenimiento' ? 'warning' : 'neutral'}>
-                {space.estadoLabel}
+              <Badge tone={spaceStatus === 'disponible' ? 'success' : spaceStatus === 'mantenimiento' ? 'warning' : 'neutral'}>
+                {statusLabels[spaceStatus] ?? spaceStatus}
               </Badge>
             </Card>
 
@@ -175,6 +185,18 @@ export default function SpaceEquipmentPage() {
           </aside>
         </div>
       </section>
+      {statusModalOpen && (
+        <SpaceStatusModal
+          space={{ ...space, estado: spaceStatus }}
+          onClose={() => setStatusModalOpen(false)}
+          onSaved={(updated) => {
+            setSpaceStatus(updated.estado);
+            setStatusModalOpen(false);
+            setNotice('El estado del espacio se actualizó correctamente.');
+            setSaveError(false);
+          }}
+        />
+      )}
     </ContentLayout>
   );
 }

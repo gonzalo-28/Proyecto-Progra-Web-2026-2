@@ -1,12 +1,12 @@
-import { useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Button from '../../components/ui/Button/Button';
 import ButtonLink from '../../components/ui/Button/ButtonLink';
 import Card from '../../components/ui/Card/Card';
 import Select from '../../components/ui/Select/Select';
 import TextField from '../../components/ui/TextField/Textfield';
 import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
-import { createCatalogSpace, getCatalogSpaces } from '../../services/spaceCatalogService';
+import { createCatalogSpace, getCatalogSpaces, updateCatalogSpace } from '../../services/spaceCatalogService';
 import styles from './SpaceFormPage.module.css';
 
 const EMPTY_FORM = {
@@ -23,22 +23,62 @@ function getSavedDraft() {
   }
 }
 
+function toForm(space) {
+  if (!space) return getSavedDraft();
+  return {
+    codigo: space.codigo ?? space.id ?? '',
+    nombre: space.nombre ?? '',
+    tipo: space.tipo ?? '',
+    sede: 'Campus Monterrico',
+    pabellon: space.pabellon ?? '',
+    piso: String(space.piso ?? 1),
+    capacidad: String(space.capacidad ?? ''),
+    descripcion: space.descripcion ?? '',
+  };
+}
+
+function toPhotos(space) {
+  const photos = space?.fotografias ?? [];
+  if (!photos.length) {
+    return [
+      { id: 'placeholder-1', name: 'foto 1', placeholder: true },
+      { id: 'placeholder-2', name: 'foto 2', placeholder: true },
+    ];
+  }
+  return photos.map((name, index) => ({
+    id: `existing-${space.id}-${index}`,
+    name: typeof name === 'string' ? name : `foto ${index + 1}`,
+    placeholder: true,
+    preserve: true,
+  }));
+}
+
 export default function SpaceFormPage() {
   const navigate = useNavigate();
+  const { spaceId } = useParams();
+  const isEditing = Boolean(spaceId);
   const fileInput = useRef(null);
   const existingSpaces = useMemo(() => getCatalogSpaces(), []);
-  const [form, setForm] = useState(getSavedDraft);
-  const [photos, setPhotos] = useState([
-    { id: 'placeholder-1', name: 'foto 1', placeholder: true },
-    { id: 'placeholder-2', name: 'foto 2', placeholder: true },
-  ]);
+  const existingSpace = existingSpaces.find((space) => String(space.id) === String(spaceId));
+  const [form, setForm] = useState(() => toForm(existingSpace));
+  const [photos, setPhotos] = useState(() => toPhotos(existingSpace));
   const [submitted, setSubmitted] = useState(false);
   const [photoError, setPhotoError] = useState('');
   const [draftNotice, setDraftNotice] = useState('');
 
+  useEffect(() => {
+    setForm(toForm(existingSpace));
+    setPhotos(toPhotos(existingSpace));
+    setSubmitted(false);
+    setPhotoError('');
+    setDraftNotice('');
+  }, [spaceId, existingSpace]);
+
   const update = (field) => (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
   const normalizedCode = form.codigo.trim().toLocaleUpperCase('es');
-  const codeExists = Boolean(normalizedCode) && existingSpaces.some((space) => space.codigo.toLocaleUpperCase('es') === normalizedCode);
+  const codeExists = Boolean(normalizedCode) && existingSpaces.some((space) => (
+    String(space.id) !== String(spaceId) && space.codigo.toLocaleUpperCase('es') === normalizedCode
+  ));
   const errors = {
     codigo: !normalizedCode ? 'Ingresa un código.' : codeExists ? 'Ya existe un espacio con este código.' : '',
     nombre: form.nombre.trim() ? '' : 'Ingresa el nombre del espacio.',
@@ -60,13 +100,14 @@ export default function SpaceFormPage() {
     const valid = selected.filter((file) => file.type === 'image/jpeg' && file.size <= 2 * 1024 * 1024);
     if (valid.length !== selected.length) setPhotoError('Solo se permiten fotografías JPG de máximo 2 MB.');
     else setPhotoError('');
-    const newPhotos = valid.slice(0, Math.max(0, 5 - photos.filter((photo) => !photo.placeholder).length)).map((file) => ({
+    const savedPhotoCount = photos.filter((photo) => photo.preserve || !photo.placeholder).length;
+    const newPhotos = valid.slice(0, Math.max(0, 5 - savedPhotoCount)).map((file) => ({
       id: `${file.name}-${file.lastModified}-${Math.random()}`,
       name: file.name,
       url: URL.createObjectURL(file),
       placeholder: false,
     }));
-    setPhotos((current) => [...current.filter((photo) => !photo.placeholder), ...newPhotos]);
+    setPhotos((current) => [...current.filter((photo) => photo.preserve || !photo.placeholder), ...newPhotos]);
     event.target.value = '';
   };
 
@@ -88,7 +129,7 @@ export default function SpaceFormPage() {
     event.preventDefault();
     setSubmitted(true);
     if (errorCount) return;
-    createCatalogSpace({
+    const changes = {
       codigo: normalizedCode,
       nombre: form.nombre.trim(),
       tipo: form.tipo,
@@ -98,13 +139,18 @@ export default function SpaceFormPage() {
       piso: Number(form.piso),
       ubicacion: `${form.pabellon}, piso ${form.piso}`,
       descripcion: form.descripcion.trim(),
-      fotografias: photos.filter((photo) => !photo.placeholder).map(({ name }) => name),
-      equipamiento: [],
-      estado: 'disponible',
-      reservasVigentes: 0,
-    });
+      fotografias: photos.filter((photo) => photo.preserve || !photo.placeholder).map(({ name }) => name),
+    };
+    if (isEditing) updateCatalogSpace(space.id, changes);
+    else createCatalogSpace({ ...changes, equipamiento: [], estado: 'disponible', reservasVigentes: 0 });
     navigate('/encargado/espacios');
   };
+
+  if (isEditing && !existingSpace) {
+    return <Navigate to="/encargado/espacios" replace />;
+  }
+
+  const returnTo = isEditing ? `/encargado/espacios/${existingSpace.id}/equipamiento` : '/encargado/espacios';
 
   return (
     <ContentLayout screen="spaceForm" className={styles.layout} spacing="none">
@@ -112,9 +158,9 @@ export default function SpaceFormPage() {
         <nav className={styles.breadcrumb} aria-label="Ruta de navegación">
           <ButtonLink to="/encargado/espacios" variant="ghost" className={styles.breadcrumbLink}>Espacios</ButtonLink>
           <span aria-hidden="true">/</span>
-          <span>Nuevo espacio</span>
+          <span>{isEditing ? `${existingSpace.codigo} / Datos generales` : 'Nuevo espacio'}</span>
         </nav>
-        <h1 id="space-form-title" className={styles.title}>Nuevo espacio</h1>
+        <h1 id="space-form-title" className={styles.title}>{isEditing ? 'Editar espacio' : 'Nuevo espacio'}</h1>
 
         {draftNotice && <p className={styles.draftNotice} role="status">{draftNotice}</p>}
         {submitted && errorCount > 0 && (
@@ -180,9 +226,9 @@ export default function SpaceFormPage() {
             </Card>
 
             <div className={styles.actions}>
-              <ButtonLink to="/encargado/espacios" variant="outline">Cancelar</ButtonLink>
-              <Button type="button" variant="outline" onClick={saveDraft}>Guardar borrador</Button>
-              <Button type="submit">Guardar espacio</Button>
+              <ButtonLink to={returnTo} variant="outline">Cancelar</ButtonLink>
+              {!isEditing && <Button type="button" variant="outline" onClick={saveDraft}>Guardar borrador</Button>}
+              <Button type="submit">{isEditing ? 'Guardar cambios' : 'Guardar espacio'}</Button>
             </div>
           </form>
 

@@ -73,6 +73,27 @@ export function createCatalogSpace(space) {
   return newSpace;
 }
 
+export function updateCatalogSpace(spaceId, changes) {
+  const db = getStoredData();
+  const spaces = db.espacios ?? [];
+  const existing = spaces.find((space) => String(space.id) === String(spaceId));
+  let updatedSpaces;
+
+  if (existing) {
+    updatedSpaces = spaces.map((space) => (
+      String(space.id) === String(spaceId) ? { ...space, ...changes } : space
+    ));
+  } else {
+    const seed = getSpacesWithSeed().find((space) => String(space.id) === String(spaceId));
+    if (!seed) throw new Error('No se encontró el espacio que intentas actualizar.');
+    updatedSpaces = [...spaces, { ...seed, ...changes }];
+  }
+
+  db.espacios = updatedSpaces;
+  if (!saveStoredData(db)) throw new Error('El navegador no pudo guardar los cambios.');
+  return updatedSpaces.find((space) => String(space.id) === String(spaceId));
+}
+
 export function saveCatalogSpaceEquipment(spaceId, equipamiento) {
   const db = getStoredData();
   const spaceExists = (db.espacios ?? []).some((space) => space.id === spaceId);
@@ -83,4 +104,44 @@ export function saveCatalogSpaceEquipment(spaceId, equipamiento) {
   ));
   if (!saveStoredData(db)) throw new Error('El navegador no pudo guardar los cambios.');
   return db.espacios.find((space) => space.id === spaceId);
+}
+
+export function saveCatalogSpaceSchedule(spaceId, horarioAtencion) {
+  const db = getStoredData();
+  let spaces = db.espacios ?? [];
+  const existing = spaces.find((space) => String(space.id) === String(spaceId));
+
+  if (existing) {
+    spaces = spaces.map((space) => (
+      String(space.id) === String(spaceId) ? { ...space, horarioAtencion } : space
+    ));
+  } else {
+    const seed = initialDb.espacios.find((space) => String(space.id) === String(spaceId));
+    if (!seed) throw new Error('No se encontró el espacio que intentas actualizar.');
+    spaces = [...spaces, { ...seed, horarioAtencion }];
+  }
+
+  db.espacios = spaces;
+  if (!saveStoredData(db)) throw new Error('El navegador no pudo guardar los cambios.');
+  return spaces.find((space) => String(space.id) === String(spaceId));
+}
+
+export function updateCatalogSpaceStatus(spaceId, estado, motivoEstado) {
+  const db = getStoredData();
+  let spaces = db.espacios ?? [];
+  const existing = spaces.find((space) => String(space.id) === String(spaceId));
+
+  if (existing) {
+    spaces = spaces.map((space) => (
+      String(space.id) === String(spaceId) ? { ...space, estado, motivoEstado } : space
+    ));
+  } else {
+    const seed = initialDb.espacios.find((space) => String(space.id) === String(spaceId));
+    if (!seed) throw new Error('No se encontró el espacio que intentas actualizar.');
+    spaces = [...spaces, { ...seed, estado, motivoEstado }];
+  }
+
+  db.espacios = spaces;
+  if (!saveStoredData(db)) throw new Error('El navegador no pudo guardar los cambios.');
+  return spaces.find((space) => String(space.id) === String(spaceId));
 }

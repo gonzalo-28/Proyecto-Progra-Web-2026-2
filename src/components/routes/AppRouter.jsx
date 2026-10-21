@@ -26,6 +26,10 @@ import ReserveTestPage from '../../pages/ReserveTestPage/ReserveTestPage';
 import SpaceCatalogPage from '../../pages/SpaceCatalogPage/SpaceCatalogPage';
 import SpaceFormPage from '../../pages/SpaceFormPage/SpaceFormPage';
 import SpaceEquipmentPage from '../../pages/SpaceEquipmentPage/SpaceEquipmentPage';
+import SpaceSchedulePage from '../../pages/SpaceSchedulePage/SpaceSchedulePage';
+import SpaceGeneralDataPage from '../../pages/SpaceGeneralDataPage/SpaceGeneralDataPage';
+import PublicSpaceCatalogPage from '../../pages/PublicSpaceCatalogPage/PublicSpaceCatalogPage';
+import PublicSpaceDetailPage from '../../pages/PublicSpaceDetailPage/PublicSpaceDetailPage';
 
 // Marcadores de vistas que pertenecen a otras HU (los dashboards).
 // Solo existen para que la redirección por rol tenga destino.
@@ -38,6 +42,9 @@ export const AppRouter = () => {
         {/* Landing: abierta a todos. El navbar se adapta si hay sesión. */}
         <Route path="/" element={<Navigate to="/landingpage" replace />} />
         <Route path="/landingpage" element={<LandingPage />} />
+        {/* Catálogo y ficha pública de espacios: disponibles para visitantes y estudiantes. */}
+        <Route path="/espacios" element={<PublicSpaceCatalogPage />} />
+        <Route path="/espacios/:spaceId" element={<PublicSpaceDetailPage />} />
 
         {/* Rutas públicas (solo accesibles sin sesión activa) */}
         <Route element={<RutaPublica />}>
@@ -63,6 +70,13 @@ export const AppRouter = () => {
 
         {/* Rutas privadas exclusivas para encargados */}
         <Route element={<RutaProtegida rolesPermitidos={['encargado']} />}>
+          {/* HU-2 · Catálogo y administración básica de espacios */}
+          <Route path="/encargado/espacios" element={<SpaceCatalogPage />} />
+          <Route path="/encargado/espacios/nuevo" element={<SpaceFormPage />} />
+          <Route path="/encargado/espacios/:spaceId/equipamiento" element={<SpaceEquipmentPage />} />
+          <Route path="/encargado/espacios/:spaceId/horario" element={<SpaceSchedulePage />} />
+          <Route path="/encargado/espacios/:spaceId/datos-generales" element={<SpaceGeneralDataPage />} />
+
           {/* HU-5 · Operación diaria */}
           <Route path={RUTAS_ENCARGADO.bandeja} element={<DailyTrayPage />} />
           <Route path={RUTAS_ENCARGADO.bloqueos} element={<NewBlockPage />} />
