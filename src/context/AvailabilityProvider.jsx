@@ -11,8 +11,12 @@
 // Patrón de carga (el mismo del ReservationModal de la HU-4): cada consulta
 // se guarda junto con su "clave"; si la clave actual no coincide, está
 // cargando. Así no se llama a setState de forma síncrona dentro del efecto.
+//
+// Sin useCallback/useMemo a mano: el proyecto usa las reglas del React
+// Compiler (eslint-plugin-react-hooks), que memoriza solo y marca como error
+// la memorización manual que no puede conservar.
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { AvailabilityContext } from './AvailabilityContext';
@@ -114,104 +118,62 @@ export function AvailabilityProvider({ espacioId, children }) {
   const [reservando, setReservando] = useState(false);
   const seleccion = seleccionado?.clave === clave ? seleccionado : null;
 
-  const seleccionar = useCallback(
-    ({ fecha, bloqueId }) => {
-      setReservando(false);
-      setSeleccionado((actual) =>
-        actual?.clave === clave && actual.fecha === fecha && actual.bloqueId === bloqueId
-          ? null // segundo clic sobre la misma celda = deseleccionar
-          : { clave, fecha, bloqueId }
-      );
-    },
-    [clave]
-  );
+  const seleccionar = ({ fecha, bloqueId }) => {
+    setReservando(false);
+    setSeleccionado((actual) =>
+      actual?.clave === clave && actual.fecha === fecha && actual.bloqueId === bloqueId
+        ? null // segundo clic sobre la misma celda = deseleccionar
+        : { clave, fecha, bloqueId }
+    );
+  };
 
-  const quitarSeleccion = useCallback(() => {
+  const quitarSeleccion = () => {
     setReservando(false);
     setSeleccionado(null);
-  }, []);
+  };
 
   /* --------------------------- Navegación (URL) ---------------------------- */
-  const cambiarParametros = useCallback(
-    (cambios) => {
-      setSearchParams((actuales) => {
-        const nuevos = new URLSearchParams(actuales);
-        Object.entries(cambios).forEach(([nombre, valor]) =>
-          valor ? nuevos.set(nombre, valor) : nuevos.delete(nombre)
-        );
-        return nuevos;
-      });
-    },
-    [setSearchParams]
-  );
+  const cambiarParametros = (cambios) => {
+    setSearchParams((actuales) => {
+      const nuevos = new URLSearchParams(actuales);
+      Object.entries(cambios).forEach(([nombre, valor]) =>
+        valor ? nuevos.set(nombre, valor) : nuevos.delete(nombre)
+      );
+      return nuevos;
+    });
+  };
 
-  const irASemana = useCallback((fecha) => cambiarParametros({ semana: fecha }), [cambiarParametros]);
-  const irAHoy = useCallback(() => cambiarParametros({ semana: null }), [cambiarParametros]);
-  const ampliarATodoElDia = useCallback(
-    () => cambiarParametros({ desde: null, hasta: null }),
-    [cambiarParametros]
-  );
-  const reintentar = useCallback(() => setIntento((n) => n + 1), []);
+  const irASemana = (fecha) => cambiarParametros({ semana: fecha });
+  const irAHoy = () => cambiarParametros({ semana: null });
+  const ampliarATodoElDia = () => cambiarParametros({ desde: null, hasta: null });
+  const reintentar = () => setIntento((n) => n + 1);
 
   /* ------------------------ Reserva (modal de la HU-4) --------------------- */
   const puedeReservar = rol === 'estudiante';
-  const abrirReserva = useCallback(() => setReservando(true), []);
-  const cerrarReserva = useCallback(() => setReservando(false), []);
-  const alReservar = useCallback(
-    (reserva) => navigate(`/mis-reservas/${reserva.codigo}/confirmacion`),
-    [navigate]
-  );
 
-  const value = useMemo(
-    () => ({
-      espacioId,
-      datos,
-      cargando,
-      error,
-      franja: desde || hasta ? { desde, hasta } : null,
-      esVisitante: !usuarioId,
-      puedeElegir: rol !== 'encargado', // el encargado no reserva (regla de la HU-4)
-      puedeReservar,
-      usoSemanal,
-      espaciosSimilares: { cargando: similaresCargando, lista: listaSimilares },
-      seleccion,
-      seleccionar,
-      quitarSeleccion,
-      modalAbierto: reservando && Boolean(seleccion) && puedeReservar,
-      abrirReserva,
-      cerrarReserva,
-      alReservar,
-      irASemana,
-      irAHoy,
-      ampliarATodoElDia,
-      reintentar,
-    }),
-    [
-      espacioId,
-      datos,
-      cargando,
-      error,
-      desde,
-      hasta,
-      usuarioId,
-      rol,
-      puedeReservar,
-      usoSemanal,
-      similaresCargando,
-      listaSimilares,
-      seleccion,
-      seleccionar,
-      quitarSeleccion,
-      reservando,
-      abrirReserva,
-      cerrarReserva,
-      alReservar,
-      irASemana,
-      irAHoy,
-      ampliarATodoElDia,
-      reintentar,
-    ]
-  );
+  const value = {
+    espacioId,
+    datos,
+    cargando,
+    error,
+    franja: desde || hasta ? { desde, hasta } : null,
+    esVisitante: !usuarioId,
+    puedeElegir: rol !== 'encargado', // el encargado no reserva (regla de la HU-4)
+    puedeReservar,
+    usoSemanal,
+    espaciosSimilares: { cargando: similaresCargando, lista: listaSimilares },
+    seleccion,
+    seleccionar,
+    quitarSeleccion,
+    modalAbierto: reservando && Boolean(seleccion) && puedeReservar,
+    abrirReserva: () => setReservando(true),
+    cerrarReserva: () => setReservando(false),
+    alReservar: (reserva) => navigate(`/mis-reservas/${reserva.codigo}/confirmacion`),
+    irASemana,
+    irAHoy,
+    ampliarATodoElDia,
+    reintentar,
+  };
 
   return <AvailabilityContext.Provider value={value}>{children}</AvailabilityContext.Provider>;
 }
