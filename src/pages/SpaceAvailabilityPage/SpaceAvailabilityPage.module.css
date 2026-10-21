@@ -1,0 +1,31 @@
+/* src/pages/SpaceAvailabilityPage/SpaceAvailabilityPage.module.css */
+/* Solo composición: el aspecto de cada pieza vive en su propio módulo. */
+
+.root {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.main {
+  display: grid;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.aside {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}

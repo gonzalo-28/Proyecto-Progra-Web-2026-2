@@ -20,6 +20,9 @@ import { RUTAS_ENCARGADO } from './rutasEncargado';
 import ReservationDetailPage from '../../pages/ReservationDetailPage/ReservationDetailPage';
 import ReservationConfirmationPage from '../../pages/ReservationConfirmationPage/ReservationConfirmationPage';
 import ReserveTestPage from '../../pages/ReserveTestPage/ReserveTestPage';
+import SpaceAvailabilityPage from '../../pages/SpaceAvailabilityPage/SpaceAvailabilityPage';
+import SpaceSearchPage from '../../pages/SpaceSearchPage/SpaceSearchPage';
+import { RUTAS_ESPACIOS } from './rutasEspacios';
 
 // Marcador de una vista que pertenece a otra HU (el dashboard del estudiante).
 // Solo existe para que la redirección por rol tenga destino.
@@ -45,6 +48,9 @@ export const AppRouter = () => {
         {/* Catálogo y ficha pública de espacios: disponibles para visitantes y estudiantes. */}
         <Route path="/espacios" element={<PublicSpaceCatalogPage />} />
         <Route path="/espacios/:spaceId" element={<PublicSpaceDetailPage />} />
+        {/* HU-3 · Abiertas a todos: el visitante consulta en modo lectura */}
+        <Route path={RUTAS_ESPACIOS.busqueda} element={<SpaceSearchPage />} />
+        <Route path={RUTAS_ESPACIOS.disponibilidad} element={<SpaceAvailabilityPage />} />
 
         {/* Rutas públicas (solo accesibles sin sesión activa) */}
         <Route element={<RutaPublica />}>

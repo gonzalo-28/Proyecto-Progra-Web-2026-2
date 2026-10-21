@@ -1,0 +1,7 @@
+/* src/components/features/search/EquipmentFilter.module.css */
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}

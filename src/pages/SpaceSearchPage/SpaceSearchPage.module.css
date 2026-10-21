@@ -1,0 +1,26 @@
+/* src/pages/SpaceSearchPage/SpaceSearchPage.module.css */
+/* Solo composición: panel de filtros a la izquierda, resultados a la derecha. */
+
+.layout {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.results {
+  display: grid;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.panelLoading {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}

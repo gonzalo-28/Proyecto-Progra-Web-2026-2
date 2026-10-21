@@ -1,0 +1,31 @@
+/* src/components/features/search/SearchFiltersPanel.module.css */
+
+.root {
+  position: sticky;
+  top: var(--space-6);
+}
+
+.form {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+  color: var(--color-primary);
+}
+
+.actions {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+}
+
+/* En pantallas angostas el panel va arriba y no se queda fijo. */
+@media (max-width: 960px) {
+  .root {
+    position: static;
+  }
+}

@@ -1,0 +1,44 @@
+/* src/components/features/availability/NoSlotsInRange.module.css */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  max-width: 560px;
+  margin: 0 auto;
+  padding: var(--space-12) 0;
+  text-align: center;
+}
+
+.icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-primary-soft);
+  font-size: var(--text-2xl);
+  color: var(--color-primary);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-extrabold);
+  color: var(--color-ink);
+}
+
+.text {
+  margin: 0;
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--color-muted);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
