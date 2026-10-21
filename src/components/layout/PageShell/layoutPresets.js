@@ -103,6 +103,12 @@ export const SCREEN_PRESETS = {
     navbar: { showCampusSelector: false, actions: ['login', 'register'] },
     footer: FOOTER_APP,
   },
+  
+  // HU-3 · Buscador de espacios (3.1–3.3): con campus. Si es visitante, Ingresar + Crear cuenta
+  search: {
+    navbar: { showCampusSelector: true, actions: ['login', 'register'] },
+    footer: FOOTER_APP,
+  },
 
   // Fallback para pantallas que aún no tienen mockup
   default: {

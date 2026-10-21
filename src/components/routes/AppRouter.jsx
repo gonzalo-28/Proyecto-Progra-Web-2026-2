@@ -17,6 +17,7 @@ import ReservationDetailPage from '../../pages/ReservationDetailPage/Reservation
 import ReservationConfirmationPage from '../../pages/ReservationConfirmationPage/ReservationConfirmationPage';
 import ReserveTestPage from '../../pages/ReserveTestPage/ReserveTestPage';
 import SpaceAvailabilityPage from '../../pages/SpaceAvailabilityPage/SpaceAvailabilityPage';
+import SpaceSearchPage from '../../pages/SpaceSearchPage/SpaceSearchPage';
 import { RUTAS_ESPACIOS } from './rutasEspacios';
 
 // Marcadores de vistas que pertenecen a otras HU (los dashboards).
@@ -32,6 +33,7 @@ export const AppRouter = () => {
         <Route path="/" element={<Navigate to="/landingpage" replace />} />
         <Route path="/landingpage" element={<LandingPage />} />
         {/* HU-3 · Abiertas a todos: el visitante consulta en modo lectura */}
+        <Route path={RUTAS_ESPACIOS.busqueda} element={<SpaceSearchPage />} />
         <Route path={RUTAS_ESPACIOS.disponibilidad} element={<SpaceAvailabilityPage />} />
 
         {/* Rutas públicas (solo accesibles sin sesión activa) */}
