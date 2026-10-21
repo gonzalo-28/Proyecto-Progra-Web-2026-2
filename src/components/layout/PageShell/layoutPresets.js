@@ -48,11 +48,12 @@ const FOOTER_MINIMAL = {
   links: [LINKS.reglamento, LINKS.contacto],
 };
 
+/* Panel del encargado (mockups 5.x): "Universidad de Lima · Panel de encargado · …" */
 const FOOTER_MANAGER = {
+  section: 'Panel de encargado',
   showAddress: false,
-  institution: 'Universidad de Lima · Panel de encargado · Campus Monterrico',
   links: [
-    { label: 'Manual de operación', textOnly: true },
+    { label: 'Manual de operación', to: '/manual-operacion' },
     { label: 'soporte.reservas@ulima.edu.pe', href: 'mailto:soporte.reservas@ulima.edu.pe' },
   ],
 };
@@ -123,6 +124,18 @@ export const SCREEN_PRESETS = {
   forbidden: {
     navbar: { showCampusSelector: false, actions: [] },
     footer: FOOTER_APP,
+  },
+
+  // HU-5 · Bandeja del día (5.1): el encargado ve su campus
+  managerTray: {
+    navbar: { showCampusSelector: true, actions: [] },
+    footer: FOOTER_MANAGER,
+  },
+
+  // HU-5 · Bloqueos y Búsqueda de reservas (5.4, 5.5): sin selector de campus
+  manager: {
+    navbar: { showCampusSelector: false, actions: [] },
+    footer: FOOTER_MANAGER,
   },
 
   // Fallback para pantallas que aún no tienen mockup

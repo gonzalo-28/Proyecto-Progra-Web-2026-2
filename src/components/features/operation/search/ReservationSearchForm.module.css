@@ -1,0 +1,34 @@
+/* src/components/features/operation/search/ReservationSearchForm.module.css */
+
+.card {
+  margin-bottom: var(--space-5);
+}
+
+/* Una fila: texto (crece) · espacio · estado · botones. Se apila en pantallas angostas. */
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.query {
+  flex: 1 1 320px;
+}
+
+.filter {
+  flex: 0 1 220px;
+  min-width: 180px;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+@media (max-width: 640px) {
+  .filter,
+  .actions {
+    flex: 1 1 100%;
+  }
+}

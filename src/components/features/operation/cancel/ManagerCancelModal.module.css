@@ -1,0 +1,42 @@
+/* src/components/features/operation/cancel/ManagerCancelModal.module.css */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Resumen gris: espacio · fecha · horario · estudiante */
+.summary {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-readonly-bg);
+  font-size: var(--text-md);
+  color: var(--color-text);
+}
+
+/* Aviso ámbar: el motivo lo verá el estudiante */
+.notice {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-warning);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-warning-soft);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--color-warning);
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+@media (max-width: 480px) {
+  .footer {
+    flex-direction: column-reverse;
+  }
+}

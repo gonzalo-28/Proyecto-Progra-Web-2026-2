@@ -1,5 +1,6 @@
 // src/data/db.js
-
+import reservasSemilla from './reservasSemilla.js';
+import { estudiantesOperacion, reservasOperacion } from './operacionSemilla.js'; // HU-5
 export const initialDb = {
   usuarios: [
     {
@@ -25,7 +26,8 @@ export const initialDb = {
       ciclo: null,
       sedeAsignadaId: "sede_central",
       estado: "activo"
-    }
+    },
+    ...estudiantesOperacion, // HU-5: estudiantes de los mockups 5.x
   ],
   espacios: [
     {
@@ -42,7 +44,7 @@ export const initialDb = {
       estado: "disponible",
       reservasVigentes: 11
     },
-    { 
+    {
       id: "esp_002",
       codigo: "E-201",
       nombre: "Sala de Estudio Grupal E-201",
@@ -55,7 +57,7 @@ export const initialDb = {
       estado: "disponible",
       reservasVigentes: 6
     },
-    { 
+    {
       id: "esp_003",
       codigo: "N-105",
       nombre: "Cabina de Grabación N-105",
@@ -68,7 +70,7 @@ export const initialDb = {
       estado: "disponible",
       reservasVigentes: 5
     },
-    { 
+    {
       id: "esp_004",
       codigo: "Q-101",
       nombre: "Auditorio Q-101",
@@ -212,7 +214,8 @@ export const initialDb = {
       etiqueta: "11:00 AM - 12:00 PM"
     }
   ],
-  reservas: [],
+  reservas: [...reservasSemilla, ...reservasOperacion], // HU-4 + jornada de prueba de la HU-5
+  bloqueos: [], // HU-5: bloqueos por mantenimiento (forma en services/blockService.js)
   incidencias: []
 };
 

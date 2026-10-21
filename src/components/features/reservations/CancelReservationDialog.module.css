@@ -1,0 +1,41 @@
+/* src/components/features/reservations/CancelReservationDialog.module.css */
+
+/* Evita que "RSV-2026-0473" se parta en dos líneas en el título */
+.nowrap {
+    white-space: nowrap;
+}
+
+.summary {
+    margin: 0;
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--color-bg);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+}
+
+.text {
+    margin: 0;
+    font-size: var(--text-sm);
+}
+
+/* Avisos (Alert de HU-1 no tiene variante ámbar, así que se definen aquí) */
+.warning,
+.danger {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+}
+
+.warning {
+    background-color: var(--color-warning-soft);
+    border-color: var(--color-warning);
+    color: var(--color-warning);
+}
+
+.danger {
+    background-color: var(--color-danger-soft);
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+}

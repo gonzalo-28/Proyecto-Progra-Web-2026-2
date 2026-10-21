@@ -1,0 +1,25 @@
+/* src/components/features/operation/tray/AbsenceConfirmDialog.module.css */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+}
+
+.body p {
+  margin: 0;
+}
+
+.note {
+  color: var(--color-muted);
+}
+
+.warning {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-warning);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-warning-soft);
+  color: var(--color-warning);
+}

@@ -1,0 +1,114 @@
+/* src/components/features/reservations/ReservationFilters.module.css */
+
+/* Tarjeta blanca que envuelve la barra (mockups 4.2 y 4.3) */
+.card {
+    padding: var(--space-3);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+/* Caja compacta con texto delante: "Estado: Todos ▾", "Desde 14/09/2026" */
+.control {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    height: var(--control-h-md);
+    padding: 0 var(--space-3);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-md);
+    color: var(--color-text);
+}
+
+.control:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-ring);
+}
+
+.hasError {
+    border-color: var(--color-danger);
+}
+
+.prefix {
+    font-weight: var(--weight-medium);
+    white-space: nowrap;
+}
+
+/* El <select> y el <input type="date"> van sin borde propio dentro de la caja */
+.select,
+.date {
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-weight: var(--weight-medium);
+    color: inherit;
+    outline: none;
+}
+
+.select {
+    appearance: none;
+    padding-right: var(--space-4);
+    cursor: pointer;
+}
+
+.caret {
+    position: absolute;
+    right: var(--space-3);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid currentColor;
+    pointer-events: none;
+}
+
+.search {
+    flex: 1 1 240px;
+    min-width: 200px;
+    outline: none;
+}
+
+.search::placeholder {
+    color: var(--color-muted);
+}
+
+.clear {
+    padding: 0 var(--space-2);
+    border: 0;
+    background: none;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-bold);
+    color: var(--color-primary);
+    cursor: pointer;
+}
+
+.clear:hover {
+    text-decoration: underline;
+}
+
+.error {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-xs);
+    color: var(--color-danger);
+}
+
+/* Celular: cada filtro ocupa todo el ancho */
+@media (max-width: 640px) {
+
+    .control,
+    .search {
+        flex: 1 1 100%;
+    }
+}
