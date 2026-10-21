@@ -1,0 +1,49 @@
+/* src/components/features/availability/SimilarSpacesList.module.css */
+
+.root {
+  display: grid;
+  gap: var(--space-3);
+  width: 100%;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  text-align: left;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+  font-size: var(--text-md);
+  color: var(--color-text);
+}
+
+.item + .item {
+  border-top: 1px solid var(--color-border);
+}
+
+.link {
+  font-weight: var(--weight-bold);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

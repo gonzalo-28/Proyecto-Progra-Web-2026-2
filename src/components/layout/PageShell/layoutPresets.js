@@ -98,6 +98,12 @@ export const SCREEN_PRESETS = {
     footer: FOOTER_APP,
   },
 
+    // HU-3 · Disponibilidad del espacio (3.4–3.6): sin campus. Si es visitante, Ingresar + Crear cuenta
+  availability: {
+    navbar: { showCampusSelector: false, actions: ['login', 'register'] },
+    footer: FOOTER_APP,
+  },
+
   // Fallback para pantallas que aún no tienen mockup
   default: {
     navbar: { showCampusSelector: false, actions: ['login'] },

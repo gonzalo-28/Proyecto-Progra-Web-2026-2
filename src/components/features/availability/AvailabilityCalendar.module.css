@@ -1,0 +1,13 @@
+/* src/components/features/availability/AvailabilityCalendar.module.css */
+
+.root {
+  display: grid;
+  gap: var(--space-3);
+}
+
+/* Mientras llega la semana nueva se ve la anterior, atenuada. */
+.stale {
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+}
