@@ -1,0 +1,14 @@
+/* src/components/features/operation/tray/RowActions.module.css */
+
+.root {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.note {
+  white-space: nowrap;
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}

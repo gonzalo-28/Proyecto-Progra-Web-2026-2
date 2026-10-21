@@ -4,6 +4,8 @@
  * Todo lo que haya que ajustar a tu router se cambia SOLO aquí.
  */
 
+import { RUTAS_ENCARGADO } from '../../routes/rutasEncargado';
+
 export const ROUTES = {
   home: '/landingpage',
   login: '/login',
@@ -20,7 +22,8 @@ export const VISITOR_LINKS = [
 
 /* Links del usuario autenticado, según rol.
    estudiante: sale del mockup (Mi cuenta / Acceso denegado).
-   encargado:  PROVISIONAL, no hay mockup de su navbar. */
+   encargado:  sale de los mockups 5.x. "Mi cuenta" sigue en el UserMenu.
+               Espacios (HU-2) e Incidencias (HU-6) aún no tienen ruta. */
 export const LINKS_BY_ROLE = {
   estudiante: [
     { to: '/espacios', label: 'Buscar espacios' },
@@ -29,8 +32,10 @@ export const LINKS_BY_ROLE = {
     { to: ROUTES.account, label: 'Mi cuenta' },
   ],
   encargado: [
-    { to: '/bandeja', label: 'Bandeja del día' },
-    { to: ROUTES.account, label: 'Mi cuenta' },
+    { to: '/encargado/espacios', label: 'Espacios' },
+    { to: RUTAS_ENCARGADO.bandeja, label: 'Bandeja del día' },
+    { to: RUTAS_ENCARGADO.bloqueos, label: 'Bloqueos' },
+    { to: '/encargado/incidencias', label: 'Incidencias' },
   ],
 };
 

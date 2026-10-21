@@ -26,6 +26,11 @@
   color: var(--color-danger);
 }
 
+.info {
+  background-color: var(--color-info-soft);
+  color: var(--color-info);
+}
+
 .role {
   background-color: var(--color-primary-soft);
   color: var(--color-primary);

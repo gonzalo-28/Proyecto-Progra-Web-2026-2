@@ -8,7 +8,8 @@ const cx = (...classes) => classes.filter(Boolean).join(' ');
  * Botón base de ReservaUL.
  *
  * Props:
- *  - variant:     'primary' | 'outline' | 'ghost'   (ghost = "Descartar")
+ *  - variant:     'primary' | 'outline' | 'ghost' | 'danger' | 'dangerOutline'
+ *                 ghost = "Descartar"; danger/dangerOutline = acciones destructivas (HU-5)
  *  - size:        'sm' | 'md' | 'lg'                (sm = navbar, lg = CTA de ancho completo)
  *  - fullWidth:   ocupa todo el ancho del contenedor (Ingresar, Actualizar contraseña…)
  *  - isLoading:   muestra spinner dentro del botón y lo bloquea

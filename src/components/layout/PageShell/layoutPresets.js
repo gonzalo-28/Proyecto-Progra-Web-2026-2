@@ -48,6 +48,16 @@ const FOOTER_MINIMAL = {
   links: [LINKS.reglamento, LINKS.contacto],
 };
 
+/* Panel del encargado (mockups 5.x): "Universidad de Lima · Panel de encargado · …" */
+const FOOTER_MANAGER = {
+  section: 'Panel de encargado',
+  showAddress: false,
+  links: [
+    { label: 'Manual de operación', to: '/manual-operacion' },
+    { label: 'soporte.reservas@ulima.edu.pe', href: 'mailto:soporte.reservas@ulima.edu.pe' },
+  ],
+};
+
 /* ---- Una entrada por pantalla del mockup ---- */
 export const SCREEN_PRESETS = {
   // Landing pública: campus + Ingresar + Crear cuenta
@@ -97,17 +107,28 @@ export const SCREEN_PRESETS = {
     navbar: { showCampusSelector: false, actions: [] },
     footer: FOOTER_APP,
   },
-
     // HU-3 · Disponibilidad del espacio (3.4–3.6): sin campus. Si es visitante, Ingresar + Crear cuenta
   availability: {
     navbar: { showCampusSelector: false, actions: ['login', 'register'] },
     footer: FOOTER_APP,
   },
-  
+
   // HU-3 · Buscador de espacios (3.1–3.3): con campus. Si es visitante, Ingresar + Crear cuenta
   search: {
     navbar: { showCampusSelector: true, actions: ['login', 'register'] },
     footer: FOOTER_APP,
+  },
+
+  // HU-5 · Bandeja del día (5.1): el encargado ve su campus
+  managerTray: {
+    navbar: { showCampusSelector: true, actions: [] },
+    footer: FOOTER_MANAGER,
+  },
+
+  // HU-5 · Bloqueos y Búsqueda de reservas (5.4, 5.5): sin selector de campus
+  manager: {
+    navbar: { showCampusSelector: false, actions: [] },
+    footer: FOOTER_MANAGER,
   },
 
   // Fallback para pantallas que aún no tienen mockup

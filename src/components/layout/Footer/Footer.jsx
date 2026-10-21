@@ -3,26 +3,29 @@
 import { Link } from 'react-router-dom';
 import styles from './Footer.module.css';
 
-const INSTITUTION = 'Universidad de Lima · Campus Monterrico';
+const UNIVERSITY = 'Universidad de Lima';
+const CAMPUS = 'Campus Monterrico';
 const ADDRESS = 'Av. Javier Prado Este 4600';
 
 /**
  * Barra oscura de pie de página.
  *
  * Props:
+ *  - section:     texto intermedio opcional ("Panel de encargado" en la HU-5)
  *  - showAddress: agrega " · Av. Javier Prado Este 4600" (solo la landing)
  *  - links: [{ label, to? , href? }]  `to` = ruta interna, `href` = externo/mailto
  *
  * Los links de cada pantalla vienen de layoutPresets.js (fieles al mockup).
  */
-export default function Footer({ showAddress = false, links = [] }) {
+export default function Footer({ section, showAddress = false, links = [] }) {
+  const text = [UNIVERSITY, section, CAMPUS, showAddress && ADDRESS]
+    .filter(Boolean)
+    .join(' · ');
+
   return (
     <footer className={styles.root}>
       <div className={styles.inner}>
-        <p className={styles.text}>
-          {INSTITUTION}
-          {showAddress && ` · ${ADDRESS}`}
-        </p>
+        <p className={styles.text}>{text}</p>
 
         {links.length > 0 && (
           <nav aria-label="Enlaces del pie de página">
