@@ -64,7 +64,12 @@ export default function UserMenu({
         aria-expanded={isOpen}
         aria-controls={menuId}
       >
-        <Avatar name={user.fullName} src={user.avatarUrl} size="sm" />
+        <Avatar
+          name={user.fullName}
+          src={user.avatarUrl}
+          size="sm"
+          className={user.role === 'encargado' ? styles.managerAvatar : undefined}
+        />
         <span className={styles.name}>{user.fullName}</span>
         <span className={styles.caret} aria-hidden="true" />
       </button>

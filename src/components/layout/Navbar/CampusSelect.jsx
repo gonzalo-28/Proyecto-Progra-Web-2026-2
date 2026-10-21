@@ -6,7 +6,7 @@ import Select from '../../ui/Select/Select';
  * Selector de campus del navbar: un Select compacto.
  * Props: value, options [{ value, label }], onChange(value: string)
  */
-export default function CampusSelect({ value, options, onChange }) {
+export default function CampusSelect({ value, options, onChange, className }) {
   return (
     <Select
       size="sm"
@@ -14,6 +14,7 @@ export default function CampusSelect({ value, options, onChange }) {
       options={options}
       value={value}
       onChange={(event) => onChange?.(event.target.value)}
+      className={className}
     />
   );
 }

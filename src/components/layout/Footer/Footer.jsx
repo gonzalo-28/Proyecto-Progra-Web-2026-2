@@ -32,7 +32,9 @@ export default function Footer({ section, showAddress = false, links = [] }) {
             <ul className={styles.links}>
               {links.map((item) => (
                 <li key={item.label}>
-                  {item.to ? (
+                  {item.textOnly ? (
+                    <span className={styles.link}>{item.label}</span>
+                  ) : item.to ? (
                     <Link to={item.to} className={styles.link}>
                       {item.label}
                     </Link>

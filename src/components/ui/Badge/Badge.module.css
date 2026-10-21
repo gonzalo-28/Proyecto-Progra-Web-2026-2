@@ -26,6 +26,17 @@
   color: var(--color-danger);
 }
 
+.neutral {
+  background-color: #f0f4f3;
+  color: var(--color-muted);
+}
+
+.info {
+  background-color: var(--color-info-soft);
+  color: var(--color-info);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
 .info {
   background-color: var(--color-info-soft);
   color: var(--color-info);
@@ -37,4 +48,5 @@
   font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
+}
 }

@@ -6,7 +6,7 @@
 // se borra este archivo y su ruta /dev/reservar.
 
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { obtenerEspaciosYBloques } from '../../services/reservationService';
 import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
 import Card from '../../components/ui/Card/Card';
@@ -24,6 +24,7 @@ function lunesProximo() {
 
 export default function ReserveTestPage() {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const [opciones, setOpciones] = useState({ espacios: [], bloques: [] });
     const [espacioId, setEspacioId] = useState('');
     const [fecha, setFecha] = useState(lunesProximo);
@@ -32,7 +33,10 @@ export default function ReserveTestPage() {
     useEffect(() => {
         obtenerEspaciosYBloques().then((datos) => {
             setOpciones(datos);
-            setEspacioId((actual) => actual || datos.espacios[0]?.id || '');
+            const requestedSpace = searchParams.get('espacio');
+            setEspacioId((actual) => actual || (datos.espacios.some((space) => String(space.id) === String(requestedSpace))
+                ? requestedSpace
+                : datos.espacios[0]?.id || ''));
         });
     }, []);
 

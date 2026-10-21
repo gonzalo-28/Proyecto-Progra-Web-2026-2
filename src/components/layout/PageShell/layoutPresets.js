@@ -102,6 +102,30 @@ export const SCREEN_PRESETS = {
     footer: FOOTER_APP,
   },
 
+  // Catálogo público y ficha del espacio (mockup 2.6).
+  publicSpaces: {
+    navbar: { showCampusSelector: true, actions: ['login', 'register'] },
+    footer: FOOTER_APP,
+  },
+
+  // Catálogo de espacios del encargado (mockup 2.1).
+  spaceCatalog: {
+    navbar: { showCampusSelector: true, actions: [] },
+    footer: FOOTER_MANAGER,
+  },
+
+  // Gestión de equipamiento de un espacio (mockup 2.4).
+  spaceEquipment: {
+    navbar: { showCampusSelector: false, actions: [] },
+    footer: FOOTER_MANAGER,
+  },
+
+  // Formulario para registrar un espacio (mockup 2.3).
+  spaceForm: {
+    navbar: { showCampusSelector: false, actions: [] },
+    footer: FOOTER_MANAGER,
+  },
+
   // Acceso denegado (estudiante autenticado): sin campus + usuario
   forbidden: {
     navbar: { showCampusSelector: false, actions: [] },

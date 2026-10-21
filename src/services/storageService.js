@@ -23,8 +23,10 @@ export const getStoredData = () => {
 export const saveStoredData = (db) => {
   try {
     localStorage.setItem(DB_KEY, JSON.stringify(db));
+    return true;
   } catch (error) {
     console.error('No se pudo guardar en localStorage:', error);
+    return false;
   }
 };
 
