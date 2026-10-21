@@ -1,0 +1,13 @@
+/* src/components/features/operation/tray/DetailActions.module.css */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.hint {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}

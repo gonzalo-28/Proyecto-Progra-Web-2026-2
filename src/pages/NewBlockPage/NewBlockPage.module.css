@@ -1,0 +1,30 @@
+/* src/pages/NewBlockPage/NewBlockPage.module.css */
+/* Solo composición: dos columnas (formulario | vista previa) y la lista abajo. */
+
+.alert {
+  margin-bottom: var(--space-4);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-5);
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.active {
+  margin-top: var(--space-5);
+}
+
+@media (max-width: 960px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

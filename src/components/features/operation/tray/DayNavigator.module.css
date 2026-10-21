@@ -1,0 +1,16 @@
+/* src/components/features/operation/tray/DayNavigator.module.css */
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Las flechas van con borde gris, como en el mockup; "Hoy" queda en verde. */
+.arrow {
+  width: var(--control-h-md);
+  padding: 0;
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+  font-size: var(--text-lg);
+}

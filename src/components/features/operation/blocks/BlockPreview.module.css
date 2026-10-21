@@ -1,0 +1,76 @@
+/* src/components/features/operation/blocks/BlockPreview.module.css */
+
+.hint {
+  margin: 0;
+  font-size: var(--text-md);
+  color: var(--color-muted);
+}
+
+/* Con muchos días la grilla se desplaza dentro de la tarjeta. */
+.scroll {
+  position: relative;
+  overflow-x: auto;
+}
+
+.grid {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: var(--space-1);
+  font-size: var(--text-sm);
+}
+
+.grid thead th {
+  padding: var(--space-1);
+  font-weight: var(--weight-bold);
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+.hour {
+  padding-right: var(--space-2);
+  font-weight: var(--weight-regular);
+  color: var(--color-muted);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.cell {
+  display: block;
+  min-width: 96px;
+  padding: var(--space-2) var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Rayado diagonal gris, como el mockup */
+.bloqueado {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--color-readonly-bg) 0 6px,
+    var(--color-border) 6px 8px
+  );
+  color: var(--color-muted);
+}
+
+.cancela {
+  border-color: var(--color-danger);
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-weight: var(--weight-semibold);
+}
+
+.libre {
+  border-color: var(--color-border);
+  color: var(--color-muted);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

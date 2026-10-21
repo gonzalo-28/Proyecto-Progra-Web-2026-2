@@ -30,6 +30,10 @@
   --color-danger-ring: rgba(180, 35, 24, 0.18);
   --color-warning: #9a5b00;
   --color-warning-soft: #fcefd6;
+  --color-info: #2f5c9e; /* estado "Confirmada" (HU-5) */
+  --color-info-soft: #e7eef8;
+  --color-overlay: rgba(18, 35, 31, 0.45); /* fondo detrás de los modales */
+  --shadow-modal: 0 12px 40px rgba(18, 35, 31, 0.18);
   --color-success: var(--color-primary);
   --color-success-soft: var(--color-primary-soft);
 

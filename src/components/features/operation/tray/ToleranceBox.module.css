@@ -1,0 +1,45 @@
+/* src/components/features/operation/tray/ToleranceBox.module.css */
+
+.root {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+}
+
+.label {
+  margin: 0;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.value {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-extrabold);
+  line-height: var(--leading-tight);
+}
+
+.note {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-sm);
+}
+
+.neutral {
+  background-color: var(--color-readonly-bg);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.warning {
+  background-color: var(--color-warning-soft);
+  border-color: var(--color-warning);
+  color: var(--color-warning);
+}
+
+.danger {
+  background-color: var(--color-danger-soft);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
