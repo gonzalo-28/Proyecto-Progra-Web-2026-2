@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
 import PageHeader from '../../components/ui/PageHeader/PageHeader';
@@ -30,10 +30,7 @@ const FORM_INICIAL = { espacioId: '', tipo: '', descripcion: '', equipamientoAfe
 export default function IncidenciasPage() {
   const { usuario } = useAuth();
   const esEncargado = usuario.rol === 'encargado';
-  const [espacios, setEspacios] = useState([]);
-  const [incidencias, setIncidencias] = useState([]);
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(''); // errores de las acciones (reportar, comentar, cambiar estado)
   const [aviso, setAviso] = useState('');
   const [version, setVersion] = useState(0);
   const [form, setForm] = useState(FORM_INICIAL);
@@ -43,24 +40,32 @@ export default function IncidenciasPage() {
   const [soluciones, setSoluciones] = useState({});
   const [procesando, setProcesando] = useState('');
 
-  const cargar = useCallback(async () => {
-    setCargando(true);
-    setError('');
-    try {
-      const [lista, catalogo] = await Promise.all([
-        esEncargado ? listarIncidencias(filtros) : listarMisIncidencias(usuario.id),
-        obtenerCatalogoIncidencias(),
-      ]);
-      setIncidencias(lista);
-      setEspacios(catalogo);
-    } catch (err) {
-      setError(err.message || 'No se pudieron cargar las incidencias.');
-    } finally {
-      setCargando(false);
-    }
-  }, [esEncargado, filtros, usuario.id, version]);
+  // Todo lo que define la consulta va en una sola clave (mismo patrón que Mis
+  // reservas). Si la clave del resultado no coincide con la actual, está cargando.
+  const clave = JSON.stringify({ esEncargado, filtros, usuarioId: usuario.id, version });
+  const [resultado, setResultado] = useState({ clave: null, incidencias: [], espacios: [], error: '' });
+  const cargando = resultado.clave !== clave;
+  const { incidencias, espacios } = resultado;
 
-  useEffect(() => { cargar(); }, [cargar]);
+  useEffect(() => {
+    let activo = true; // descarta respuestas viejas si los filtros cambian rápido
+    const consulta = JSON.parse(clave);
+    Promise.all([
+      consulta.esEncargado ? listarIncidencias(consulta.filtros) : listarMisIncidencias(consulta.usuarioId),
+      obtenerCatalogoIncidencias(),
+    ])
+      .then(([lista, catalogo]) => {
+        if (activo) setResultado({ clave, incidencias: lista, espacios: catalogo, error: '' });
+      })
+      .catch((err) => {
+        if (activo) {
+          setResultado({ clave, incidencias: [], espacios: [], error: err.message || 'No se pudieron cargar las incidencias.' });
+        }
+      });
+    return () => {
+      activo = false;
+    };
+  }, [clave]);
 
   const opcionesEspacios = useMemo(() => espacios.map((e) => ({ value: e.id, label: `${e.codigo} · ${e.nombre}` })), [espacios]);
   const actualizarFiltro = (campo) => (e) => setFiltros((actuales) => ({ ...actuales, [campo]: e.target.value }));
@@ -109,6 +114,7 @@ export default function IncidenciasPage() {
         subtitle={esEncargado ? 'Revisa los reportes y registra su seguimiento y resolución.' : 'Reporta un problema en un espacio y consulta su seguimiento.'}
       />
       {aviso && <Alert variant="success" onClose={() => setAviso('')}>{aviso}</Alert>}
+      {resultado.error && <Alert variant="error">{resultado.error}</Alert>}
       {error && <Alert variant="error" onClose={() => setError('')}>{error}</Alert>}
 
       {!esEncargado && (
