@@ -25,7 +25,7 @@ export const MOTIVOS_NO_DISPONIBLE = {
 /**
  * Horario general del campus (mockup 2.5). Se usa mientras el espacio no tenga
  * su propio horarioAtencion (lo registra la HU-2). null = cerrado ese día.
- * Forma propuesta a la HU-2: { lun: { apertura: 'HH:MM', cierre: 'HH:MM' } | null, … }
+ * Es el mismo horario por defecto que muestra SpaceSchedulePage (HU-2).
  */
 export const HORARIO_POR_DEFECTO = {
   dom: null,
@@ -37,10 +37,36 @@ export const HORARIO_POR_DEFECTO = {
   sab: { apertura: '08:00', cierre: '14:00' },
 };
 
-/** Horario de un espacio en una fecha: { apertura, cierre } o null si cierra. */
+/* Ids de día que guarda la HU-2 en horarioAtencion.dias[].id */
+const ID_DIA_HU2 = {
+  dom: 'domingo',
+  lun: 'lunes',
+  mar: 'martes',
+  mie: 'miercoles',
+  jue: 'jueves',
+  vie: 'viernes',
+  sab: 'sabado',
+};
+
+/**
+ * Horario de un espacio en una fecha: { apertura, cierre } o null si cierra.
+ *
+ * Formato que guarda la HU-2 (SpaceSchedulePage → saveCatalogSpaceSchedule):
+ *   horarioAtencion: { dias: [{ id: 'lunes', open: '07:00', close: '22:00', enabled: true }, …], duracion: 60 }
+ * Un día que no esté en la lista toma el horario por defecto (igual que la HU-2).
+ * También acepta la forma corta { lun: { apertura, cierre } | null, … }.
+ */
 export function horarioDelDia(espacio, fechaISO) {
-  const horario = espacio.horarioAtencion ?? HORARIO_POR_DEFECTO;
-  return horario[claveDia(fechaISO)] ?? null;
+  const clave = claveDia(fechaISO);
+  const horario = espacio.horarioAtencion;
+
+  if (Array.isArray(horario?.dias)) {
+    const dia = horario.dias.find((d) => d.id === ID_DIA_HU2[clave]);
+    if (!dia) return HORARIO_POR_DEFECTO[clave];
+    return dia.enabled && dia.open && dia.close ? { apertura: dia.open, cierre: dia.close } : null;
+  }
+
+  return (horario ?? HORARIO_POR_DEFECTO)[clave] ?? null;
 }
 
 /** ¿El bloque cae completo dentro de la franja 'HH:MM'–'HH:MM'? (sin franja = sí) */
