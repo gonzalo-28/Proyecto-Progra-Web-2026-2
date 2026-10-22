@@ -2,7 +2,7 @@
 
 import { Link } from 'react-router-dom';
 import Card from '../../ui/Card/Card';
-import ImagePlaceholder from '../../ui/ImagePlaceHolder/ImagePlaceholder';
+import ImagePlaceholder from '../../ui/ImagePlaceholder/ImagePlaceholder';
 import styles from './SpaceResultCard.module.css';
 
 /**

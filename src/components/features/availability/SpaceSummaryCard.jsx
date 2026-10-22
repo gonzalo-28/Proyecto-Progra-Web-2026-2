@@ -3,7 +3,7 @@
 import { useAvailability } from '../../../context/AvailabilityContext';
 import Card from '../../ui/Card/Card';
 import Badge from '../../ui/Badge/Badge';
-import ImagePlaceholder from '../../ui/ImagePlaceHolder/ImagePlaceholder';
+import ImagePlaceholder from '../../ui/ImagePlaceholder/ImagePlaceholder';
 import styles from './SpaceSummaryCard.module.css';
 
 const ESTADO_ESPACIO = {

@@ -220,11 +220,3 @@ export const initialDb = {
 };
 
 export default initialDb;
-
-/*
-#####Importación directa (Solo lectura / Mocks simples)######
-
-import initialDb from '@/data/db.js';
-
-console.log(initialDb.usuarios);
-*/

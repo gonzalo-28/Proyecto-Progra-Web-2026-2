@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import Button from '../../components/ui/Button/Button';
 import ButtonLink from '../../components/ui/Button/ButtonLink';
 import Card from '../../components/ui/Card/Card';
 import Select from '../../components/ui/Select/Select';
-import TextField from '../../components/ui/TextField/Textfield';
+import TextField from '../../components/ui/TextField/TextField';
 import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
 import { createCatalogSpace, getCatalogSpaces, updateCatalogSpace } from '../../services/spaceCatalogService';
 import styles from './SpaceFormPage.module.css';
@@ -65,14 +65,9 @@ export default function SpaceFormPage() {
   const [submitted, setSubmitted] = useState(false);
   const [photoError, setPhotoError] = useState('');
   const [draftNotice, setDraftNotice] = useState('');
-
-  useEffect(() => {
-    setForm(toForm(existingSpace));
-    setPhotos(toPhotos(existingSpace));
-    setSubmitted(false);
-    setPhotoError('');
-    setDraftNotice('');
-  }, [spaceId, existingSpace]);
+  // El estado inicial sale de existingSpace. Si se agrega una ruta de edición
+  // (/encargado/espacios/:spaceId/editar), se monta con key={spaceId} para que
+  // el formulario se reinicie al cambiar de espacio.
 
   const update = (field) => (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
   const normalizedCode = form.codigo.trim().toLocaleUpperCase('es');
@@ -141,7 +136,7 @@ export default function SpaceFormPage() {
       descripcion: form.descripcion.trim(),
       fotografias: photos.filter((photo) => photo.preserve || !photo.placeholder).map(({ name }) => name),
     };
-    if (isEditing) updateCatalogSpace(space.id, changes);
+    if (isEditing) updateCatalogSpace(existingSpace.id, changes);
     else createCatalogSpace({ ...changes, equipamiento: [], estado: 'disponible', reservasVigentes: 0 });
     navigate('/encargado/espacios');
   };

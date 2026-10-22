@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import Badge from '../../components/ui/Badge/Badge';
 import Button from '../../components/ui/Button/Button';
 import Card from '../../components/ui/Card/Card';
 import Select from '../../components/ui/Select/Select';
-import TextField from '../../components/ui/TextField/Textfield';
+import TextField from '../../components/ui/TextField/TextField';
 import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
 import { getCatalogSpaces, saveCatalogSpaceEquipment } from '../../services/spaceCatalogService';
 import SpaceStatusModal from '../../components/features/spaces/SpaceStatusModal';
@@ -43,15 +43,12 @@ export default function SpaceEquipmentPage() {
   const originalEquipment = useMemo(() => (space ? normalizeEquipment(space) : []), [space]);
   const [equipment, setEquipment] = useState(originalEquipment);
   const [spaceStatus, setSpaceStatus] = useState(space?.estado ?? 'disponible');
-  const [statusModalOpen, setStatusModalOpen] = useState(false);
+  // "Estado" en Datos generales navega aquí con state.abrirEstado: el modal nace abierto.
+  const [statusModalOpen, setStatusModalOpen] = useState(() => Boolean(location.state?.abrirEstado));
   const [newItem, setNewItem] = useState('Micrófonos');
   const [quantity, setQuantity] = useState('2');
   const [notice, setNotice] = useState('');
   const [saveError, setSaveError] = useState(false);
-
-  useEffect(() => {
-    if (location.state?.abrirEstado) setStatusModalOpen(true);
-  }, [location.state]);
 
   if (!space) {
     return <Navigate to="/encargado/espacios" replace />;
