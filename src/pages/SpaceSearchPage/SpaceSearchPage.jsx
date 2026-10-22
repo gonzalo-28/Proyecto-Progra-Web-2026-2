@@ -20,7 +20,7 @@ import styles from './SpaceSearchPage.module.css';
 
 export default function SpaceSearchPage() {
   return (
-    <ContentLayout screen="search">
+    <ContentLayout screen="search" className={styles.page}>
       <SpaceSearchProvider>
         <SearchContent />
       </SpaceSearchProvider>

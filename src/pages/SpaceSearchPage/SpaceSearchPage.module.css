@@ -1,6 +1,12 @@
 /* src/pages/SpaceSearchPage/SpaceSearchPage.module.css */
 /* Solo composición: panel de filtros a la izquierda, resultados a la derecha. */
 
+/* Mismo ancho que el navbar y el footer (1440px): el contenido queda alineado
+   con el logo en vez de encogerse al centro en pantallas grandes. */
+div.page {
+  max-width: 1440px;
+}
+
 .layout {
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);

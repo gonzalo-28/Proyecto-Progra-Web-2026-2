@@ -30,7 +30,7 @@ export default function SpaceAvailabilityPage() {
   const { espacioId } = useParams();
 
   return (
-    <ContentLayout screen="availability">
+    <ContentLayout screen="availability" className={styles.page}>
       {/* key: al pasar a otro espacio, el estado (selección, cargas) empieza de cero */}
       <AvailabilityProvider key={espacioId} espacioId={espacioId}>
         <AvailabilityContent />

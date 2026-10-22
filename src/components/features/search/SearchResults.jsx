@@ -1,7 +1,7 @@
 // src/components/features/search/SearchResults.jsx
 
 import { useSpaceSearch } from '../../../context/SpaceSearchContext';
-import { rutaDisponibilidad } from '../../routes/rutasEspacios';
+import { rutaDisponibilidad, rutaFichaPublica } from '../../routes/rutasEspacios';
 import Alert from '../../ui/Alert/Alert';
 import Button from '../../ui/Button/Button';
 import Pagination from '../../ui/Pagination/Pagination';
@@ -12,8 +12,9 @@ import styles from './SearchResults.module.css';
 
 /**
  * Zona de resultados: error, cargando (3.3), vacío (3.2) o las tarjetas con
- * paginación (3.1). Cada tarjeta abre el calendario del espacio en la semana
- * del día buscado y con la misma franja horaria.
+ * paginación (3.1). "Reservar" abre el calendario del espacio en la semana
+ * del día buscado y con la misma franja horaria; el nombre abre la ficha
+ * pública de la HU-2.
  */
 export default function SearchResults() {
   const { filtros, cargando, error, total, resultados, pagina, totalPaginas, irAPagina, reintentar } =
@@ -45,6 +46,7 @@ export default function SearchResults() {
                 desde: filtros.desde,
                 hasta: filtros.hasta,
               })}
+              fichaTo={rutaFichaPublica(espacio.id)}
             />
           </li>
         ))}
