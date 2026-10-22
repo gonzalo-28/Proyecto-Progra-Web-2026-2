@@ -25,7 +25,8 @@ export const MOTIVOS_NO_DISPONIBLE = {
 /**
  * Horario general del campus (mockup 2.5). Se usa mientras el espacio no tenga
  * su propio horarioAtencion (lo registra la HU-2). null = cerrado ese día.
- * Forma propuesta a la HU-2: { lun: { apertura: 'HH:MM', cierre: 'HH:MM' } | null, … }
+ * HU-2 guarda { dias: [{ id, open, close, enabled }], duracion }; también se
+ * admite la forma anterior con claves lun, mar, mie, jue, vie, sab y dom.
  */
 export const HORARIO_POR_DEFECTO = {
   dom: null,
@@ -40,6 +41,20 @@ export const HORARIO_POR_DEFECTO = {
 /** Horario de un espacio en una fecha: { apertura, cierre } o null si cierra. */
 export function horarioDelDia(espacio, fechaISO) {
   const horario = espacio.horarioAtencion ?? HORARIO_POR_DEFECTO;
+  if (Array.isArray(horario.dias)) {
+    const idDia = {
+      dom: 'domingo',
+      lun: 'lunes',
+      mar: 'martes',
+      mie: 'miercoles',
+      jue: 'jueves',
+      vie: 'viernes',
+      sab: 'sabado',
+    }[claveDia(fechaISO)];
+    const dia = horario.dias.find((item) => item.id === idDia);
+    if (!dia?.enabled) return null;
+    return { apertura: dia.open, cierre: dia.close };
+  }
   return horario[claveDia(fechaISO)] ?? null;
 }
 
@@ -63,11 +78,17 @@ export function normalizarTexto(texto) {
  */
 export function normalizarEquipamiento(lista = []) {
   return lista
-    .map((item) =>
-      typeof item === 'string'
-        ? { nombre: item.trim(), cantidad: 1 }
-        : { nombre: String(item?.nombre ?? '').trim(), cantidad: Number(item?.cantidad ?? 1) }
-    )
+    .map((item) => {
+      if (typeof item !== 'string') {
+        return { nombre: String(item?.nombre ?? '').trim(), cantidad: Number(item?.cantidad ?? 1) };
+      }
+
+      const texto = item.trim();
+      const computadoras = texto.match(/^(\d+)\s*(?:pcs|computadoras)$/i);
+      return computadoras
+        ? { nombre: 'Computadoras', cantidad: Number(computadoras[1]) }
+        : { nombre: texto, cantidad: 1 };
+    })
     .filter((item) => item.nombre);
 }
 

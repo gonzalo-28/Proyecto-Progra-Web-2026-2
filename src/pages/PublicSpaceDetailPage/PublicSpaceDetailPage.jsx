@@ -1,30 +1,26 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import Badge from '../../components/ui/Badge/Badge';
 import ButtonLink from '../../components/ui/Button/ButtonLink';
 import Card from '../../components/ui/Card/Card';
 import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
+import { rutaDisponibilidad } from '../../components/routes/rutasEspacios';
+import { obtenerDisponibilidadSemanal } from '../../services/availabilityService';
 import { getCatalogSpaces } from '../../services/spaceCatalogService';
+import { HORARIO_POR_DEFECTO, normalizarEquipamiento } from '../../utils/disponibilidad';
 import styles from './PublicSpaceDetailPage.module.css';
 
-const DEFAULT_DAYS = [
-  { id: 'lunes', label: 'Lunes', open: '07:00', close: '22:00', enabled: true },
-  { id: 'martes', label: 'Martes', open: '07:00', close: '22:00', enabled: true },
-  { id: 'miercoles', label: 'Miércoles', open: '07:00', close: '22:00', enabled: true },
-  { id: 'jueves', label: 'Jueves', open: '07:00', close: '22:00', enabled: true },
-  { id: 'viernes', label: 'Viernes', open: '07:00', close: '20:00', enabled: true },
-  { id: 'sabado', label: 'Sábado', open: '08:00', close: '14:00', enabled: true },
-  { id: 'domingo', label: 'Domingo', open: '', close: '', enabled: false },
+const DAYS = [
+  { id: 'lunes', key: 'lun', label: 'Lunes' },
+  { id: 'martes', key: 'mar', label: 'Martes' },
+  { id: 'miercoles', key: 'mie', label: 'Miércoles' },
+  { id: 'jueves', key: 'jue', label: 'Jueves' },
+  { id: 'viernes', key: 'vie', label: 'Viernes' },
+  { id: 'sabado', key: 'sab', label: 'Sábado' },
+  { id: 'domingo', key: 'dom', label: 'Domingo' },
 ];
 
-const DEFAULT_EQUIPMENT = [
-  { nombre: 'Computadoras', cantidad: 30 },
-  { nombre: 'Proyector', cantidad: 1 },
-  { nombre: 'Pizarras acrílicas', cantidad: 2 },
-  { nombre: 'Televisor', cantidad: 1 },
-  { nombre: 'Tomacorrientes', cantidad: 16 },
-  { nombre: 'Mesa de trabajo', cantidad: 1 },
-];
+const DURACION_BLOQUE_POR_DEFECTO = 60;
 
 const RULES = [
   'Presenta tu carné al ingresar.',
@@ -41,22 +37,27 @@ const CATEGORY_LABELS = {
   sala_reuniones: 'Salas de reuniones',
 };
 
-function getEquipment(space) {
-  const items = space.equipamiento ?? [];
-  if (space.codigo === 'H-304' && items.length > 0 && items.every((item) => typeof item === 'string')) return DEFAULT_EQUIPMENT;
-  return items.map((item) => {
-    if (typeof item !== 'string') return item;
-    const computerCount = item.match(/^(\d+)\s*(?:PCs|computadoras)$/i);
-    return computerCount
-      ? { nombre: 'Computadoras', cantidad: Number(computerCount[1]) }
-      : { nombre: item, cantidad: 1 };
-  });
-}
+const getEquipment = (space) => normalizarEquipamiento(space.equipamiento);
 
 function getSchedule(space) {
-  const saved = space.horarioAtencion;
-  if (!saved?.dias?.length) return DEFAULT_DAYS;
-  return DEFAULT_DAYS.map((day) => ({ ...day, ...(saved.dias.find((item) => item.id === day.id) ?? {}) }));
+  const savedSchedule = space.horarioAtencion;
+  const savedDays = savedSchedule?.dias;
+  return DAYS.map(({ id, key, label }) => {
+    const saved = savedDays?.find((day) => day.id === id);
+    const hours = savedDays
+      ? (saved?.enabled ? { apertura: saved.open, cierre: saved.close } : null)
+      : savedSchedule && Object.prototype.hasOwnProperty.call(savedSchedule, key)
+        ? savedSchedule[key]
+        : HORARIO_POR_DEFECTO[key];
+
+    return {
+      id,
+      label,
+      open: hours?.apertura ?? '',
+      close: hours?.cierre ?? '',
+      enabled: Boolean(hours),
+    };
+  });
 }
 
 function groupedSchedule(days) {
@@ -83,20 +84,47 @@ export default function PublicSpaceDetailPage() {
   const { spaceId } = useParams();
   const space = useMemo(() => getCatalogSpaces().find((item) => String(item.id) === String(spaceId)
     || item.codigo.toLowerCase() === String(spaceId).toLowerCase()), [spaceId]);
+  const [availability, setAvailability] = useState(null);
+
+  useEffect(() => {
+    if (!space || space.estado !== 'disponible') return undefined;
+
+    let active = true;
+    obtenerDisponibilidadSemanal({ espacioId: space.id })
+      .then((data) => {
+        if (!active) return;
+        const todayIndex = data.semana.dias.findIndex((day) => day.esHoy);
+        const freeBlocks = todayIndex < 0
+          ? null
+          : data.filas.filter((row) => row.celdas[todayIndex]?.estado === 'libre').length;
+        setAvailability({ spaceId: space.id, freeBlocks });
+      })
+      .catch(() => {
+        if (active) setAvailability({ spaceId: space.id, freeBlocks: null, error: true });
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [space]);
 
   if (!space) return <Navigate to="/espacios" replace />;
 
   const equipment = getEquipment(space);
   const schedule = groupedSchedule(getSchedule(space));
   const available = space.estado === 'disponible';
-  const freeToday = space.codigo === 'H-304' ? 2 : Math.max(0, Number(space.bloquesLibresHoy ?? 0));
+  const currentAvailability = availability?.spaceId === space.id ? availability : null;
+  const freeToday = currentAvailability?.freeBlocks ?? null;
+  const freeTodayLabel = currentAvailability?.error
+    ? 'No calculado'
+    : freeToday === null ? 'Calculando…' : `${freeToday} bloques`;
   const place = space.ubicacion || `${space.pabellon}${space.piso ? `, piso ${space.piso}` : ''}`;
 
   return (
     <ContentLayout screen="publicSpaces" className={styles.layout} spacing="none">
       <section className={styles.page} aria-labelledby="space-title">
         <nav className={styles.breadcrumb} aria-label="Ruta de navegación">
-          <Link to="/espacios">Catálogo</Link><span aria-hidden="true">/</span>
+          <Link to="/espacios">Buscar espacios</Link><span aria-hidden="true">/</span>
           <span>{CATEGORY_LABELS[space.tipo] ?? 'Espacios'}</span><span aria-hidden="true">/</span>
           <span>{space.codigo}</span>
         </nav>
@@ -151,10 +179,10 @@ export default function PublicSpaceDetailPage() {
               <dl className={styles.facts}>
                 <div><dt>Tipo</dt><dd>{space.tipoLabel.toLocaleLowerCase('es')}</dd></div>
                 <div><dt>Aforo</dt><dd>{space.capacidad} personas</dd></div>
-                <div><dt>Bloque</dt><dd>{space.horarioAtencion?.duracion ?? 60} minutos</dd></div>
-                <div><dt>Libres hoy</dt><dd className={available ? styles.freeCount : ''}>{available ? `${freeToday} bloques` : 'No disponible'}</dd></div>
+                <div><dt>Bloque</dt><dd>{space.horarioAtencion?.duracion ?? DURACION_BLOQUE_POR_DEFECTO} minutos</dd></div>
+                <div><dt>Libres hoy</dt><dd className={available && freeToday !== null ? styles.freeCount : ''}>{available ? freeTodayLabel : 'No disponible'}</dd></div>
               </dl>
-              <ButtonLink to={`/dev/reservar?espacio=${encodeURIComponent(space.id)}`} className={styles.primaryAction}>
+              <ButtonLink to={rutaDisponibilidad(space.id)} className={styles.primaryAction}>
                 Ver disponibilidad
               </ButtonLink>
               <a className={styles.secondaryAction} href={`mailto:reservas@ulima.edu.pe?subject=${encodeURIComponent(`Incidencia en ${space.codigo}`)}&body=${encodeURIComponent(`Quiero reportar una incidencia en ${space.nombre} (${space.codigo}).\n\nDescripción:`)}`}>

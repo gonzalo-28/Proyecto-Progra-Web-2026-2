@@ -1,9 +1,11 @@
 // src/components/features/availability/SpaceSummaryCard.jsx
 
 import { useAvailability } from '../../../context/AvailabilityContext';
+import { Link } from 'react-router-dom';
 import Card from '../../ui/Card/Card';
 import Badge from '../../ui/Badge/Badge';
 import ImagePlaceholder from '../../ui/ImagePlaceholder/ImagePlaceholder';
+import { rutaFichaPublica } from '../../routes/rutasEspacios';
 import styles from './SpaceSummaryCard.module.css';
 
 const ESTADO_ESPACIO = {
@@ -22,8 +24,7 @@ const textoEquipamiento = (equipamiento) =>
  * Ficha resumida del espacio en la columna derecha (mockup 3.4): foto,
  * estado, nombre, ubicación, aforo y equipamiento.
  *
- * "Ver ficha completa →" (mockup 2.6) es de la HU-2. Cuando exista su ruta,
- * se agrega aquí un TextLink hacia ella.
+ * Enlace a la ficha pública de la HU-2.
  */
 export default function SpaceSummaryCard() {
   const { datos } = useAvailability();
@@ -45,6 +46,9 @@ export default function SpaceSummaryCard() {
         <p className={styles.meta}>
           {espacio.equipamiento.length ? textoEquipamiento(espacio.equipamiento) : 'Sin equipamiento registrado'}
         </p>
+        <Link className={styles.detailLink} to={rutaFichaPublica(espacio.id)}>
+          Ver ficha completa →
+        </Link>
       </div>
     </Card>
   );
