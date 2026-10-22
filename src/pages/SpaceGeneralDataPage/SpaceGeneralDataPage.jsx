@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import Button from '../../components/ui/Button/Button';
 import Card from '../../components/ui/Card/Card';
 import Select from '../../components/ui/Select/Select';
-import TextField from '../../components/ui/TextField/Textfield';
+import TextField from '../../components/ui/TextField/TextField';
 import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
 import { getCatalogSpaces, updateCatalogSpace } from '../../services/spaceCatalogService';
 import styles from './SpaceGeneralDataPage.module.css';

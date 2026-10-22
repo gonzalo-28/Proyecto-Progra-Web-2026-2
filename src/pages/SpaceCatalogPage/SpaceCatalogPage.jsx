@@ -6,7 +6,7 @@ import Button from '../../components/ui/Button/Button';
 import ButtonLink from '../../components/ui/Button/ButtonLink';
 import Card from '../../components/ui/Card/Card';
 import Select from '../../components/ui/Select/Select';
-import TextField from '../../components/ui/TextField/Textfield';
+import TextField from '../../components/ui/TextField/TextField';
 import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
 import { getCatalogSpaces, getSpaceCatalogOptions } from '../../services/spaceCatalogService';
 import styles from './SpaceCatalogPage.module.css';
@@ -43,13 +43,12 @@ export default function SpaceCatalogPage() {
     ...options.pavilions.map((option) => ({ ...option, label: `Pabellón: ${option.label}` })),
   ];
 
-  const filteredSpaces = useMemo(() => {
-    const query = search.trim().toLocaleLowerCase('es');
-    return spaces.filter((space) => {
-      const matchesQuery = !query || `${space.codigo} ${space.nombre}`.toLocaleLowerCase('es').includes(query);
-      return matchesQuery && (!type || space.tipo === type) && (!state || space.estado === state) && (!pavilion || space.pabellon === pavilion);
-    });
-  }, [spaces, search, type, state, pavilion]);
+  // Se calcula en cada render (es barato); el React Compiler se encarga de memorizarlo.
+  const query = search.trim().toLocaleLowerCase('es');
+  const filteredSpaces = spaces.filter((space) => {
+    const matchesQuery = !query || `${space.codigo} ${space.nombre}`.toLocaleLowerCase('es').includes(query);
+    return matchesQuery && (!type || space.tipo === type) && (!state || space.estado === state) && (!pavilion || space.pabellon === pavilion);
+  });
 
   const clearFilters = () => {
     setSearch('');
