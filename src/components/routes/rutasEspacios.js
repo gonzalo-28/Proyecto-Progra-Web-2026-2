@@ -8,6 +8,7 @@
 export const RUTAS_ESPACIOS = {
   busqueda: '/espacios',
   disponibilidad: '/espacios/:espacioId',
+  ficha: '/espacios/:spaceId/ficha',
 };
 
 /** Arma '?a=1&b=2' omitiendo valores vacíos; los arreglos se repiten (?tipo=a&tipo=b). */
@@ -26,6 +27,10 @@ function armarQuery(params) {
 /** /espacios/esp_001?semana=2026-09-14&desde=08:00&hasta=10:00 */
 export const rutaDisponibilidad = (espacioId, { semana, desde, hasta } = {}) =>
   `/espacios/${encodeURIComponent(espacioId)}${armarQuery({ semana, desde, hasta })}`;
+
+/** /espacios/esp_001/ficha */
+export const rutaFichaPublica = (spaceId) =>
+  `/espacios/${encodeURIComponent(spaceId)}/ficha`;
 
 /** /espacios?tipo=sala&dia=2026-09-14 (mismos nombres que ya usa la landing) */
 export const rutaBusqueda = (filtros = {}) => `${RUTAS_ESPACIOS.busqueda}${armarQuery(filtros)}`;

@@ -5,6 +5,7 @@ import Card from '../../components/ui/Card/Card';
 import TextField from '../../components/ui/TextField/TextField';
 import Select from '../../components/ui/Select/Select';
 import Badge from '../../components/ui/Badge/Badge';
+import { rutaFichaPublica } from '../../components/routes/rutasEspacios';
 import { getCatalogSpaces, getSpaceCatalogOptions } from '../../services/spaceCatalogService';
 import styles from './PublicSpaceCatalogPage.module.css';
 
@@ -64,7 +65,7 @@ export default function PublicSpaceCatalogPage() {
                   <p>{space.pabellon} · Aforo {space.capacidad}</p>
                   <div className={styles.cardFooter}>
                     <span>{space.tipoLabel}</span>
-                    <Link to={`/espacios/${space.id}`}>Ver espacio <span aria-hidden="true">→</span></Link>
+                    <Link to={rutaFichaPublica(space.id)}>Ver espacio <span aria-hidden="true">→</span></Link>
                   </div>
                 </div>
               </Card>

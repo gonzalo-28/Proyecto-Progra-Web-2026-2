@@ -40,7 +40,13 @@ export const initialDb = {
       pabellon: "Ed. de Ingeniería",
       piso: 3,
       ubicacion: "Edificio de Ingeniería, piso 3",
-      equipamiento: ["Proyector", "30 PCs", "Aire acondicionado"],
+      equipamiento: [
+        { nombre: "Computadoras", cantidad: 30 },
+        { nombre: "Proyector", cantidad: 1 },
+        { nombre: "Pizarra acrílica", cantidad: 2 },
+        { nombre: "Tomacorrientes", cantidad: 16 },
+        { nombre: "Televisor", cantidad: 1 }
+      ],
       estado: "disponible",
       reservasVigentes: 11
     },

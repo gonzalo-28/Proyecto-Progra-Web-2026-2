@@ -10,25 +10,12 @@ import { getCatalogSpaces, saveCatalogSpaceEquipment } from '../../services/spac
 import SpaceStatusModal from '../../components/features/spaces/SpaceStatusModal';
 import styles from './SpaceEquipmentPage.module.css';
 
-const H304_EQUIPMENT = [
-  { id: 'computadoras', nombre: 'Computadoras', cantidad: 30 },
-  { id: 'proyector', nombre: 'Proyector', cantidad: 1 },
-  { id: 'pizarra-acrilica', nombre: 'Pizarra acrílica', cantidad: 2 },
-  { id: 'tomacorrientes', nombre: 'Tomacorrientes', cantidad: 16 },
-  { id: 'televisor', nombre: 'Televisor', cantidad: 1 },
-];
-
 const EQUIPMENT_OPTIONS = [
   'Micrófonos', 'Computadoras', 'Proyector', 'Pizarra acrílica',
   'Tomacorrientes', 'Televisor', 'Parlantes', 'Cable HDMI',
 ];
 
 function normalizeEquipment(space) {
-  if (space.codigo === 'H-304' && Array.isArray(space.equipamiento)
-    && space.equipamiento.every((item) => typeof item === 'string')) {
-    return H304_EQUIPMENT.map((item) => ({ ...item }));
-  }
-
   return (space.equipamiento ?? []).map((item, index) => (
     typeof item === 'string'
       ? { id: `${space.id}-equipo-${index}`, nombre: item, cantidad: 1 }

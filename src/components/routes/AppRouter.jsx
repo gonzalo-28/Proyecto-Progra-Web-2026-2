@@ -3,7 +3,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import RutaProtegida from './RutaProtegida';
 import RutaPublica from './RutaPublica';
-import VistaPendiente from './VistaPendiente';
 import ForbiddenPage from '../../pages/ForbiddenPage/ForbiddenPage';
 import NotFoundPage from '../../pages/NotFoundPage/NotFoundPage';
 import Login from '../../pages/LoginPage/LoginPage';
@@ -31,13 +30,8 @@ import SpaceFormPage from '../../pages/SpaceFormPage/SpaceFormPage';
 import SpaceEquipmentPage from '../../pages/SpaceEquipmentPage/SpaceEquipmentPage';
 import SpaceSchedulePage from '../../pages/SpaceSchedulePage/SpaceSchedulePage';
 import SpaceGeneralDataPage from '../../pages/SpaceGeneralDataPage/SpaceGeneralDataPage';
-import PublicSpaceCatalogPage from '../../pages/PublicSpaceCatalogPage/PublicSpaceCatalogPage';
 import PublicSpaceDetailPage from '../../pages/PublicSpaceDetailPage/PublicSpaceDetailPage';
 import IncidenciasPage from '../../pages/IncidenciasPage/IncidenciasPage';
-
-// Marcadores de vistas que pertenecen a otras HU (los dashboards).
-// Solo existen para que la redirección por rol tenga destino.
-const EstudianteDashboard = () => <VistaPendiente titulo="Panel del estudiante" />;
 
 export const AppRouter = () => {
   return (
@@ -46,12 +40,10 @@ export const AppRouter = () => {
         {/* Landing: abierta a todos. El navbar se adapta si hay sesión. */}
         <Route path="/" element={<Navigate to="/landingpage" replace />} />
         <Route path="/landingpage" element={<LandingPage />} />
-        {/* Catálogo y ficha pública de espacios: disponibles para visitantes y estudiantes. */}
-        <Route path="/espacios" element={<PublicSpaceCatalogPage />} />
-        <Route path="/espacios/:spaceId" element={<PublicSpaceDetailPage />} />
-        {/* HU-3 · Abiertas a todos: el visitante consulta en modo lectura */}
+        {/* HU-3: buscador y calendario públicos; HU-2: ficha pública separada. */}
         <Route path={RUTAS_ESPACIOS.busqueda} element={<SpaceSearchPage />} />
         <Route path={RUTAS_ESPACIOS.disponibilidad} element={<SpaceAvailabilityPage />} />
+        <Route path={RUTAS_ESPACIOS.ficha} element={<PublicSpaceDetailPage />} />
 
         {/* Rutas públicas (solo accesibles sin sesión activa) */}
         <Route element={<RutaPublica />}>
@@ -68,7 +60,6 @@ export const AppRouter = () => {
 
         {/* Rutas privadas exclusivas para estudiantes */}
         <Route element={<RutaProtegida rolesPermitidos={['estudiante']} />}>
-          <Route path="/estudiante/dashboard" element={<EstudianteDashboard />} />
           <Route path="/mis-reservas" element={<MyReservationsPage />} />   {/* ← nueva */}
           <Route path="/mis-reservas/:codigo" element={<ReservationDetailPage />} />
           <Route path="/mis-reservas/:codigo/confirmacion" element={<ReservationConfirmationPage />} />  {/* ← NUEVA */}
