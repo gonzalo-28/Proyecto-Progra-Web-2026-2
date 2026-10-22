@@ -3,6 +3,8 @@
 import { useAvailability } from '../../../context/AvailabilityContext';
 import Card from '../../ui/Card/Card';
 import Badge from '../../ui/Badge/Badge';
+import TextLink from '../../ui/TextLink/TextLink';
+import { rutaFicha } from '../../routes/rutasEspacios';
 import ImagePlaceholder from '../../ui/ImagePlaceholder/ImagePlaceholder';
 import styles from './SpaceSummaryCard.module.css';
 
@@ -22,8 +24,7 @@ const textoEquipamiento = (equipamiento) =>
  * Ficha resumida del espacio en la columna derecha (mockup 3.4): foto,
  * estado, nombre, ubicación, aforo y equipamiento.
  *
- * "Ver ficha completa →" (mockup 2.6) es de la HU-2. Cuando exista su ruta,
- * se agrega aquí un TextLink hacia ella.
+ * "Ver ficha completa →" (mockup 3.4) lleva a la ficha pública de la HU-2 (2.6).
  */
 export default function SpaceSummaryCard() {
   const { datos } = useAvailability();
@@ -45,6 +46,9 @@ export default function SpaceSummaryCard() {
         <p className={styles.meta}>
           {espacio.equipamiento.length ? textoEquipamiento(espacio.equipamiento) : 'Sin equipamiento registrado'}
         </p>
+        <TextLink to={rutaFicha(espacio.id)} className={styles.link}>
+          Ver ficha completa →
+        </TextLink>
       </div>
     </Card>
   );

@@ -26,3 +26,9 @@
   font-size: var(--text-md);
   color: var(--color-muted);
 }
+
+.link {
+  justify-self: start;
+  margin-top: var(--space-1);
+  font-weight: var(--weight-bold);
+}

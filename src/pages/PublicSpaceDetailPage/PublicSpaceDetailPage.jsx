@@ -5,6 +5,7 @@ import ButtonLink from '../../components/ui/Button/ButtonLink';
 import Card from '../../components/ui/Card/Card';
 import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
 import { getCatalogSpaces } from '../../services/spaceCatalogService';
+import { rutaDisponibilidad } from '../../components/routes/rutasEspacios';
 import styles from './PublicSpaceDetailPage.module.css';
 
 const DEFAULT_DAYS = [
@@ -154,7 +155,7 @@ export default function PublicSpaceDetailPage() {
                 <div><dt>Bloque</dt><dd>{space.horarioAtencion?.duracion ?? 60} minutos</dd></div>
                 <div><dt>Libres hoy</dt><dd className={available ? styles.freeCount : ''}>{available ? `${freeToday} bloques` : 'No disponible'}</dd></div>
               </dl>
-              <ButtonLink to={`/dev/reservar?espacio=${encodeURIComponent(space.id)}`} className={styles.primaryAction}>
+              <ButtonLink to={rutaDisponibilidad(space.id)} className={styles.primaryAction}>
                 Ver disponibilidad
               </ButtonLink>
               <a className={styles.secondaryAction} href={`mailto:reservas@ulima.edu.pe?subject=${encodeURIComponent(`Incidencia en ${space.codigo}`)}&body=${encodeURIComponent(`Quiero reportar una incidencia en ${space.nombre} (${space.codigo}).\n\nDescripción:`)}`}>

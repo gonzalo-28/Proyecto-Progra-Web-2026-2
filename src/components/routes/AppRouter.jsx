@@ -19,7 +19,6 @@ import ReservationSearchPage from '../../pages/ReservationSearchPage/Reservation
 import { RUTAS_ENCARGADO } from './rutasEncargado';
 import ReservationDetailPage from '../../pages/ReservationDetailPage/ReservationDetailPage';
 import ReservationConfirmationPage from '../../pages/ReservationConfirmationPage/ReservationConfirmationPage';
-import ReserveTestPage from '../../pages/ReserveTestPage/ReserveTestPage';
 import SpaceAvailabilityPage from '../../pages/SpaceAvailabilityPage/SpaceAvailabilityPage';
 import SpaceSearchPage from '../../pages/SpaceSearchPage/SpaceSearchPage';
 import { RUTAS_ESPACIOS } from './rutasEspacios';
@@ -31,7 +30,6 @@ import SpaceFormPage from '../../pages/SpaceFormPage/SpaceFormPage';
 import SpaceEquipmentPage from '../../pages/SpaceEquipmentPage/SpaceEquipmentPage';
 import SpaceSchedulePage from '../../pages/SpaceSchedulePage/SpaceSchedulePage';
 import SpaceGeneralDataPage from '../../pages/SpaceGeneralDataPage/SpaceGeneralDataPage';
-import PublicSpaceCatalogPage from '../../pages/PublicSpaceCatalogPage/PublicSpaceCatalogPage';
 import PublicSpaceDetailPage from '../../pages/PublicSpaceDetailPage/PublicSpaceDetailPage';
 import IncidenciasPage from '../../pages/IncidenciasPage/IncidenciasPage';
 
@@ -46,9 +44,8 @@ export const AppRouter = () => {
         {/* Landing: abierta a todos. El navbar se adapta si hay sesión. */}
         <Route path="/" element={<Navigate to="/landingpage" replace />} />
         <Route path="/landingpage" element={<LandingPage />} />
-        {/* Catálogo y ficha pública de espacios: disponibles para visitantes y estudiantes. */}
-        <Route path="/espacios" element={<PublicSpaceCatalogPage />} />
-        <Route path="/espacios/:spaceId" element={<PublicSpaceDetailPage />} />
+        {/* HU-2 · Ficha pública del espacio (2.6). Va antes que el calendario por ser más específica. */}
+        <Route path={RUTAS_ESPACIOS.ficha} element={<PublicSpaceDetailPage />} />
         {/* HU-3 · Abiertas a todos: el visitante consulta en modo lectura */}
         <Route path={RUTAS_ESPACIOS.busqueda} element={<SpaceSearchPage />} />
         <Route path={RUTAS_ESPACIOS.disponibilidad} element={<SpaceAvailabilityPage />} />
@@ -73,7 +70,6 @@ export const AppRouter = () => {
           <Route path="/mis-reservas/:codigo" element={<ReservationDetailPage />} />
           <Route path="/mis-reservas/:codigo/confirmacion" element={<ReservationConfirmationPage />} />  {/* ← NUEVA */}
           <Route path="/mis-incidencias" element={<IncidenciasPage />} />
-          <Route path="/dev/reservar" element={<ReserveTestPage />} />
         </Route>
 
         {/* Rutas privadas exclusivas para encargados */}

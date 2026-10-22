@@ -381,3 +381,22 @@ export async function obtenerEspaciosSimilares({
     )
     .slice(0, limite);
 }
+/**
+ * Bloques libres de UN espacio en un día, con la misma regla del calendario
+ * (horario de atención, reservas, bloqueos y bloques ya pasados).
+ * Pensado para "Libres hoy" de la ficha pública (HU-2) y otras vistas.
+ *
+ * @param {string} espacioId
+ * @param {string} [fecha] 'YYYY-MM-DD' (por defecto, hoy)
+ * @returns {Promise<number>}
+ */
+export async function contarBloquesLibresDelDia(espacioId, fecha = toISODate(), ahora = new Date()) {
+  await simularLatencia(150);
+  const base = leerBase();
+  const espacio = base.espacios.find((e) => e.id === espacioId);
+  if (!espacio) return 0;
+  const ctx = crearContexto(base, { ahora });
+  return calcularDia(espacio, fecha, base.bloques, ctx).filter(
+    (celda) => celda.estado === ESTADOS_BLOQUE.libre
+  ).length;
+}
