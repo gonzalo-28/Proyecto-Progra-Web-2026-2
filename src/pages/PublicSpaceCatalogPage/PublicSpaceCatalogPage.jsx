@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
 import Card from '../../components/ui/Card/Card';
-import TextField from '../../components/ui/TextField/Textfield';
+import TextField from '../../components/ui/TextField/TextField';
 import Select from '../../components/ui/Select/Select';
 import Badge from '../../components/ui/Badge/Badge';
 import { getCatalogSpaces, getSpaceCatalogOptions } from '../../services/spaceCatalogService';

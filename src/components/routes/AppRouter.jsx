@@ -33,7 +33,7 @@ import SpaceSchedulePage from '../../pages/SpaceSchedulePage/SpaceSchedulePage';
 import SpaceGeneralDataPage from '../../pages/SpaceGeneralDataPage/SpaceGeneralDataPage';
 import PublicSpaceCatalogPage from '../../pages/PublicSpaceCatalogPage/PublicSpaceCatalogPage';
 import PublicSpaceDetailPage from '../../pages/PublicSpaceDetailPage/PublicSpaceDetailPage';
-import IncidenciasPage from '../../pages/InicidenciasPage/IncidenciasPage';
+import IncidenciasPage from '../../pages/IncidenciasPage/IncidenciasPage';
 
 // Marcadores de vistas que pertenecen a otras HU (los dashboards).
 // Solo existen para que la redirección por rol tenga destino.
