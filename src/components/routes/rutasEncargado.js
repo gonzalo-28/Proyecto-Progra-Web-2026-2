@@ -9,6 +9,7 @@ export const RUTAS_ENCARGADO = {
   bandeja: '/encargado/bandeja', // 5.1 · 5.2 · 5.3 Bandeja del día
   bloqueos: '/encargado/bloqueos', // 5.4 Nuevo bloqueo por mantenimiento
   busqueda: '/encargado/reservas', // 5.5 Búsqueda de reservas
+  incidencias: '/encargado/incidencias', // HU-6 · Bandeja de incidencias
 };
 
 /**

@@ -35,7 +35,7 @@ export const LINKS_BY_ROLE = {
     { to: '/encargado/espacios', label: 'Espacios' },
     { to: RUTAS_ENCARGADO.bandeja, label: 'Bandeja del día' },
     { to: RUTAS_ENCARGADO.bloqueos, label: 'Bloqueos' },
-    { to: '/encargado/incidencias', label: 'Incidencias' },
+    { to: RUTAS_ENCARGADO.incidencias, label: 'Incidencias' },
   ],
 };
 

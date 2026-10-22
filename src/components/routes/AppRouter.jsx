@@ -33,6 +33,7 @@ import SpaceSchedulePage from '../../pages/SpaceSchedulePage/SpaceSchedulePage';
 import SpaceGeneralDataPage from '../../pages/SpaceGeneralDataPage/SpaceGeneralDataPage';
 import PublicSpaceCatalogPage from '../../pages/PublicSpaceCatalogPage/PublicSpaceCatalogPage';
 import PublicSpaceDetailPage from '../../pages/PublicSpaceDetailPage/PublicSpaceDetailPage';
+import IncidenciasPage from '../../pages/InicidenciasPage/IncidenciasPage';
 
 // Marcadores de vistas que pertenecen a otras HU (los dashboards).
 // Solo existen para que la redirección por rol tenga destino.
@@ -71,6 +72,7 @@ export const AppRouter = () => {
           <Route path="/mis-reservas" element={<MyReservationsPage />} />   {/* ← nueva */}
           <Route path="/mis-reservas/:codigo" element={<ReservationDetailPage />} />
           <Route path="/mis-reservas/:codigo/confirmacion" element={<ReservationConfirmationPage />} />  {/* ← NUEVA */}
+          <Route path="/mis-incidencias" element={<IncidenciasPage />} />
           <Route path="/dev/reservar" element={<ReserveTestPage />} />
         </Route>
 
@@ -87,6 +89,7 @@ export const AppRouter = () => {
           <Route path={RUTAS_ENCARGADO.bandeja} element={<DailyTrayPage />} />
           <Route path={RUTAS_ENCARGADO.bloqueos} element={<NewBlockPage />} />
           <Route path={RUTAS_ENCARGADO.busqueda} element={<ReservationSearchPage />} />
+          <Route path={RUTAS_ENCARGADO.incidencias} element={<IncidenciasPage />} />
           {/* Ruta antigua: se mantiene para no romper enlaces guardados */}
           <Route
             path="/encargado/dashboard"
