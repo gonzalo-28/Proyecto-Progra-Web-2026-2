@@ -1,6 +1,11 @@
 /* src/pages/SpaceAvailabilityPage/SpaceAvailabilityPage.module.css */
 /* Solo composición: el aspecto de cada pieza vive en su propio módulo. */
 
+/* Mismo ancho que el navbar y el footer (1440px), igual que el buscador. */
+div.page {
+  max-width: 1440px;
+}
+
 .root {
   display: grid;
   gap: var(--space-6);

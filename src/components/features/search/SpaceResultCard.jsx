@@ -13,8 +13,9 @@ import styles from './SpaceResultCard.module.css';
  * Props:
  *  - espacio: resultado de buscarEspacios (vistaEspacio + proximoLibre)
  *  - to:      ruta del calendario del espacio con el día y la franja buscados
+ *  - fichaTo: ruta de la ficha pública del espacio (HU-2)
  */
-export default function SpaceResultCard({ espacio, to }) {
+export default function SpaceResultCard({ espacio, to, fichaTo }) {
   const meta = [espacio.codigo, espacio.pabellon, `Aforo ${espacio.capacidad}`].filter(Boolean).join(' · ');
   const equipos = espacio.equipamiento.map((item) => item.nombre).join(' · ');
   // La última palabra suele ser el código ("A-410"): no se corta en el guion.
@@ -28,7 +29,7 @@ export default function SpaceResultCard({ espacio, to }) {
 
       <div className={styles.body}>
         <h2 className={styles.name}>
-          <Link to={to} className={styles.nameLink}>
+          <Link to={fichaTo} className={styles.nameLink} title="Ver ficha del espacio">
             {inicioNombre}
             <span className={styles.noWrap}>{finNombre}</span>
           </Link>
