@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
 import PageHeader from '../../components/ui/PageHeader/PageHeader';
-import TextField from '../../components/ui/TextField/Textfield';
+import TextField from '../../components/ui/TextField/TextField';
 import TextArea from '../../components/ui/TextArea/TextArea';
 import Select from '../../components/ui/Select/Select';
 import Button from '../../components/ui/Button/Button';
