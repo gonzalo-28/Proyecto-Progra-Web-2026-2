@@ -126,10 +126,15 @@ export function mensajeSinResultados(filtros, opciones) {
     (filtros.desde || filtros.hasta) && `entre ${filtros.desde || 'la apertura'} y ${filtros.hasta || 'el cierre'}`,
   ].filter(Boolean);
 
-  const sugerencia =
-    filtros.aforoMin > 0
-      ? 'Prueba reducir el aforo mínimo o cambiar el tipo de espacio.'
-      : 'Prueba con otro día, otra franja horaria o menos filtros.';
+  // La sugerencia nombra lo que el usuario sí filtró, para no mandarlo a
+  // cambiar algo que no tocó (p. ej. el aforo cuando el problema es la hora).
+  const cambios = [
+    (filtros.desde || filtros.hasta) && 'ampliar la franja horaria',
+    filtros.aforoMin > 0 && 'reducir el aforo mínimo',
+    filtros.tipos.length > 0 && 'cambiar el tipo de espacio',
+    'elegir otro día',
+  ].filter(Boolean);
+  const sugerencia = `Prueba ${cambios.slice(0, -1).join(', ')}${cambios.length > 1 ? ' o ' : ''}${cambios.at(-1)}.`;
 
   return { texto: `No hay ${sujeto} ${condiciones.join(' ')}.`, sugerencia };
 }

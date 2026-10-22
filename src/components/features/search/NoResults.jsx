@@ -7,7 +7,8 @@ import styles from './NoResults.module.css';
 
 /**
  * "Ningún espacio cumple estos filtros" (mockup 3.2). El texto se arma con
- * los filtros reales y ofrece la salida más probable: quitar el aforo.
+ * los filtros reales y ofrece las salidas más probables: todo el día
+ * (si hay franja horaria) y quitar el aforo.
  */
 export default function NoResults() {
   const { filtros, opciones, quitarFiltro, limpiarTodo } = useSpaceSearch();
@@ -26,6 +27,11 @@ export default function NoResults() {
       </p>
 
       <div className={styles.actions}>
+        {(filtros.desde || filtros.hasta) && (
+          <Button variant="outline" onClick={() => quitarFiltro({ desde: '', hasta: '' })}>
+            Ver todo el día
+          </Button>
+        )}
         {filtros.aforoMin > 0 && (
           <Button variant="outline" onClick={() => quitarFiltro({ aforoMin: 0 })}>
             Quitar el aforo
