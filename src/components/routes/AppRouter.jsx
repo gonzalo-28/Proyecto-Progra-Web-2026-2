@@ -18,7 +18,6 @@ import ReservationSearchPage from '../../pages/ReservationSearchPage/Reservation
 import { RUTAS_ENCARGADO } from './rutasEncargado';
 import ReservationDetailPage from '../../pages/ReservationDetailPage/ReservationDetailPage';
 import ReservationConfirmationPage from '../../pages/ReservationConfirmationPage/ReservationConfirmationPage';
-import ReserveTestPage from '../../pages/ReserveTestPage/ReserveTestPage';
 import SpaceAvailabilityPage from '../../pages/SpaceAvailabilityPage/SpaceAvailabilityPage';
 import SpaceSearchPage from '../../pages/SpaceSearchPage/SpaceSearchPage';
 import { RUTAS_ESPACIOS } from './rutasEspacios';
@@ -64,7 +63,6 @@ export const AppRouter = () => {
           <Route path="/mis-reservas/:codigo" element={<ReservationDetailPage />} />
           <Route path="/mis-reservas/:codigo/confirmacion" element={<ReservationConfirmationPage />} />  {/* ← NUEVA */}
           <Route path="/mis-incidencias" element={<IncidenciasPage />} />
-          <Route path="/dev/reservar" element={<ReserveTestPage />} />
         </Route>
 
         {/* Rutas privadas exclusivas para encargados */}
