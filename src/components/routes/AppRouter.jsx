@@ -21,9 +21,6 @@ import ReservationConfirmationPage from '../../pages/ReservationConfirmationPage
 import SpaceAvailabilityPage from '../../pages/SpaceAvailabilityPage/SpaceAvailabilityPage';
 import SpaceSearchPage from '../../pages/SpaceSearchPage/SpaceSearchPage';
 import { RUTAS_ESPACIOS } from './rutasEspacios';
-
-// Marcador de una vista que pertenece a otra HU (el dashboard del estudiante).
-// Solo existe para que la redirección por rol tenga destino.
 import SpaceCatalogPage from '../../pages/SpaceCatalogPage/SpaceCatalogPage';
 import SpaceFormPage from '../../pages/SpaceFormPage/SpaceFormPage';
 import SpaceEquipmentPage from '../../pages/SpaceEquipmentPage/SpaceEquipmentPage';
@@ -59,9 +56,9 @@ export const AppRouter = () => {
 
         {/* Rutas privadas exclusivas para estudiantes */}
         <Route element={<RutaProtegida rolesPermitidos={['estudiante']} />}>
-          <Route path="/mis-reservas" element={<MyReservationsPage />} />   {/* ← nueva */}
+          <Route path="/mis-reservas" element={<MyReservationsPage />} />
           <Route path="/mis-reservas/:codigo" element={<ReservationDetailPage />} />
-          <Route path="/mis-reservas/:codigo/confirmacion" element={<ReservationConfirmationPage />} />  {/* ← NUEVA */}
+          <Route path="/mis-reservas/:codigo/confirmacion" element={<ReservationConfirmationPage />} />
           <Route path="/mis-incidencias" element={<IncidenciasPage />} />
         </Route>
 
