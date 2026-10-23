@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
 import PageHeader from '../../components/ui/PageHeader/PageHeader';
@@ -28,12 +29,16 @@ const textoTipo = (tipo) => TIPOS_INCIDENCIA.find((t) => t.value === tipo)?.labe
 const FORM_INICIAL = { espacioId: '', tipo: '', descripcion: '', equipamientoAfectado: '', detectadaEn: ahoraLocal() };
 
 export default function IncidenciasPage() {
+  const [searchParams] = useSearchParams();
   const { usuario } = useAuth();
   const esEncargado = usuario.rol === 'encargado';
   const [error, setError] = useState(''); // errores de las acciones (reportar, comentar, cambiar estado)
   const [aviso, setAviso] = useState('');
   const [version, setVersion] = useState(0);
-  const [form, setForm] = useState(FORM_INICIAL);
+  const [form, setForm] = useState(() => ({
+    ...FORM_INICIAL,
+    espacioId: searchParams.get('espacioId') ?? '',
+  }));
   const [errores, setErrores] = useState({});
   const [filtros, setFiltros] = useState({ busqueda: '', espacioId: '', tipo: '', estado: '' });
   const [comentarios, setComentarios] = useState({});

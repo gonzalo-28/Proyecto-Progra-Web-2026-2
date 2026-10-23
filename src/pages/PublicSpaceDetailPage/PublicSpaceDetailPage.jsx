@@ -7,6 +7,7 @@ import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
 import { rutaDisponibilidad } from '../../components/routes/rutasEspacios';
 import { obtenerDisponibilidadSemanal } from '../../services/availabilityService';
 import { getCatalogSpaces } from '../../services/spaceCatalogService';
+import { formatDate } from '../../utils/dates';
 import { HORARIO_POR_DEFECTO, normalizarEquipamiento } from '../../utils/disponibilidad';
 import styles from './PublicSpaceDetailPage.module.css';
 
@@ -176,18 +177,24 @@ export default function PublicSpaceDetailPage() {
               </Badge>
               <h1 id="space-title">{space.nombre}</h1>
               <p className={styles.location}>Código {space.codigo} · {place}</p>
+              {space.estado === 'mantenimiento' && (
+                <p className={styles.statusNotice}>
+                  {space.motivoEstado || 'Este espacio está en mantenimiento.'}
+                  {space.fechaRestablecimiento && ` · Restablecimiento estimado: ${formatDate(space.fechaRestablecimiento)}.`}
+                </p>
+              )}
               <dl className={styles.facts}>
                 <div><dt>Tipo</dt><dd>{space.tipoLabel.toLocaleLowerCase('es')}</dd></div>
                 <div><dt>Aforo</dt><dd>{space.capacidad} personas</dd></div>
-                <div><dt>Bloque</dt><dd>{space.horarioAtencion?.duracion ?? DURACION_BLOQUE_POR_DEFECTO} minutos</dd></div>
+                <div><dt>Bloque</dt><dd>{DURACION_BLOQUE_POR_DEFECTO} minutos</dd></div>
                 <div><dt>Libres hoy</dt><dd className={available && freeToday !== null ? styles.freeCount : ''}>{available ? freeTodayLabel : 'No disponible'}</dd></div>
               </dl>
               <ButtonLink to={rutaDisponibilidad(space.id)} className={styles.primaryAction}>
                 Ver disponibilidad
               </ButtonLink>
-              <a className={styles.secondaryAction} href={`mailto:reservas@ulima.edu.pe?subject=${encodeURIComponent(`Incidencia en ${space.codigo}`)}&body=${encodeURIComponent(`Quiero reportar una incidencia en ${space.nombre} (${space.codigo}).\n\nDescripción:`)}`}>
+              <Link className={styles.secondaryAction} to={`/mis-incidencias?espacioId=${encodeURIComponent(space.id)}`}>
                 Reportar incidencia
-              </a>
+              </Link>
             </Card>
 
             <Card className={styles.mapCard} padding="md">

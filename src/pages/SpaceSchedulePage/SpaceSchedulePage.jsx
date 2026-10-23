@@ -18,14 +18,14 @@ const DAYS = [
   { id: 'domingo', label: 'Domingo', open: '', close: '', enabled: false },
 ];
 
-const BLOCK_LENGTHS = [30, 60, 90, 120];
+const BLOCK_LENGTHS = [60];
 
 function getDefaultSchedule(space) {
   const saved = space.horarioAtencion;
   if (saved?.dias?.length) {
     return {
       dias: DAYS.map((day) => ({ ...day, ...(saved.dias.find((item) => item.id === day.id) ?? {}) })),
-      duracion: Number(saved.duracion) || 60,
+      duracion: 60,
     };
   }
   return { dias: DAYS.map((day) => ({ ...day })), duracion: 60 };
@@ -78,11 +78,16 @@ export default function SpaceSchedulePage() {
 
   const saveSchedule = () => {
     const invalid = days.some((day) => day.enabled && (
-      !day.open || !day.close || toMinutes(day.close) <= toMinutes(day.open)
+      !day.open || !day.close
+      || toMinutes(day.close) <= toMinutes(day.open)
+      || toMinutes(day.open) < 7 * 60
+      || toMinutes(day.close) > 22 * 60
+      || toMinutes(day.open) % 60 !== 0
+      || toMinutes(day.close) % 60 !== 0
     ));
     if (invalid) {
       setSaveError(true);
-      setNotice('Revisa el horario: la hora de cierre debe ser posterior a la apertura.');
+      setNotice('Usa horas en punto entre 07:00 y 22:00, y verifica que el cierre sea posterior a la apertura.');
       return;
     }
 
@@ -152,6 +157,9 @@ export default function SpaceSchedulePage() {
                         <TextField
                           aria-label={`Apertura ${day.label}`}
                           type="time"
+                          min="07:00"
+                          max="22:00"
+                          step="3600"
                           value={day.enabled ? day.open : ''}
                           disabled={!day.enabled}
                           onChange={(event) => updateDay(day.id, { open: event.target.value })}
@@ -161,6 +169,9 @@ export default function SpaceSchedulePage() {
                         <TextField
                           aria-label={`Cierre ${day.label}`}
                           type="time"
+                          min="07:00"
+                          max="22:00"
+                          step="3600"
                           value={day.enabled ? day.close : ''}
                           disabled={!day.enabled}
                           onChange={(event) => updateDay(day.id, { close: event.target.value })}

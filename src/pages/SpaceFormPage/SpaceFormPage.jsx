@@ -65,6 +65,7 @@ export default function SpaceFormPage() {
   const [submitted, setSubmitted] = useState(false);
   const [photoError, setPhotoError] = useState('');
   const [draftNotice, setDraftNotice] = useState('');
+  const [saveError, setSaveError] = useState('');
   // El estado inicial sale de existingSpace. Si se agrega una ruta de edición
   // (/encargado/espacios/:spaceId/editar), se monta con key={spaceId} para que
   // el formulario se reinicie al cambiar de espacio.
@@ -136,9 +137,16 @@ export default function SpaceFormPage() {
       descripcion: form.descripcion.trim(),
       fotografias: photos.filter((photo) => photo.preserve || !photo.placeholder).map(({ name }) => name),
     };
-    if (isEditing) updateCatalogSpace(existingSpace.id, changes);
-    else createCatalogSpace({ ...changes, equipamiento: [], estado: 'disponible', reservasVigentes: 0 });
-    navigate('/encargado/espacios');
+    setSaveError('');
+    try {
+      if (isEditing) updateCatalogSpace(existingSpace.id, changes);
+      else createCatalogSpace({ ...changes, equipamiento: [], estado: 'disponible', reservasVigentes: 0 });
+      navigate('/encargado/espacios', {
+        state: { notice: isEditing ? 'Cambios del espacio guardados correctamente.' : 'Espacio creado correctamente.' },
+      });
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'No se pudieron guardar los cambios. Inténtalo nuevamente.');
+    }
   };
 
   if (isEditing && !existingSpace) {
@@ -158,6 +166,7 @@ export default function SpaceFormPage() {
         <h1 id="space-form-title" className={styles.title}>{isEditing ? 'Editar espacio' : 'Nuevo espacio'}</h1>
 
         {draftNotice && <p className={styles.draftNotice} role="status">{draftNotice}</p>}
+        {saveError && <div className={styles.errorSummary} role="alert">{saveError}</div>}
         {submitted && errorCount > 0 && (
           <div className={styles.errorSummary} role="alert">
             <strong>Revisa {errorCount} {errorCount === 1 ? 'campo' : 'campos'}.</strong>{' '}
