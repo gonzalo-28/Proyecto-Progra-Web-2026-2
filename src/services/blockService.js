@@ -9,7 +9,7 @@
 // Al crear un bloqueo se cancelan, en la MISMA escritura, las reservas
 // confirmadas que caen dentro (sin inasistencia y con el motivo visible).
 
-import { getStoredData, saveStoredData } from './storageService';
+import { getStoredData, guardarOFallar } from './storageService';
 import {
   conEvento,
   crearError,
@@ -208,7 +208,7 @@ export const crearBloqueo = async ({
   );
 
   bloqueo.reservasCanceladas = afectadas.size;
-  saveStoredData({ ...db, reservas, bloqueos: [...(db.bloqueos ?? []), bloqueo] });
+  guardarOFallar({ ...db, reservas, bloqueos: [...(db.bloqueos ?? []), bloqueo] });
 
   return { bloqueo, canceladas: afectadas.size };
 };
@@ -230,5 +230,5 @@ export const eliminarBloqueo = async (bloqueoId, { encargadoId }) => {
   if (encargado.sedeAsignadaId && espacio?.sedeId !== encargado.sedeAsignadaId) {
     throw crearError('Ese bloqueo no pertenece a tu sede.', { code: 'SIN_PERMISO' });
   }
-  saveStoredData({ ...db, bloqueos: db.bloqueos.filter((b) => b.id !== bloqueoId) });
+  guardarOFallar({ ...db, bloqueos: db.bloqueos.filter((b) => b.id !== bloqueoId) });
 };

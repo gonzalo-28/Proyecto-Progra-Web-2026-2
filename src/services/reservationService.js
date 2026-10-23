@@ -13,7 +13,7 @@
 //   - campos:  { campo: mensaje } cuando es un error de formulario
 //   - detalle: datos extra para el modal (p. ej. la reserva con la que se solapa)
 
-import { getStoredData, saveStoredData } from './storageService';
+import { getStoredData, guardarOFallar } from './storageService';
 import { isBlank, isInstitutionalEmail } from '../utils/validators';
 import {
     DIAS_BLOQUEO_POR_INASISTENCIAS,
@@ -95,7 +95,7 @@ const leerBase = () => {
 };
 
 const guardarReservas = (reservas) => {
-    saveStoredData({ ...getStoredData(), reservas });
+    guardarOFallar({ ...getStoredData(), reservas }); // lanza ERROR_GUARDADO si el navegador no guarda
 };
 
 /* ------------------------------ Enriquecimiento --------------------------- */

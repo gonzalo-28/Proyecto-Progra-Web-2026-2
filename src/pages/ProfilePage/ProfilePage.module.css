@@ -19,6 +19,26 @@
   gap: var(--space-4);
 }
 
+/* Esqueleto de "Uso de la semana" mientras llega el cálculo. */
+.usoCargando {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.usoCargando > span[aria-hidden='true'] {
+  display: block;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 @media (max-width: 860px) {
   .grid {
     grid-template-columns: minmax(0, 1fr);

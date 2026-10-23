@@ -1,0 +1,52 @@
+/* src/pages/AyudaPage/AyudaPage.module.css */
+/* Solo composición: título, preguntas desplegables y tarjeta de contacto. */
+
+.title {
+  margin-bottom: var(--space-3);
+  font-size: var(--text-2xl);
+}
+
+.intro {
+  margin-bottom: var(--space-6);
+  color: var(--color-muted);
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.faq {
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-3) 0;
+}
+
+.item:last-child {
+  border-bottom: 0;
+}
+
+.summary {
+  cursor: pointer;
+  font-weight: var(--weight-semibold);
+}
+
+.answer {
+  margin-top: var(--space-2);
+  color: var(--color-muted);
+  line-height: var(--leading-normal);
+}
+
+.contact {
+  line-height: var(--leading-normal);
+}
+
+.contact a {
+  color: var(--color-primary);
+  font-weight: var(--weight-semibold);
+}

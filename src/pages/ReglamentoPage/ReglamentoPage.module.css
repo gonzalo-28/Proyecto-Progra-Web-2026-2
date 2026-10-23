@@ -1,0 +1,33 @@
+/* src/pages/ReglamentoPage/ReglamentoPage.module.css */
+/* Solo composición: título, introducción y tarjetas de reglas. */
+
+.title {
+  margin-bottom: var(--space-3);
+  font-size: var(--text-2xl);
+}
+
+.intro {
+  max-width: 60ch;
+  margin-bottom: var(--space-6);
+  color: var(--color-muted);
+  line-height: var(--leading-normal);
+}
+
+.intro a {
+  color: var(--color-primary);
+  font-weight: var(--weight-semibold);
+}
+
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-left: var(--space-5);
+  line-height: var(--leading-normal);
+}

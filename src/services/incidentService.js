@@ -1,6 +1,6 @@
 // Servicio de incidencias HU-6. Mantiene la persistencia local detrás de
 // storageService para poder sustituirla por la API sin cambiar las vistas.
-import { getStoredData, saveStoredData } from './storageService';
+import { getStoredData, guardarOFallar } from './storageService';
 
 export const TIPOS_INCIDENCIA = [
   { value: 'equipamiento', label: 'Equipamiento' },
@@ -21,7 +21,7 @@ const leer = () => {
   const db = getStoredData();
   return { ...db, incidencias: db.incidencias ?? [], espacios: db.espacios ?? [], usuarios: db.usuarios ?? [] };
 };
-const guardar = (db) => saveStoredData(db);
+const guardar = (db) => guardarOFallar(db);
 const texto = (v) => String(v ?? '').trim();
 const crearError = (message, campos = {}) => Object.assign(new Error(message), { campos });
 const ahoraISO = () => new Date().toISOString();

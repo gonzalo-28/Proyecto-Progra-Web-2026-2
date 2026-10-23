@@ -43,5 +43,20 @@ export const saveStoredData = (db) => {
   }
 };
 
+export const MENSAJE_ERROR_GUARDADO =
+  'No pudimos guardar los cambios: el navegador no tiene espacio o bloquea el almacenamiento. Inténtalo de nuevo.';
+
+/**
+ * Guarda la base y, si el navegador no puede persistirla, lanza un Error con
+ * code 'ERROR_GUARDADO'. Es lo que deben usar los servicios en cada escritura
+ * iniciada por el usuario, para que la interfaz nunca trate como exitoso un
+ * cambio que no se guardó.
+ */
+export const guardarOFallar = (db, mensaje = MENSAJE_ERROR_GUARDADO) => {
+  if (!saveStoredData(db)) {
+    throw Object.assign(new Error(mensaje), { code: 'ERROR_GUARDADO' });
+  }
+};
+
 /** Vuelve a los datos semilla (útil para pruebas). */
 export const resetStoredData = () => saveStoredData(clonarSemilla());

@@ -11,7 +11,7 @@
 //   - campos:  { campo: mensaje } cuando el error es de validación de formulario
 //   - intentosRestantes / bloqueadoHasta: solo en errores de login
 
-import { getStoredData, saveStoredData } from './storageService';
+import { getStoredData, guardarOFallar, MENSAJE_ERROR_GUARDADO } from './storageService';
 import {
   INSTITUTIONAL_DOMAIN,
   isBlank,
@@ -69,11 +69,21 @@ const leerJSON = (storage, key, fallback) => {
   }
 };
 
+/** Devuelve true si guardó. Los datos de apoyo (contador de intentos) toleran el fallo. */
 const escribirJSON = (storage, key, value) => {
   try {
     storage.setItem(key, JSON.stringify(value));
+    return true;
   } catch (error) {
     console.error(`No se pudo guardar "${key}":`, error);
+    return false;
+  }
+};
+
+/** Igual que escribirJSON, pero lanza ERROR_GUARDADO si no se pudo guardar. */
+const escribirJSONOFallar = (storage, key, value) => {
+  if (!escribirJSON(storage, key, value)) {
+    throw crearError(MENSAJE_ERROR_GUARDADO, { code: 'ERROR_GUARDADO' });
   }
 };
 
@@ -96,7 +106,7 @@ const generarToken = () =>
 const obtenerUsuarios = () => getStoredData().usuarios ?? [];
 
 const guardarUsuarios = (usuarios) => {
-  saveStoredData({ ...getStoredData(), usuarios });
+  guardarOFallar({ ...getStoredData(), usuarios });
 };
 
 const buscarPorCorreo = (correo) =>
@@ -112,7 +122,7 @@ const buscarPorId = (id) =>
 const guardarSesion = (id, recordar) => {
   borrar(localStorage, SESSION_KEY);
   borrar(sessionStorage, SESSION_KEY);
-  escribirJSON(recordar ? localStorage : sessionStorage, SESSION_KEY, { id });
+  escribirJSONOFallar(recordar ? localStorage : sessionStorage, SESSION_KEY, { id });
 };
 
 const limpiarSesion = () => {
@@ -383,7 +393,7 @@ export const solicitarRecuperacion = async (correo) => {
   const token = generarToken();
   const expiraEn = ahora + RECUPERACION_TTL_MS;
   vigentes[token] = { correo: correoNormalizado, expiraEn };
-  escribirTokens(vigentes);
+  escribirJSONOFallar(localStorage, RECUPERACION_KEY, vigentes); // sin token guardado, el enlace no serviría
 
   return { ...respuesta, token, expiraEn };
 };

@@ -74,7 +74,7 @@ Usuarios de prueba (todos con la contraseña **`Aa1234`**):
 
 | Quién | Rutas |
 |---|---|
-| Visitante | `/landingpage`, `/espacios` (buscador), `/espacios/:id` (calendario semanal), `/espacios/:id/ficha` (ficha pública), `/login`, `/registro`, `/registro/encargado`, `/recuperar` |
+| Visitante | `/landingpage`, `/espacios` (buscador), `/espacios/:id` (calendario semanal), `/espacios/:id/ficha` (ficha pública), `/login`, `/registro`, `/registro/encargado`, `/recuperar`, `/reglamento`, `/ayuda` (estas dos también las ve cualquier usuario con sesión) |
 | Estudiante | `/espacios` (inicio), `/mis-reservas`, `/mis-reservas/:codigo`, `/mis-incidencias`, `/perfil` |
 | Encargado | `/encargado/bandeja` (inicio), `/encargado/bloqueos`, `/encargado/reservas`, `/encargado/espacios`, `/encargado/incidencias`, `/perfil` |
 

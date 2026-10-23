@@ -28,6 +28,8 @@ import SpaceSchedulePage from '../../pages/SpaceSchedulePage/SpaceSchedulePage';
 import SpaceGeneralDataPage from '../../pages/SpaceGeneralDataPage/SpaceGeneralDataPage';
 import PublicSpaceDetailPage from '../../pages/PublicSpaceDetailPage/PublicSpaceDetailPage';
 import IncidenciasPage from '../../pages/IncidenciasPage/IncidenciasPage';
+import ReglamentoPage from '../../pages/ReglamentoPage/ReglamentoPage';
+import AyudaPage from '../../pages/AyudaPage/AyudaPage';
 
 export const AppRouter = () => {
   return (
@@ -40,6 +42,9 @@ export const AppRouter = () => {
         <Route path={RUTAS_ESPACIOS.busqueda} element={<SpaceSearchPage />} />
         <Route path={RUTAS_ESPACIOS.disponibilidad} element={<SpaceAvailabilityPage />} />
         <Route path={RUTAS_ESPACIOS.ficha} element={<PublicSpaceDetailPage />} />
+        {/* Páginas informativas: abiertas a todos, con o sin sesión. */}
+        <Route path="/reglamento" element={<ReglamentoPage />} />
+        <Route path="/ayuda" element={<AyudaPage />} />
 
         {/* Rutas públicas (solo accesibles sin sesión activa) */}
         <Route element={<RutaPublica />}>

@@ -53,7 +53,6 @@ const FOOTER_MANAGER = {
   section: 'Panel de encargado',
   showAddress: false,
   links: [
-    { label: 'Manual de operación', to: '/manual-operacion' },
     { label: 'soporte.reservas@ulima.edu.pe', href: 'mailto:soporte.reservas@ulima.edu.pe' },
   ],
 };
@@ -153,6 +152,12 @@ export const SCREEN_PRESETS = {
   manager: {
     navbar: { showCampusSelector: false, actions: [] },
     footer: FOOTER_MANAGER,
+  },
+
+  // Páginas informativas (Reglamento y Ayuda): campus no, Ingresar + Crear cuenta si es visitante
+  info: {
+    navbar: { showCampusSelector: false, actions: ['login', 'register'] },
+    footer: FOOTER_APP,
   },
 
   // Fallback para pantallas que aún no tienen mockup

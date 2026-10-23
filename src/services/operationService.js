@@ -18,7 +18,7 @@
 // Las validaciones se repiten aquí aunque la interfaz ya oculte los botones
 // ("las validaciones se repiten en el servidor").
 
-import { getStoredData, saveStoredData } from './storageService';
+import { getStoredData, guardarOFallar } from './storageService';
 import {
   conEvento,
   crearError,
@@ -124,7 +124,7 @@ function obtenerReservaOperable(db, reservaId, encargadoId) {
 }
 
 function guardarReserva(db, actualizada) {
-  saveStoredData({
+  guardarOFallar({
     ...db,
     reservas: db.reservas.map((r) => (r.id === actualizada.id ? actualizada : r)),
   });
