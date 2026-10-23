@@ -2,7 +2,10 @@ import { useState } from 'react';
 import Button from '../../ui/Button/Button';
 import Modal from '../../ui/Modal/Modal';
 import TextArea from '../../ui/TextArea/TextArea';
-import { updateCatalogSpaceStatus } from '../../../services/spaceCatalogService';
+import TextField from '../../ui/TextField/TextField';
+import { useAuth } from '../../../context/AuthContext';
+import { addDays, toISODate } from '../../../utils/dates';
+import { getActiveSpaceReservationCount, updateCatalogSpaceStatus } from '../../../services/spaceCatalogService';
 import styles from './SpaceStatusModal.module.css';
 
 const STATUS_OPTIONS = [
@@ -11,28 +14,38 @@ const STATUS_OPTIONS = [
   { value: 'disponible', label: 'Disponible' },
 ];
 
-const DEFAULT_REASON = 'Cambio de 24 computadoras y recableado eléctrico del laboratorio.';
-
 const getStatusLabel = (status) => STATUS_OPTIONS.find((option) => option.value === status)?.label ?? 'Disponible';
 
 export default function SpaceStatusModal({ space, onClose, onSaved }) {
+  const { usuario } = useAuth();
   const [status, setStatus] = useState(space.estado);
-  const [reason, setReason] = useState(DEFAULT_REASON);
+  const [reason, setReason] = useState(space.motivoEstado ?? '');
+  const [restorationDate, setRestorationDate] = useState(space.fechaRestablecimiento ?? '');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const isDestructive = status !== 'disponible';
+  const reservationsToCancel = status === 'mantenimiento'
+    ? getActiveSpaceReservationCount(space.id, restorationDate || null)
+    : status === 'baja' ? getActiveSpaceReservationCount(space.id) : 0;
 
   const save = () => {
-    if (!reason.trim()) {
-      setError('Ingresa el motivo del cambio de estado.');
+    if (isDestructive && reason.trim().length < 5) {
+      setError('Describe el motivo con al menos 5 caracteres.');
+      return;
+    }
+    if (status === 'mantenimiento' && (!restorationDate || restorationDate <= toISODate())) {
+      setError('Indica una fecha estimada posterior a hoy.');
       return;
     }
     setSaving(true);
     try {
-      const updated = updateCatalogSpaceStatus(space.id, status, reason.trim());
+      const updated = updateCatalogSpaceStatus(space.id, status, reason.trim(), {
+        fechaRestablecimiento: restorationDate,
+        encargadoId: usuario?.id,
+      });
       onSaved?.(updated);
-    } catch {
-      setError('No se pudo guardar el cambio. Inténtalo nuevamente.');
+    } catch (saveError) {
+      setError(saveError.message || 'No se pudo guardar el cambio. Inténtalo nuevamente.');
       setSaving(false);
     }
   };
@@ -51,9 +64,9 @@ export default function SpaceStatusModal({ space, onClose, onSaved }) {
           <Button
             variant={isDestructive ? 'danger' : 'primary'}
             onClick={save}
-            disabled={saving || !reason.trim()}
+            disabled={saving || (isDestructive && reason.trim().length < 5) || (status === 'mantenimiento' && (!restorationDate || restorationDate <= toISODate()))}
           >
-            {isDestructive ? 'Cambiar estado y cancelar reservas' : 'Cambiar estado'}
+            {status === 'baja' ? 'Dar de baja' : status === 'mantenimiento' ? 'Cambiar a mantenimiento' : 'Cambiar estado'}
           </Button>
         </>
       )}
@@ -77,21 +90,48 @@ export default function SpaceStatusModal({ space, onClose, onSaved }) {
           </div>
         </fieldset>
 
-        <TextArea
-          label="Motivo (obligatorio)"
-          value={reason}
-          onChange={(event) => { setReason(event.target.value); setError(''); }}
-          rows={3}
-          maxLength={300}
-          required
-          errorMsg={error}
-          className={styles.reason}
-        />
-        <p className={styles.helper}>El motivo se mostrará a los usuarios afectados.</p>
-
         {isDestructive && (
+          <>
+            <TextArea
+              label="Motivo (obligatorio)"
+              value={reason}
+              onChange={(event) => { setReason(event.target.value); setError(''); }}
+              rows={3}
+              maxLength={300}
+              required
+              errorMsg={error && reason.trim().length < 5 ? error : ''}
+              className={styles.reason}
+            />
+            <p className={styles.helper}>El motivo se mostrará en el historial de las reservas afectadas.</p>
+          </>
+        )}
+
+        {status === 'mantenimiento' && (
+          <TextField
+            label="Fecha estimada de restablecimiento (obligatoria)"
+            type="date"
+            min={addDays(toISODate(), 1)}
+            value={restorationDate}
+            onChange={(event) => { setRestorationDate(event.target.value); setError(''); }}
+            errorMsg={error && (!restorationDate || restorationDate <= toISODate()) ? error : ''}
+            required
+          />
+        )}
+
+        {status === 'baja' && (
           <div className={styles.warning} role="status">
-            <p><strong>Atención:</strong> se cancelarán 4 reservas vigentes entre el 14/09/2026 y el 18/09/2026. Los<br className={styles.mockupBreak} /> estudiantes recibirán un correo con el motivo.</p>
+            <p><strong>Baja lógica:</strong> {reservationsToCancel > 0
+              ? `se cancelarán ${reservationsToCancel} ${reservationsToCancel === 1 ? 'reserva confirmada vigente' : 'reservas confirmadas vigentes'} sin penalidad y con el motivo visible para los estudiantes. `
+              : 'no hay reservas confirmadas vigentes que cancelar. '}
+              El espacio dejará de aceptar reservas y su ficha e historial se conservarán.</p>
+          </div>
+        )}
+        {status === 'mantenimiento' && (
+          <div className={styles.warning} role="status">
+            <p>{reservationsToCancel > 0
+              ? `Se cancelarán ${reservationsToCancel} ${reservationsToCancel === 1 ? 'reserva confirmada vigente' : 'reservas confirmadas vigentes'} anteriores a la fecha indicada, sin penalidad y con el motivo visible para los estudiantes. `
+              : 'No hay reservas confirmadas vigentes anteriores a la fecha indicada. '}
+              El espacio dejará de aceptar reservas nuevas hasta que el encargado lo marque disponible.</p>
           </div>
         )}
         {!isDestructive && <p className={styles.availableMessage}>El espacio volverá a estar disponible para reservas.</p>}

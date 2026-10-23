@@ -11,7 +11,20 @@ const clonarSemilla = () => JSON.parse(JSON.stringify(initialDb));
 export const getStoredData = () => {
   try {
     const stored = localStorage.getItem(DB_KEY);
-    if (stored) return JSON.parse(stored);
+    if (stored) {
+      const db = JSON.parse(stored);
+      const bloquesGuardados = db.bloquesHorarios ?? [];
+      const idsGuardados = new Set(bloquesGuardados.map((bloque) => bloque.id));
+      const bloquesNuevos = initialDb.bloquesHorarios.filter((bloque) => !idsGuardados.has(bloque.id));
+
+      // Añade los nuevos bloques semilla sin borrar reservas ni datos locales existentes.
+      if (bloquesNuevos.length) {
+        db.bloquesHorarios = [...bloquesGuardados, ...bloquesNuevos];
+        saveStoredData(db);
+      }
+
+      return db;
+    }
   } catch (error) {
     console.error('Base local ilegible, se restaura la semilla:', error);
   }

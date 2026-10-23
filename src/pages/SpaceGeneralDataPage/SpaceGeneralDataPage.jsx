@@ -33,6 +33,7 @@ export default function SpaceGeneralDataPage() {
     descripcion: space.descripcion ?? '',
   }) : {});
   const [submitted, setSubmitted] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   if (!space) return <Navigate to="/encargado/espacios" replace />;
 
@@ -55,18 +56,23 @@ export default function SpaceGeneralDataPage() {
     event.preventDefault();
     setSubmitted(true);
     if (errorCount) return;
-    updateCatalogSpace(space.id, {
-      codigo: normalizedCode,
-      nombre: form.nombre.trim(),
-      tipo: form.tipo,
-      capacidad: Number(form.capacidad),
-      sedeId: 'sede_central',
-      pabellon: form.pabellon,
-      piso: Number(form.piso),
-      ubicacion: `${form.pabellon}, piso ${form.piso}`,
-      descripcion: form.descripcion.trim(),
-    });
-    navigate('/encargado/espacios');
+    setSaveError('');
+    try {
+      updateCatalogSpace(space.id, {
+        codigo: normalizedCode,
+        nombre: form.nombre.trim(),
+        tipo: form.tipo,
+        capacidad: Number(form.capacidad),
+        sedeId: 'sede_central',
+        pabellon: form.pabellon,
+        piso: Number(form.piso),
+        ubicacion: `${form.pabellon}, piso ${form.piso}`,
+        descripcion: form.descripcion.trim(),
+      });
+      navigate('/encargado/espacios', { state: { notice: 'Datos generales guardados correctamente.' } });
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'No se pudieron guardar los cambios. Inténtalo nuevamente.');
+    }
   };
 
   return (
@@ -97,6 +103,7 @@ export default function SpaceGeneralDataPage() {
             {Object.values(errors).filter(Boolean).join(' ')}
           </div>
         )}
+        {saveError && <div className={styles.errorSummary} role="alert">{saveError}</div>}
 
         <form onSubmit={save} noValidate>
           <Card className={styles.formCard} padding="md">

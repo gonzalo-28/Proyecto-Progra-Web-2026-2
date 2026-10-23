@@ -196,6 +196,12 @@ export const initialDb = {
   ],
   bloquesHorarios: [
     {
+      id: "bloque_005",
+      horaInicio: "07:00",
+      horaFin: "08:00",
+      etiqueta: "07:00 AM - 08:00 AM"
+    },
+    {
       id: "bloque_001",
       horaInicio: "08:00",
       horaFin: "09:00",
@@ -218,7 +224,18 @@ export const initialDb = {
       horaInicio: "11:00",
       horaFin: "12:00",
       etiqueta: "11:00 AM - 12:00 PM"
-    }
+    },
+    ...Array.from({ length: 10 }, (_, index) => {
+      const horaInicio = 12 + index;
+      const horaFin = horaInicio + 1;
+      const formato = (hora) => `${String(hora).padStart(2, "0")}:00`;
+      return {
+        id: `bloque_${String(index + 6).padStart(3, "0")}`,
+        horaInicio: formato(horaInicio),
+        horaFin: formato(horaFin),
+        etiqueta: `${formato(horaInicio)} - ${formato(horaFin)}`
+      };
+    })
   ],
   reservas: [...reservasSemilla, ...reservasOperacion], // HU-4 + jornada de prueba de la HU-5
   bloqueos: [], // HU-5: bloqueos por mantenimiento (forma en services/blockService.js)

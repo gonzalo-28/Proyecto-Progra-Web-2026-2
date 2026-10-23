@@ -1,7 +1,7 @@
 // src/pages/SpaceCatalogPage/SpaceCatalogPage.jsx
 
-import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Button from '../../components/ui/Button/Button';
 import ButtonLink from '../../components/ui/Button/ButtonLink';
 import Card from '../../components/ui/Card/Card';
@@ -21,8 +21,9 @@ function FilterChip({ children, onRemove, label }) {
 
 export default function SpaceCatalogPage() {
   const navigate = useNavigate();
-  const spaces = useMemo(() => getCatalogSpaces(), []);
-  const options = useMemo(() => getSpaceCatalogOptions(), []);
+  const location = useLocation();
+  const spaces = getCatalogSpaces();
+  const options = getSpaceCatalogOptions();
   const [search, setSearch] = useState('');
   const [type, setType] = useState('');
   const [state, setState] = useState('');
@@ -74,6 +75,8 @@ export default function SpaceCatalogPage() {
           </div>
           <ButtonLink to="/encargado/espacios/nuevo">＋ Nuevo espacio</ButtonLink>
         </header>
+
+        {location.state?.notice && <p className={styles.notice} role="status">{location.state.notice}</p>}
 
         <Card className={styles.filterPanel} padding="md">
           <div className={styles.filters}>
@@ -128,7 +131,9 @@ export default function SpaceCatalogPage() {
                     <td>{space.capacidad}</td>
                     <td><span className={`${styles.status} ${styles[space.estado]}`}>{space.estadoLabel}</span></td>
                     <td>{space.reservasVigentes}</td>
-                  <td><button type="button" className={styles.editButton} onClick={() => navigate(`/encargado/espacios/${space.id}/equipamiento`)}>Editar</button></td>
+                    <td>
+                      <button type="button" className={styles.editButton} onClick={() => navigate(`/encargado/espacios/${space.id}/equipamiento`)}>Editar</button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

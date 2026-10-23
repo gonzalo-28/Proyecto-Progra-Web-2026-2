@@ -176,7 +176,9 @@ export default function SpaceEquipmentPage() {
           onSaved={(updated) => {
             setSpaceStatus(updated.estado);
             setStatusModalOpen(false);
-            setNotice('El estado del espacio se actualizó correctamente.');
+            setNotice(updated.reservasCanceladas > 0
+              ? `Estado actualizado. Se cancelaron ${updated.reservasCanceladas} reservas futuras; el motivo quedó visible en Mis reservas.`
+              : 'El estado del espacio se actualizó correctamente.');
             setSaveError(false);
           }}
         />
