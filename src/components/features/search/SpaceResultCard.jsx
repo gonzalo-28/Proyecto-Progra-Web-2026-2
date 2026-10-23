@@ -2,7 +2,8 @@
 
 import { Link } from 'react-router-dom';
 import Card from '../../ui/Card/Card';
-import ImagePlaceholder from '../../ui/ImagePlaceholder/ImagePlaceholder';
+import Photo from '../../ui/Photo/Photo';
+import { imagenDeEspacio, textoAltImagen } from '../../../utils/imagenEspacio';
 import styles from './SpaceResultCard.module.css';
 
 /**
@@ -25,7 +26,12 @@ export default function SpaceResultCard({ espacio, to, fichaTo }) {
 
   return (
     <Card as="article" padding="none" className={styles.root}>
-      <ImagePlaceholder label={`foto ${espacio.codigo || espacio.nombre}`} className={styles.photo} />
+      <Photo
+        src={imagenDeEspacio(espacio)}
+        alt={textoAltImagen(espacio)}
+        label={`foto ${espacio.codigo || espacio.nombre}`}
+        className={styles.photo}
+      />
 
       <div className={styles.body}>
         <h2 className={styles.name}>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-label="Laboratorio de redes con racks de switches y estaciones de trabajo">
+  <defs>
+    <linearGradient id="pared" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9f0ef"/><stop offset="1" stop-color="#d7e3e0"/></linearGradient>
+    <linearGradient id="piso" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9d7d4"/><stop offset="1" stop-color="#b3c6c1"/></linearGradient>
+    <linearGradient id="pantalla" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8fd3c6"/><stop offset="1" stop-color="#3f9d8e"/></linearGradient>
+  </defs>
+  <rect width="640" height="400" fill="url(#pared)"/>
+  <rect y="262" width="640" height="138" fill="url(#piso)"/>
+  <path d="M0 262H640" stroke="#a9bdb8" stroke-width="2"/>
+  <!-- bandeja de cables -->
+  <rect x="0" y="30" width="640" height="10" fill="#c5d0ce"/>
+  <path d="M120 40 C120 70 140 80 140 110M300 40 C300 70 320 80 320 110M200 40 C200 90 160 100 160 110" stroke="#e9b44c" stroke-width="4" fill="none"/>
+  <path d="M260 40 C260 80 240 90 240 110" stroke="#4aa3df" stroke-width="4" fill="none"/>
+  <!-- racks -->
+  <g>
+    <rect x="96" y="104" width="120" height="196" rx="6" fill="#152322"/>
+    <rect x="236" y="104" width="120" height="196" rx="6" fill="#152322"/>
+    <g fill="#24403c">
+      <rect x="106" y="116" width="100" height="22" rx="2"/><rect x="106" y="146" width="100" height="22" rx="2"/><rect x="106" y="176" width="100" height="22" rx="2"/><rect x="106" y="206" width="100" height="22" rx="2"/><rect x="106" y="236" width="100" height="22" rx="2"/>
+      <rect x="246" y="116" width="100" height="22" rx="2"/><rect x="246" y="146" width="100" height="22" rx="2"/><rect x="246" y="176" width="100" height="22" rx="2"/><rect x="246" y="206" width="100" height="22" rx="2"/><rect x="246" y="236" width="100" height="22" rx="2"/>
+    </g>
+    <g fill="#5fd0b8">
+      <circle cx="116" cy="127" r="3"/><circle cx="126" cy="127" r="3"/><circle cx="136" cy="127" r="3"/><circle cx="116" cy="157" r="3"/><circle cx="126" cy="157" r="3"/><circle cx="116" cy="187" r="3"/><circle cx="126" cy="187" r="3"/><circle cx="136" cy="187" r="3"/><circle cx="146" cy="187" r="3"/><circle cx="116" cy="217" r="3"/><circle cx="116" cy="247" r="3"/><circle cx="126" cy="247" r="3"/>
+      <circle cx="256" cy="127" r="3"/><circle cx="266" cy="127" r="3"/><circle cx="256" cy="157" r="3"/><circle cx="266" cy="157" r="3"/><circle cx="276" cy="157" r="3"/><circle cx="256" cy="187" r="3"/><circle cx="256" cy="217" r="3"/><circle cx="266" cy="217" r="3"/><circle cx="276" cy="217" r="3"/><circle cx="256" cy="247" r="3"/>
+    </g>
+    <g fill="#e9b44c"><circle cx="146" cy="127" r="3"/><circle cx="276" cy="187" r="3"/><circle cx="136" cy="247" r="3"/></g>
+    <g fill="#8ea3a0">
+      <rect x="160" y="122" width="40" height="10" rx="1"/><rect x="160" y="152" width="40" height="10" rx="1"/><rect x="160" y="182" width="40" height="10" rx="1"/><rect x="160" y="212" width="40" height="10" rx="1"/><rect x="160" y="242" width="40" height="10" rx="1"/>
+      <rect x="300" y="122" width="40" height="10" rx="1"/><rect x="300" y="152" width="40" height="10" rx="1"/><rect x="300" y="182" width="40" height="10" rx="1"/><rect x="300" y="212" width="40" height="10" rx="1"/><rect x="300" y="242" width="40" height="10" rx="1"/>
+    </g>
+  </g>
+  <!-- mesa de trabajo -->
+  <rect x="380" y="232" width="236" height="14" rx="3" fill="#a07c5c"/>
+  <rect x="392" y="246" width="10" height="70" fill="#7d5f45"/><rect x="594" y="246" width="10" height="70" fill="#7d5f45"/>
+  <rect x="420" y="160" width="120" height="72" rx="6" fill="#152322"/>
+  <rect x="426" y="166" width="108" height="60" rx="3" fill="url(#pantalla)"/>
+  <g stroke="#ffffff" stroke-width="2.5" opacity=".9" fill="none">
+    <circle cx="480" cy="178" r="5"/><circle cx="452" cy="210" r="5"/><circle cx="508" cy="210" r="5"/><path d="M480 183 L452 205 M480 183 L508 205 M457 210 H503"/>
+  </g>
+  <rect x="472" y="226" width="16" height="8" fill="#152322"/>
+  <rect x="556" y="214" width="40" height="18" rx="3" fill="#24403c"/><g fill="#5fd0b8"><circle cx="564" cy="223" r="2.5"/><circle cx="572" cy="223" r="2.5"/><circle cx="580" cy="223" r="2.5"/></g>
+  <path d="M596 223 C620 223 612 250 600 262" stroke="#4aa3df" stroke-width="3" fill="none"/>
+  <!-- silla -->
+  <rect x="452" y="290" width="56" height="44" rx="12" fill="#136f63"/>
+  <rect x="476" y="334" width="8" height="40" fill="#0d5249"/><rect x="452" y="372" width="56" height="7" rx="3.5" fill="#0d5249"/>
+</svg>

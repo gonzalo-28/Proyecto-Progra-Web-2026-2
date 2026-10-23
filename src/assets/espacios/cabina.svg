@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-label="Cabina de grabación con micrófono, audífonos y paneles acústicos">
+  <defs>
+    <linearGradient id="pared" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#24403c"/><stop offset="1" stop-color="#1b322f"/></linearGradient>
+    <linearGradient id="mesa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b38b66"/><stop offset="1" stop-color="#8a6a4f"/></linearGradient>
+    <radialGradient id="luz" cx=".5" cy=".3" r=".7"><stop offset="0" stop-color="#ffffff" stop-opacity=".18"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/></radialGradient>
+    <pattern id="espuma" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect width="40" height="40" fill="#2f5550"/>
+      <path d="M0 0 L20 20 L0 40 Z" fill="#284a45"/><path d="M40 0 L20 20 L40 40 Z" fill="#355f59"/>
+    </pattern>
+  </defs>
+  <rect width="640" height="400" fill="url(#pared)"/>
+  <!-- paneles acústicos -->
+  <rect x="40" y="36" width="160" height="200" rx="6" fill="url(#espuma)"/>
+  <rect x="440" y="36" width="160" height="200" rx="6" fill="url(#espuma)"/>
+  <rect x="230" y="36" width="180" height="70" rx="6" fill="url(#espuma)"/>
+  <rect width="640" height="400" fill="url(#luz)"/>
+  <!-- luz EN VIVO -->
+  <rect x="268" y="122" width="104" height="34" rx="8" fill="#152322" stroke="#e07a5f" stroke-width="2"/>
+  <circle cx="288" cy="139" r="7" fill="#e07a5f"/>
+  <text x="300" y="145" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#f4b6a6">EN VIVO</text>
+  <!-- mesa -->
+  <rect x="0" y="300" width="640" height="100" fill="url(#mesa)"/>
+  <rect x="0" y="296" width="640" height="8" fill="#c99a6b"/>
+  <!-- brazo y micrófono -->
+  <path d="M470 300 V250 L400 200" stroke="#0f1d1b" stroke-width="10" stroke-linecap="round" fill="none"/>
+  <circle cx="470" cy="250" r="9" fill="#0f1d1b"/>
+  <rect x="452" y="292" width="36" height="10" rx="3" fill="#0f1d1b"/>
+  <circle cx="340" cy="216" r="56" fill="none" stroke="#0f1d1b" stroke-width="5"/>
+  <g stroke="#0f1d1b" stroke-width="2" opacity=".55"><path d="M300 176 L380 256M380 176 L300 256M340 160 V272M284 216 H396"/></g>
+  <rect x="318" y="168" width="44" height="96" rx="22" fill="#cfd8d6"/>
+  <rect x="318" y="168" width="44" height="52" rx="22" fill="#9fb1ae"/>
+  <g stroke="#7d8f8c" stroke-width="2"><path d="M322 184 H358M320 196 H360M322 208 H358"/></g>
+  <rect x="314" y="226" width="52" height="8" rx="2" fill="#5c6f6c"/>
+  <path d="M362 230 L400 200" stroke="#0f1d1b" stroke-width="6"/>
+  <!-- audífonos -->
+  <path d="M120 290 C120 236 200 236 200 290" stroke="#136f63" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <rect x="104" y="276" width="30" height="28" rx="10" fill="#0d5249"/><rect x="186" y="276" width="30" height="28" rx="10" fill="#0d5249"/>
+  <!-- interfaz de audio y laptop -->
+  <rect x="520" y="270" width="90" height="28" rx="5" fill="#152322"/>
+  <g fill="#e9b44c"><circle cx="540" cy="284" r="7"/><circle cx="566" cy="284" r="7"/></g><g fill="#5fd0b8"><rect x="584" y="278" width="4" height="12"/><rect x="592" y="282" width="4" height="8"/><rect x="600" y="276" width="4" height="14"/></g>
+  <!-- ondas de sonido -->
+  <g fill="none" stroke="#5fd0b8" stroke-width="4" stroke-linecap="round" opacity=".8">
+    <path d="M248 196 C236 208 236 224 248 236"/><path d="M228 182 C208 204 208 228 228 250"/>
+  </g>
+  <!-- guion -->
+  <rect x="236" y="318" width="120" height="58" rx="3" fill="#ffffff" transform="rotate(-4 296 347)"/>
+  <g stroke="#c5d0ce" stroke-width="3" transform="rotate(-4 296 347)"><path d="M248 334 H340M248 346 H326M248 358 H334"/></g>
+</svg>
