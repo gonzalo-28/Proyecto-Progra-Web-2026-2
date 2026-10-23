@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-label="Sala de reuniones con mesa larga, sillas y televisor para presentaciones">
+  <defs>
+    <linearGradient id="pared" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef3f2"/><stop offset="1" stop-color="#e0e8e6"/></linearGradient>
+    <linearGradient id="piso" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c3d1ce"/><stop offset="1" stop-color="#aec0bc"/></linearGradient>
+    <linearGradient id="mesa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e6eceb"/></linearGradient>
+  </defs>
+  <rect width="640" height="400" fill="url(#pared)"/>
+  <!-- ventanal -->
+  <rect x="440" y="30" width="176" height="200" rx="4" fill="#cfe7f0" stroke="#b7cdc8" stroke-width="4"/>
+  <path d="M528 30 V230 M440 130 H616" stroke="#b7cdc8" stroke-width="4"/>
+  <g fill="#9fc9a8" opacity=".9"><circle cx="480" cy="196" r="26"/><circle cx="512" cy="204" r="20"/><circle cx="580" cy="200" r="28"/></g>
+  <rect y="258" width="640" height="142" fill="url(#piso)"/>
+  <path d="M0 258 H640" stroke="#a9bdb8" stroke-width="2"/>
+  <!-- televisor -->
+  <rect x="120" y="44" width="240" height="140" rx="8" fill="#152322"/>
+  <rect x="130" y="54" width="220" height="120" rx="3" fill="#e2f1ee"/>
+  <rect x="148" y="70" width="80" height="10" rx="5" fill="#136f63"/>
+  <g fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M150 154 L190 126 L226 140 L266 104 L330 118" stroke="#136f63"/>
+  </g>
+  <g fill="#136f63"><circle cx="190" cy="126" r="5"/><circle cx="226" cy="140" r="5"/><circle cx="266" cy="104" r="5"/></g>
+  <rect x="234" y="184" width="12" height="20" fill="#152322"/>
+  <!-- sillas de fondo -->
+  <g fill="#136f63"><rect x="156" y="198" width="52" height="66" rx="12"/><rect x="236" y="198" width="52" height="66" rx="12"/><rect x="316" y="198" width="52" height="66" rx="12"/><rect x="396" y="198" width="52" height="66" rx="12"/></g>
+  <!-- mesa larga en perspectiva -->
+  <path d="M120 262 H520 L600 330 H40 Z" fill="url(#mesa)" stroke="#c5d0ce" stroke-width="2"/>
+  <path d="M40 330 H600 V342 H40 Z" fill="#c5d0ce"/>
+  <rect x="70" y="342" width="12" height="58" fill="#8ea3a0"/><rect x="558" y="342" width="12" height="58" fill="#8ea3a0"/>
+  <!-- objetos -->
+  <g>
+    <rect x="176" y="282" width="56" height="34" rx="3" fill="#152322" transform="skewX(-12)"/>
+    <rect x="248" y="272" width="44" height="16" rx="2" fill="#ffffff" stroke="#c5d0ce"/>
+    <rect x="352" y="274" width="40" height="18" rx="2" fill="#ffffff" stroke="#c5d0ce"/>
+    <circle cx="318" cy="294" r="14" fill="#152322"/><circle cx="318" cy="294" r="5" fill="#5fd0b8"/>
+    <rect x="430" y="284" width="56" height="34" rx="3" fill="#152322" transform="skewX(12)"/>
+    <rect x="200" y="292" width="10" height="16" rx="3" fill="#e9b44c"/><rect x="420" y="268" width="10" height="16" rx="3" fill="#ffffff" stroke="#c5d0ce"/>
+  </g>
+  <!-- sillas delanteras -->
+  <g fill="#0d5249"><rect x="110" y="344" width="66" height="56" rx="14"/><rect x="290" y="350" width="66" height="50" rx="14"/><rect x="466" y="344" width="66" height="56" rx="14"/></g>
+</svg>

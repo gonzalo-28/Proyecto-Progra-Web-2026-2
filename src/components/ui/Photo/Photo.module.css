@@ -1,0 +1,14 @@
+/* src/components/ui/Photo/Photo.module.css */
+
+.root {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background-color: var(--color-readonly-bg);
+}
+
+/* Con ratio, la altura la define la proporción y no el contenedor. */
+.hasRatio {
+  height: auto;
+}

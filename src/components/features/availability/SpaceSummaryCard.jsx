@@ -4,7 +4,8 @@ import { useAvailability } from '../../../context/AvailabilityContext';
 import { Link } from 'react-router-dom';
 import Card from '../../ui/Card/Card';
 import Badge from '../../ui/Badge/Badge';
-import ImagePlaceholder from '../../ui/ImagePlaceholder/ImagePlaceholder';
+import Photo from '../../ui/Photo/Photo';
+import { imagenDeEspacio, textoAltImagen } from '../../../utils/imagenEspacio';
 import { rutaFichaPublica } from '../../routes/rutasEspacios';
 import styles from './SpaceSummaryCard.module.css';
 
@@ -34,7 +35,12 @@ export default function SpaceSummaryCard() {
 
   return (
     <Card as="section" padding="none" className={styles.root} aria-labelledby="ficha-espacio">
-      <ImagePlaceholder label={`foto ${espacio.codigo || espacio.nombre}`} ratio="16/7" />
+      <Photo
+        src={imagenDeEspacio(espacio)}
+        alt={textoAltImagen(espacio)}
+        label={`foto ${espacio.codigo || espacio.nombre}`}
+        ratio="16/7"
+      />
       <div className={styles.body}>
         <Badge tone={estado.tone} className={styles.badge}>
           {estado.label}
