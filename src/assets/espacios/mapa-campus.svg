@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" aria-label="Ilustración referencial del campus">
+  <rect width="720" height="300" rx="16" fill="#eaf2ef"/>
+  <path d="M0 224C110 185 166 260 280 218s170-37 254 6 118 42 186 6v70H0Z" fill="#d5e8df"/>
+  <path d="M-10 96c114 12 184 48 274 35s161-55 251-32 144 55 224 42M112 0c-8 81 15 120 60 167s59 80 54 143M460-10c-7 78 12 124 61 171s64 83 59 147" fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round"/>
+  <path d="M-10 96c114 12 184 48 274 35s161-55 251-32 144 55 224 42M112 0c-8 81 15 120 60 167s59 80 54 143M460-10c-7 78 12 124 61 171s64 83 59 147" fill="none" stroke="#bfd4cd" stroke-width="2" stroke-dasharray="6 7"/>
+  <g fill="#fff" stroke="#b7cdc8" stroke-width="2">
+    <rect x="58" y="35" width="102" height="48" rx="8"/><rect x="192" y="65" width="112" height="52" rx="8"/>
+    <rect x="348" y="30" width="100" height="54" rx="8"/><rect x="528" y="70" width="128" height="58" rx="8"/>
+    <rect x="282" y="176" width="112" height="52" rx="8"/><rect x="494" y="194" width="116" height="48" rx="8"/>
+  </g>
+  <g fill="#6a7a78" font-family="Arial, sans-serif" font-size="13" font-weight="700" text-anchor="middle">
+    <text x="109" y="64">PABELLÓN A</text><text x="248" y="96">PABELLÓN E</text>
+    <text x="398" y="63">BIBLIOTECA</text><text x="592" y="103">PABELLÓN N</text>
+    <text x="338" y="207">PABELLÓN Q</text><text x="552" y="223">INGENIERÍA</text>
+  </g>
+  <circle cx="552" cy="166" r="22" fill="#136f63" opacity=".16"/>
+  <path d="M552 136c-15 0-27 12-27 27 0 20 27 48 27 48s27-28 27-48c0-15-12-27-27-27Zm0 36a9 9 0 1 1 0-18 9 9 0 0 1 0 18Z" fill="#136f63"/>
+</svg>

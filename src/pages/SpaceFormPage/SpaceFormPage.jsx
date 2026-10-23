@@ -7,6 +7,7 @@ import Select from '../../components/ui/Select/Select';
 import TextField from '../../components/ui/TextField/TextField';
 import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
 import { createCatalogSpace, getCatalogSpaces, updateCatalogSpace } from '../../services/spaceCatalogService';
+import { imagenReferencialDelEspacio } from '../../utils/imagenEspacio';
 import styles from './SpaceFormPage.module.css';
 
 const EMPTY_FORM = {
@@ -47,10 +48,33 @@ function toPhotos(space) {
   }
   return photos.map((name, index) => ({
     id: `existing-${space.id}-${index}`,
-    name: typeof name === 'string' ? name : `foto ${index + 1}`,
-    placeholder: true,
+    name: typeof name === 'string' ? name : name.name ?? `foto ${index + 1}`,
+    url: typeof name === 'object' ? name.dataUrl : undefined,
+    placeholder: false,
     preserve: true,
   }));
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('No se pudo leer la fotografía.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function optimizePhoto(file) {
+  const image = await createImageBitmap(file);
+  const scale = Math.min(1, 1280 / image.width, 900 / image.height);
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(image.width * scale);
+  canvas.height = Math.round(image.height * scale);
+  canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+  image.close();
+  const compressed = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.78));
+  if (!compressed) throw new Error('No se pudo procesar la fotografía.');
+  return readFileAsDataUrl(compressed);
 }
 
 export default function SpaceFormPage() {
@@ -91,24 +115,31 @@ export default function SpaceFormPage() {
     return Object.values(errors).filter(Boolean).join(' ');
   };
 
-  const handlePhotoSelection = (event) => {
+  const handlePhotoSelection = async (event) => {
     const selected = Array.from(event.target.files ?? []);
     const valid = selected.filter((file) => file.type === 'image/jpeg' && file.size <= 2 * 1024 * 1024);
     if (valid.length !== selected.length) setPhotoError('Solo se permiten fotografías JPG de máximo 2 MB.');
     else setPhotoError('');
     const savedPhotoCount = photos.filter((photo) => photo.preserve || !photo.placeholder).length;
-    const newPhotos = valid.slice(0, Math.max(0, 5 - savedPhotoCount)).map((file) => ({
-      id: `${file.name}-${file.lastModified}-${Math.random()}`,
-      name: file.name,
-      url: URL.createObjectURL(file),
-      placeholder: false,
-    }));
-    setPhotos((current) => [...current.filter((photo) => photo.preserve || !photo.placeholder), ...newPhotos]);
+    try {
+      const newPhotos = await Promise.all(valid.slice(0, Math.max(0, 5 - savedPhotoCount)).map(async (file) => {
+        const dataUrl = await optimizePhoto(file);
+        return {
+          id: `${file.name}-${file.lastModified}-${Math.random()}`,
+          name: file.name,
+          url: dataUrl,
+          dataUrl,
+          placeholder: false,
+        };
+      }));
+      setPhotos((current) => [...current.filter((photo) => photo.preserve || !photo.placeholder), ...newPhotos]);
+    } catch {
+      setPhotoError('No se pudo procesar una fotografía. Inténtalo con un archivo JPG válido.');
+    }
     event.target.value = '';
   };
 
   const removePhoto = (photo) => {
-    if (photo.url) URL.revokeObjectURL(photo.url);
     setPhotos((current) => current.filter((item) => item.id !== photo.id));
   };
 
@@ -135,7 +166,9 @@ export default function SpaceFormPage() {
       piso: Number(form.piso),
       ubicacion: `${form.pabellon}, piso ${form.piso}`,
       descripcion: form.descripcion.trim(),
-      fotografias: photos.filter((photo) => photo.preserve || !photo.placeholder).map(({ name }) => name),
+      fotografias: photos
+        .filter((photo) => photo.preserve || !photo.placeholder)
+        .map(({ name, dataUrl }) => ({ name, ...(dataUrl ? { dataUrl } : {}) })),
     };
     setSaveError('');
     try {
@@ -214,7 +247,10 @@ export default function SpaceFormPage() {
               <div className={styles.gallery}>
                 {photos.map((photo, index) => (
                   <div className={styles.photo} key={photo.id}>
-                    {photo.url ? <img src={photo.url} alt={photo.name} /> : <span className={styles.photoPlaceholder}>foto {index + 1}</span>}
+                    <img
+                      src={photo.url ?? imagenReferencialDelEspacio({ tipo: form.tipo })}
+                      alt={photo.url ? photo.name : `Imagen referencial para ${form.tipo || 'el espacio'}`}
+                    />
                     <button type="button" className={styles.removePhoto} aria-label={`Quitar ${photo.name}`} onClick={() => removePhoto(photo)}>×</button>
                   </div>
                 ))}

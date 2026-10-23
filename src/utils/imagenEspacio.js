@@ -1,10 +1,4 @@
-// src/utils/imagenEspacio.js
-//
-// Imagen referencial de un espacio para el buscador y el calendario (HU-3).
-// Son ilustraciones propias (src/assets/espacios), una por tipo de espacio,
-// mientras los espacios no tengan fotos reales. Si un espacio trae su propia
-// foto (espacio.foto), se usa esa.
-
+// Ilustraciones reutilizadas por la búsqueda, el calendario y la ficha pública.
 import auditorio from '../assets/espacios/auditorio.svg';
 import cabina from '../assets/espacios/cabina.svg';
 import laboratorio from '../assets/espacios/laboratorio.svg';
@@ -23,12 +17,11 @@ const POR_TIPO = {
 const nombresDeEquipos = (equipamiento = []) =>
   equipamiento.map((item) => (typeof item === 'string' ? item : item?.nombre ?? '').toLowerCase());
 
-/** Un laboratorio con switches o "Redes" en el nombre usa la ilustración de redes. */
 const esLaboratorioDeRedes = (espacio) =>
   espacio.tipo === 'laboratorio' &&
   (/redes/i.test(espacio.nombre ?? '') || nombresDeEquipos(espacio.equipamiento).includes('switches'));
 
-/** URL de la imagen del espacio, o null si su tipo no tiene ilustración. */
+/** Devuelve una foto propia o la ilustración referencial correspondiente. */
 export function imagenDeEspacio(espacio) {
   if (!espacio) return null;
   if (espacio.foto) return espacio.foto;
@@ -36,6 +29,13 @@ export function imagenDeEspacio(espacio) {
   return POR_TIPO[espacio.tipo] ?? null;
 }
 
-/** Texto alternativo: aclara que es una ilustración y no una foto del lugar. */
+export function imagenReferencialDelEspacio(space = {}) {
+  if (esLaboratorioDeRedes(space) || String(space.codigo ?? space.id).toUpperCase() === 'H-201') {
+    return laboratorioRedes;
+  }
+  return POR_TIPO[space.tipo] ?? salaEstudio;
+}
+
+/** Texto alternativo que distingue ilustraciones genéricas de fotografías reales. */
 export const textoAltImagen = (espacio) =>
-  `Ilustración referencial: ${(espacio.tipoLabel ?? 'espacio').toLowerCase()}`;
+  `Ilustración referencial: ${(espacio?.tipoLabel ?? 'espacio').toLowerCase()}`;

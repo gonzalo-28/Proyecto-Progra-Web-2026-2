@@ -4,11 +4,13 @@ import Badge from '../../components/ui/Badge/Badge';
 import ButtonLink from '../../components/ui/Button/ButtonLink';
 import Card from '../../components/ui/Card/Card';
 import ContentLayout from '../../components/layout/ContentLayout/ContentLayout';
+import campusMap from '../../assets/espacios/mapa-campus.svg';
 import { rutaDisponibilidad } from '../../components/routes/rutasEspacios';
 import { obtenerDisponibilidadSemanal } from '../../services/availabilityService';
 import { getCatalogSpaces } from '../../services/spaceCatalogService';
 import { formatDate } from '../../utils/dates';
 import { HORARIO_POR_DEFECTO, normalizarEquipamiento } from '../../utils/disponibilidad';
+import { imagenReferencialDelEspacio } from '../../utils/imagenEspacio';
 import styles from './PublicSpaceDetailPage.module.css';
 
 const DAYS = [
@@ -39,6 +41,18 @@ const CATEGORY_LABELS = {
 };
 
 const getEquipment = (space) => normalizarEquipamiento(space.equipamiento);
+
+function getGalleryImages(space) {
+  const uploaded = (space.fotografias ?? [])
+    .filter((photo) => photo && typeof photo === 'object' && photo.dataUrl)
+    .slice(0, 3)
+    .map((photo) => ({ src: photo.dataUrl, alt: photo.name || `Fotografía de ${space.nombre}` }));
+
+  return uploaded.length ? uploaded : [{
+    src: imagenReferencialDelEspacio(space),
+    alt: `Ilustración referencial de ${space.tipoLabel.toLocaleLowerCase('es')}`,
+  }];
+}
 
 function getSchedule(space) {
   const savedSchedule = space.horarioAtencion;
@@ -112,6 +126,7 @@ export default function PublicSpaceDetailPage() {
   if (!space) return <Navigate to="/espacios" replace />;
 
   const equipment = getEquipment(space);
+  const galleryImages = getGalleryImages(space);
   const schedule = groupedSchedule(getSchedule(space));
   const available = space.estado === 'disponible';
   const currentAvailability = availability?.spaceId === space.id ? availability : null;
@@ -132,12 +147,26 @@ export default function PublicSpaceDetailPage() {
 
         <div className={styles.columns}>
           <div className={styles.mainColumn}>
-            <section className={styles.gallery} aria-label={`Fotografías de ${space.nombre}`}>
-              <div className={`${styles.photo} ${styles.mainPhoto}`}><span>Fotografía principal · {space.codigo}</span></div>
-              <div className={styles.sidePhotos}>
-                <div className={styles.photo}><span>Foto 2</span></div>
-                <div className={styles.photo}><span>Foto 3</span></div>
-              </div>
+            <section className={`${styles.gallery} ${galleryImages.length === 1 ? styles.singlePhotoGallery : ''}`} aria-label={`Fotografías de ${space.nombre}`}>
+              {galleryImages.length > 1 ? (
+                <>
+                  <div className={`${styles.photo} ${styles.mainPhoto}`}>
+                    <img src={galleryImages[0].src} alt={galleryImages[0].alt} />
+                  </div>
+                  <div className={styles.sidePhotos}>
+                    {galleryImages.slice(1).map((photo) => (
+                      <div className={styles.photo} key={photo.src}>
+                        <img src={photo.src} alt={photo.alt} />
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className={`${styles.photo} ${styles.mainPhoto}`}>
+                  <img src={galleryImages[0].src} alt={galleryImages[0].alt} />
+                  <span className={styles.imageCaption}>Imagen referencial</span>
+                </div>
+              )}
             </section>
 
             <Card className={styles.equipmentCard} padding="md">
@@ -199,9 +228,8 @@ export default function PublicSpaceDetailPage() {
 
             <Card className={styles.mapCard} padding="md">
               <span className={styles.eyebrow}>Cómo llegar</span>
-              <div className={styles.mapPlaceholder} role="img" aria-label={`Mapa del campus, ubicación: ${place}`}>
-                <span>Mapa del campus</span>
-              </div>
+              <img className={styles.campusMap} src={campusMap} alt={`Mapa esquemático referencial del campus. Ubicación del espacio: ${place}.`} />
+              <p className={styles.mapCaption}>Ubicación referencial · {place}</p>
             </Card>
           </aside>
         </div>
