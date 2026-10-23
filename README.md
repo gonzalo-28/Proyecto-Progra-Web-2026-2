@@ -64,11 +64,19 @@ Usuarios de prueba (todos con la contraseña **`Aa1234`**):
 | HU | Qué incluye |
 |---|---|
 | HU-1 | Inicio de sesión con límite de intentos, registro de estudiante y de encargado, recuperación de contraseña, Mi cuenta, redirección según el rol y vistas 403 y 404 |
-| HU-2 | Catálogo público y ficha del espacio. El encargado crea espacios y edita sus datos generales, su equipamiento y su horario |
+| HU-2 | Listado de espacios de la sede con búsqueda y filtros. Registro de espacios y edición de sus datos generales, su equipamiento (con cantidades) y su horario de atención. Cambio de estado (disponible, en mantenimiento, de baja). Ficha pública del espacio |
 | HU-3 | Búsqueda de espacios con filtros, orden y paginación. Disponibilidad semanal del espacio y reserva desde el calendario |
 | HU-4 | Reserva de un bloque con invitados. Mis reservas con filtros, detalle con trazabilidad, confirmación y cancelación |
 | HU-5 | Bandeja del día por sede con contadores. Registro de llegada e inasistencia según la tolerancia, cancelación con motivo, bloqueos por mantenimiento o evento, búsqueda de reservas e historial del día exportable a Excel |
-| HU-6 | Registro y seguimiento de incidencias (en desarrollo) |
+| HU-6 | El estudiante reporta incidencias sobre un espacio y sigue su estado. El encargado las revisa con filtros, agrega seguimiento y cambia su estado (recibida, en atención, resuelta, desestimada) |
+
+### Rutas principales
+
+| Quién | Rutas |
+|---|---|
+| Visitante | `/landingpage`, `/espacios` (buscador), `/espacios/:id` (calendario semanal), `/espacios/:id/ficha` (ficha pública), `/login`, `/registro`, `/registro/encargado`, `/recuperar` |
+| Estudiante | `/espacios` (inicio), `/mis-reservas`, `/mis-reservas/:codigo`, `/mis-incidencias`, `/perfil` |
+| Encargado | `/encargado/bandeja` (inicio), `/encargado/bloqueos`, `/encargado/reservas`, `/encargado/espacios`, `/encargado/incidencias`, `/perfil` |
 
 En modo desarrollo, la bandeja del encargado acepta `?hora=HH:MM` para simular la hora actual y probar la tolerancia. Por ejemplo: `/encargado/bandeja?hora=10:08`.
 
