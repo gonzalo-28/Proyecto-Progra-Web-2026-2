@@ -22,8 +22,7 @@ export const VISITOR_LINKS = [
 
 /* Links del usuario autenticado, según rol.
    estudiante: sale del mockup (Mi cuenta / Acceso denegado).
-   encargado:  sale de los mockups 5.x. "Mi cuenta" sigue en el UserMenu.
-               Espacios (HU-2) e Incidencias (HU-6) aún no tienen ruta. */
+   encargado:  sale de los mockups 5.x. "Mi cuenta" sigue en el UserMenu. */
 export const LINKS_BY_ROLE = {
   estudiante: [
     { to: '/espacios', label: 'Buscar espacios' },
