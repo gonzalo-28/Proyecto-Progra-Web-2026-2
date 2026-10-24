@@ -6,10 +6,13 @@
   color: var(--color-muted);
 }
 
-/* Con muchos días la grilla se desplaza dentro de la tarjeta. */
+/* Días en columnas, horas en filas. Con muchas horas ("Todo el día") la
+   tarjeta no crece: la grilla se desplaza hacia abajo (unas 6 filas a la
+   vista) y, con muchos días, hacia los lados. */
 .scroll {
   position: relative;
-  overflow-x: auto;
+  max-height: 17rem;
+  overflow: auto;
 }
 
 .grid {
@@ -20,6 +23,10 @@
 }
 
 .grid thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--color-surface);
   padding: var(--space-1);
   font-weight: var(--weight-bold);
   color: var(--color-ink);
@@ -27,6 +34,7 @@
 }
 
 .hour {
+  width: 1%; /* la columna de horas ocupa solo lo que mide "09:00" */
   padding-right: var(--space-2);
   font-weight: var(--weight-regular);
   color: var(--color-muted);
@@ -59,11 +67,6 @@
   background-color: var(--color-danger-soft);
   color: var(--color-danger);
   font-weight: var(--weight-semibold);
-}
-
-.libre {
-  border-color: var(--color-border);
-  color: var(--color-muted);
 }
 
 .srOnly {

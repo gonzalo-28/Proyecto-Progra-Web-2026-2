@@ -13,26 +13,36 @@ function columnLabel(iso) {
 }
 
 /**
- * "Vista previa sobre el calendario" (mockup 5.4): días en columnas, bloques
- * en filas. Cada celda dice si queda Bloqueado, si Se cancela una reserva o
- * si queda Libre.
+ * "Vista previa sobre el calendario" (mockup 5.4): cada día del rango es una
+ * columna (Mié 16 · Jue 17 · Vie 18) y cada hora bloqueada es una fila.
+ * Como en el mockup, solo aparecen las horas que cubre el bloqueo y cada
+ * celda dice si queda Bloqueado o si Se cancela una reserva. Si son muchas
+ * horas ("Todo el día"), la tarjeta mantiene su alto y la grilla se desplaza
+ * hacia abajo con los días siempre visibles.
  *
  * Props:
- *  - preview:   { dias, bloques, afectadas } | null   (blockService.previsualizarBloqueo)
+ *  - preview:   { dias, bloques, afectadas, sinBloques } | null   (useBlockPreview)
  *  - bloqueIds: bloques elegidos ([] = todo el día)
  */
 export default function BlockPreview({ preview, bloqueIds = [] }) {
-  if (!preview) {
+  const horas = preview
+    ? preview.bloques.filter((bloque) => bloqueIds.length === 0 || bloqueIds.includes(bloque.id))
+    : [];
+
+  if (!preview || horas.length === 0) {
     return (
       <Card as="section" title="Vista previa sobre el calendario" padding="lg">
-        <p className={styles.hint}>Elige un espacio y un rango de fechas válido para ver la vista previa.</p>
+        <p className={styles.hint}>
+          {preview
+            ? 'Elige al menos un bloque horario para ver la vista previa.'
+            : 'Elige un espacio y un rango de fechas válido para ver la vista previa.'}
+        </p>
       </Card>
     );
   }
 
-  const { dias, bloques, afectadas } = preview;
+  const { dias, afectadas } = preview;
   const seCancela = new Set(afectadas.map((r) => `${r.fecha}|${r.horaInicio}`));
-  const cubierto = (bloque) => bloqueIds.length === 0 || bloqueIds.includes(bloque.id);
 
   return (
     <Card as="section" title="Vista previa sobre el calendario" padding="lg">
@@ -51,20 +61,17 @@ export default function BlockPreview({ preview, bloqueIds = [] }) {
             </tr>
           </thead>
           <tbody>
-            {bloques.map((bloque) => (
+            {horas.map((bloque) => (
               <tr key={bloque.id}>
                 <th scope="row" className={styles.hour}>
                   {bloque.horaInicio}
                 </th>
                 {dias.map((dia) => {
-                  let estado = 'libre';
-                  if (cubierto(bloque)) {
-                    estado = seCancela.has(`${dia}|${bloque.horaInicio}`) ? 'cancela' : 'bloqueado';
-                  }
+                  const cancela = seCancela.has(`${dia}|${bloque.horaInicio}`);
                   return (
                     <td key={dia}>
-                      <span className={cx(styles.cell, styles[estado])}>
-                        {estado === 'cancela' ? 'Se cancela' : estado === 'bloqueado' ? 'Bloqueado' : 'Libre'}
+                      <span className={cx(styles.cell, cancela ? styles.cancela : styles.bloqueado)}>
+                        {cancela ? 'Se cancela' : 'Bloqueado'}
                       </span>
                     </td>
                   );
