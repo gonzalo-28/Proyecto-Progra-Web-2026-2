@@ -19,22 +19,44 @@ Proyecto del curso **Programación Web** · Universidad de Lima · 2026-2 · Gru
 
 - **React 19** + **Vite 8**
 - **React Router 7**: rutas públicas, privadas y protegidas por rol
-- **CSS Modules** con tokens de diseño (`src/styles/tokens.css`)
+- **CSS Modules** con tokens de diseño (`frontend/src/styles/tokens.css`)
 - **ESLint**, con las reglas de `react-hooks` y `react-refresh`
-- Persistencia simulada en `localStorage`. En esta entrega no hay backend: los servicios imitan las respuestas de una API y sus validaciones.
+- Persistencia simulada en `localStorage` (primera entrega): los servicios imitan las respuestas de una API y sus validaciones.
+- **Backend** (en construcción): **Node.js + Express 5**, **Sequelize 6** y **PostgreSQL**. Ver `backend/LEEME.md` y el esquema de la base de datos en `backend/ESQUEMA_BD.md`.
 
 ## Cómo ejecutarlo
 
 Requisitos: **Node.js 20.19 o superior** (en la línea 22, la 22.13 o superior) y **Git**.
 
+El repositorio tiene dos proyectos, cada uno con su `package.json`:
+
+```
+Proyecto-Progra-Web-2026-2/
+├── frontend/   React + Vite (puerto 5173)
+└── backend/    Express + Sequelize + PostgreSQL (puerto 3005)
+```
+
+**Frontend**
+
 ```bash
 git clone https://github.com/gonzalo-28/Proyecto-Progra-Web-2026-2.git
-cd Proyecto-Progra-Web-2026-2
+cd Proyecto-Progra-Web-2026-2/frontend
 npm install
 npm run dev
 ```
 
 Abre **http://localhost:5173** en el navegador.
+
+**Backend** (necesita PostgreSQL y la base `reservauldb` creada en pgAdmin; detalles en `backend/LEEME.md`)
+
+```bash
+cd Proyecto-Progra-Web-2026-2/backend
+npm install
+npm run init   # la primera vez: crea las tablas
+npm run dev    # las siguientes veces
+```
+
+Comandos del frontend (se ejecutan dentro de `frontend/`):
 
 | Comando | Para qué sirve |
 |---|---|
@@ -45,7 +67,7 @@ Abre **http://localhost:5173** en el navegador.
 
 ### Datos de prueba
 
-La primera vez que se abre, la app copia los datos de `src/data/` en `localStorage` (clave `app_db`). Si los datos de prueba cambiaron o quieres empezar de cero, abre la consola del navegador (F12 → **Console**), ejecuta lo siguiente y recarga la página con F5:
+La primera vez que se abre, la app copia los datos de `frontend/src/data/` en `localStorage` (clave `app_db`). Si los datos de prueba cambiaron o quieres empezar de cero, abre la consola del navegador (F12 → **Console**), ejecuta lo siguiente y recarga la página con F5:
 
 ```js
 localStorage.removeItem('app_db')
@@ -80,10 +102,10 @@ Usuarios de prueba (todos con la contraseña **`Aa1234`**):
 
 En modo desarrollo, la bandeja del encargado acepta `?hora=HH:MM` para simular la hora actual y probar la tolerancia. Por ejemplo: `/encargado/bandeja?hora=10:08`.
 
-## Estructura del proyecto
+## Estructura del frontend
 
 ```
-src/
+frontend/src/
 ├── components/
 │   ├── ui/          Componentes genéricos y reutilizables (Button, Modal, TextField…)
 │   ├── features/    Componentes de cada funcionalidad (auth, spaces, search, reservations, operation…)
@@ -108,5 +130,5 @@ Reglas que sigue el código:
 ## Flujo de trabajo con Git
 
 1. Cada integrante trabaja en su propia rama (`feature/hu<N>-…`). Nadie trabaja directo en `main`.
-2. Antes de abrir un Pull Request, se actualiza la rama con `git merge origin/main` y se revisa que pasen `npm run lint` y `npm run build`.
+2. Antes de abrir un Pull Request, se actualiza la rama con `git merge origin/main` y se revisa que pasen `npm run lint` y `npm run build` (dentro de `frontend/`).
 3. El Pull Request lo revisa y lo aprueba **otro integrante** antes de unirlo a `main`.
