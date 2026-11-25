@@ -22,7 +22,7 @@ Proyecto del curso **Programación Web** · Universidad de Lima · 2026-2 · Gru
 - **CSS Modules** con tokens de diseño (`frontend/src/styles/tokens.css`)
 - **ESLint**, con las reglas de `react-hooks` y `react-refresh`
 - Persistencia simulada en `localStorage` (primera entrega): los servicios imitan las respuestas de una API y sus validaciones.
-- **Backend** (en construcción): **Node.js + Express 5**, **Sequelize 6** y **PostgreSQL**. Ver `backend/LEEME.md`.
+- **Backend** (en construcción): **Node.js + Express 5**, **Sequelize 6** y **PostgreSQL**. Ver `backend/LEEME.md` y el esquema de la base de datos en `backend/ESQUEMA_BD.md`.
 
 ## Cómo ejecutarlo
 

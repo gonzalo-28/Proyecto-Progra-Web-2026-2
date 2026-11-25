@@ -35,4 +35,4 @@ src/tests/pruebas.http         pruebas con REST Client
 | HU-5 | bloqueo, bloqueoBloque + columnas de llegada y cancelación de reserva |
 | HU-6 | incidencia, comentarioIncidencia |
 
-El detalle de cada columna está en `backend/ESQUEMA_BD.md` del proyecto AppGrupo4.
+El detalle de cada tabla, las relaciones y el reparto por HU están en [`ESQUEMA_BD.md`](ESQUEMA_BD.md).
