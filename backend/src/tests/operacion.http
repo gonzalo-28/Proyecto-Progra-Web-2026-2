@@ -1,0 +1,87 @@
+### HU-5 · Pruebas de la operación diaria (extensión REST Client)
+# Antes: npm run semilla (los datos de "hoy" dependen del día en que se corre) y npm run dev.
+# Encargado Carlos = 2, estudiante Ana = 1.
+# Reservas confirmadas de HOY: 17 (10:00, espacio 1), 18 (11:00, espacio 1),
+# 22 (11:00, espacio 2), 25 (11:00, espacio 3), 27 (10:00) y 28 (11:00) del espacio 4.
+# "hora" es SOLO PARA PROBAR: simula la hora actual (como ?hora=10:08 en el frontend).
+
+@url = http://localhost:3005/operacion
+@hoy = {{$localDatetime 'YYYY-MM-DD'}}
+
+### 1. Bandeja de hoy → total 14: 6 confirmadas, 5 atendidas, 2 inasistencias, 1 cancelada
+GET {{url}}/bandeja?sedeId=1&fecha={{hoy}}
+
+### 2. Llegada muy temprano (09:30 para la de las 10:00) → 400 MUY_TEMPRANO ("desde las 09:45")
+PUT {{url}}/reservas/17/llegada
+Content-Type: application/json
+
+{ "encargadoId": 2, "hora": "09:30" }
+
+### 3. Llegada dentro de la tolerancia → 200 { codigo: RSV-2026-0603, hora: 10:05, tardia: false }
+PUT {{url}}/reservas/17/llegada
+Content-Type: application/json
+
+{ "encargadoId": 2, "hora": "10:05" }
+
+### 4. La misma reserva otra vez → 409 ESTADO_INVALIDO (ya está atendida)
+PUT {{url}}/reservas/17/llegada
+Content-Type: application/json
+
+{ "encargadoId": 2, "hora": "10:06" }
+
+### 5. Inasistencia antes de que venza la tolerancia (11:10 para la de las 11:00) → 400 TOLERANCIA_VIGENTE
+PUT {{url}}/reservas/18/inasistencia
+Content-Type: application/json
+
+{ "encargadoId": 2, "hora": "11:10" }
+
+### 6. Inasistencia vencida la tolerancia → 200 { codigo: RSV-2026-0604, estudiante: Andrea Villanueva Soto }
+PUT {{url}}/reservas/18/inasistencia
+Content-Type: application/json
+
+{ "encargadoId": 2, "hora": "11:20" }
+
+### 7. Cancelar con "Otro" y sin detalle suficiente → 400 con campos.detalle
+PUT {{url}}/reservas/22/cancelar
+Content-Type: application/json
+
+{ "encargadoId": 2, "motivo": "otro", "detalle": "corto", "hora": "10:00" }
+
+### 8. Cancelar bien → 200 { codigo: RSV-2026-0608, estudiante: Mariana Tello Bustamante }
+PUT {{url}}/reservas/22/cancelar
+Content-Type: application/json
+
+{ "encargadoId": 2, "motivo": "corte_energia", "detalle": "Corte programado en el pabellón E", "hora": "10:00" }
+
+### 9. Cancelar cuando el bloque ya terminó (12:30 para la de 11:00–12:00) → 400 NO_CANCELABLE
+PUT {{url}}/reservas/25/cancelar
+Content-Type: application/json
+
+{ "encargadoId": 2, "motivo": "uso_academico", "hora": "12:30" }
+
+### 10. Una estudiante intenta operar → 403 SIN_PERMISO
+PUT {{url}}/reservas/27/llegada
+Content-Type: application/json
+
+{ "encargadoId": 1, "hora": "10:05" }
+
+### 11. Reserva que no existe → 404
+PUT {{url}}/reservas/999/llegada
+Content-Type: application/json
+
+{ "encargadoId": 2 }
+
+### 12. Buscar "lucia" (sin tilde) → 2 resultados: RSV-2026-0611 y RSV-2026-0602
+GET {{url}}/reservas?sedeId=1&texto=lucia
+
+### 13. Buscar con 1 letra → 400 (mínimo 2 caracteres)
+GET {{url}}/reservas?sedeId=1&texto=a
+
+### 14. Filtrar por estado: todas las inasistencias de la sede
+GET {{url}}/reservas?sedeId=1&estado=inasistencia
+
+### 15. Espacios de la sede (filtro "Espacio" de la búsqueda) → 12
+GET {{url}}/espacios?sedeId=1
+
+### 16. Bandeja otra vez → 6 atendidas, 3 inasistencias, 2 canceladas; el historial incluye lo que acabas de hacer
+GET {{url}}/bandeja?sedeId=1&fecha={{hoy}}

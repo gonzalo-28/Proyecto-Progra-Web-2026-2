@@ -39,3 +39,34 @@ src/tests/pruebas.http         pruebas con REST Client
 | HU-6 | incidencia, comentarioIncidencia |
 
 El detalle de cada tabla, las relaciones y el reparto por HU están en [`ESQUEMA_BD.md`](ESQUEMA_BD.md).
+
+## Endpoints disponibles
+Cada HU agrega aquí los suyos. Las pruebas de cada HU van en su propio archivo `src/tests/<entidad>.http`.
+
+| HU | Método y ruta | Qué hace |
+|---|---|---|
+| HU-5 | `GET /bloqueos?sedeId=1` | Bloqueos vigentes (terminan hoy o después), con espacio, bloques y reservas canceladas |
+| HU-5 | `GET /bloqueos/preview?espacioId&desde&hasta&bloqueIds=4,5` | Reservas confirmadas que el bloqueo cancelaría |
+| HU-5 | `GET /bloqueos/:id` | Un bloqueo |
+| HU-5 | `POST /bloqueos` | Crea el bloqueo y cancela las reservas afectadas en una transacción |
+| HU-5 | `DELETE /bloqueos/:id?encargadoId=2` | Elimina el bloqueo (las reservas canceladas no se reactivan) |
+| HU-5 | `GET /operacion/bandeja?sedeId=1&fecha=2026-11-25` | Bandeja del día: contadores, reservas agrupadas por espacio e historial de la operación |
+| HU-5 | `PUT /operacion/reservas/:id/llegada` | Registra la llegada (body: `encargadoId`) |
+| HU-5 | `PUT /operacion/reservas/:id/inasistencia` | Marca la inasistencia, vencida la tolerancia de 15 min |
+| HU-5 | `PUT /operacion/reservas/:id/cancelar` | Cancela como encargado (body: `encargadoId`, `motivo`, `detalle`) |
+| HU-5 | `GET /operacion/reservas?sedeId=1&texto=&espacioId=&estado=` | Búsqueda por código, estudiante, correo o código de alumno |
+| HU-5 | `GET /operacion/espacios?sedeId=1` | Espacios de la sede para el filtro de la búsqueda |
+
+En los `PUT` de `/operacion` se puede mandar `"hora": "10:05"` para simular la hora actual al probar
+(como `?hora=10:08` en la bandeja del frontend).
+
+## Capas y errores
+`routes` → `controllers` (recibe y responde) → `services` (reglas de negocio) → `repositories` (Sequelize).
+Para una entidad con solo CRUD basta el patrón del profesor (controller + RepositoryBase).
+
+Cuando una regla falla, el servicio lanza `crearError(status, mensaje, { code, campos })` (`src/utils/errores.js`)
+y el controlador responde con `responderError`. El frontend recibe siempre la misma forma:
+```json
+{ "success": false, "message": "Revisa los campos marcados.", "code": "VALIDACION", "campos": { "motivo": "…" } }
+```
+400 datos inválidos · 403 sin permiso · 404 no existe · 409 choca con otro registro · 500 error interno.
