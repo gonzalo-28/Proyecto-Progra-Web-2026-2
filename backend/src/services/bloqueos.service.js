@@ -3,12 +3,12 @@
 // El controlador solo recibe y responde; aquí se valida y se decide.
 import repository from '../repositories/bloqueos.repository.js'
 import RepositoryBase from '../repositories/RepositoryBase.js'
-import { Usuario, Espacio, BloqueHorario } from '../models/relaciones.js'
+import { Espacio, BloqueHorario } from '../models/relaciones.js'
 import { crearError } from '../utils/errores.js'
+import { exigirEncargado as exigirEncargadoBase } from '../utils/permisos.js'
 import { hoyISO, esFechaISO, contarDias, fechaHora } from '../utils/fechas.js'
 
 // Para buscar por id basta el CRUD genérico del profesor
-const usuarios = new RepositoryBase(Usuario);
 const espacios = new RepositoryBase(Espacio);
 const bloquesHorarios = new RepositoryBase(BloqueHorario);
 
@@ -109,13 +109,8 @@ async function buscarAfectadas({ espacioId, desde, hasta, bloqueIds }, ahora) {
   );
 }
 
-async function exigirEncargado(encargadoId) {
-  const encargado = encargadoId ? await usuarios.findOne(encargadoId) : null;
-  if (!encargado || encargado.rol !== 'encargado') {
-    throw crearError(403, 'Solo un encargado puede gestionar bloqueos.', { code: 'SIN_PERMISO' });
-  }
-  return encargado;
-}
+const exigirEncargado = (encargadoId) =>
+  exigirEncargadoBase(encargadoId, 'Solo un encargado puede gestionar bloqueos.');
 
 async function contarPorBloqueo(bloqueos) {
   const conteo = await repository.contarCanceladas(bloqueos.map((b) => b.id));

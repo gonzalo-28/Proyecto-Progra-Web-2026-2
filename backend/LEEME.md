@@ -50,6 +50,15 @@ Cada HU agrega aquí los suyos. Las pruebas de cada HU van en su propio archivo 
 | HU-5 | `GET /bloqueos/:id` | Un bloqueo |
 | HU-5 | `POST /bloqueos` | Crea el bloqueo y cancela las reservas afectadas en una transacción |
 | HU-5 | `DELETE /bloqueos/:id?encargadoId=2` | Elimina el bloqueo (las reservas canceladas no se reactivan) |
+| HU-5 | `GET /operacion/bandeja?sedeId=1&fecha=2026-11-25` | Bandeja del día: contadores, reservas agrupadas por espacio e historial de la operación |
+| HU-5 | `PUT /operacion/reservas/:id/llegada` | Registra la llegada (body: `encargadoId`) |
+| HU-5 | `PUT /operacion/reservas/:id/inasistencia` | Marca la inasistencia, vencida la tolerancia de 15 min |
+| HU-5 | `PUT /operacion/reservas/:id/cancelar` | Cancela como encargado (body: `encargadoId`, `motivo`, `detalle`) |
+| HU-5 | `GET /operacion/reservas?sedeId=1&texto=&espacioId=&estado=` | Búsqueda por código, estudiante, correo o código de alumno |
+| HU-5 | `GET /operacion/espacios?sedeId=1` | Espacios de la sede para el filtro de la búsqueda |
+
+En los `PUT` de `/operacion` se puede mandar `"hora": "10:05"` para simular la hora actual al probar
+(como `?hora=10:08` en la bandeja del frontend).
 
 ## Capas y errores
 `routes` → `controllers` (recibe y responde) → `services` (reglas de negocio) → `repositories` (Sequelize).

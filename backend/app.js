@@ -7,6 +7,7 @@ import cors from 'cors';
 // import espaciosRouter from './src/routes/espacios.routes.js'      // HU-2 / HU-3
 // import reservasRouter from './src/routes/reservas.routes.js'      // HU-4 / HU-5
 import bloqueosRouter from './src/routes/bloqueos.routes.js'         // HU-5
+import operacionRouter from './src/routes/operacion.routes.js'       // HU-5
 // import incidenciasRouter from './src/routes/incidencias.routes.js' // HU-6
 
 const app = express();
@@ -21,6 +22,7 @@ app.get('/', (req, resp) => {
 // app.use('/espacios', espaciosRouter);
 // app.use('/reservas', reservasRouter);
 app.use('/bloqueos', bloqueosRouter);
+app.use('/operacion', operacionRouter);
 // app.use('/incidencias', incidenciasRouter);
 
 export default app;

@@ -22,3 +22,25 @@ export const contarDias = (desde, hasta) =>
 
 /** ('2026-11-25', '10:00') → Date local de ese momento. */
 export const fechaHora = (fecha, hora) => new Date(`${fecha}T${hora}:00`);
+
+/** Date → '10:15' */
+export const formatoHora = (fecha) => `${pad2(fecha.getHours())}:${pad2(fecha.getMinutes())}`;
+
+/** '2026-11-25' → '25/11' */
+export const formatoCorto = (iso) => `${iso.slice(8, 10)}/${iso.slice(5, 7)}`;
+
+/** Primer y último instante de un día local: para buscar lo que pasó "ese día". */
+export const rangoDelDia = (iso) => [new Date(`${iso}T00:00:00`), new Date(`${iso}T23:59:59.999`)];
+
+/**
+ * Devuelve `ahora` con la hora cambiada a 'HH:mm' (mismo día). Si no llega una hora
+ * válida, devuelve `ahora` sin tocar. SOLO PARA PROBAR: permite simular la hora
+ * (como ?hora=10:08 en la bandeja del frontend) sin esperar al reloj.
+ */
+export const conHora = (ahora, hora) => {
+  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(String(hora ?? ''))) return ahora;
+  const [h, m] = hora.split(':').map(Number);
+  const fecha = new Date(ahora);
+  fecha.setHours(h, m, 0, 0);
+  return fecha;
+};
