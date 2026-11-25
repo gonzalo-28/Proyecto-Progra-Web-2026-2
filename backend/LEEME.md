@@ -39,3 +39,25 @@ src/tests/pruebas.http         pruebas con REST Client
 | HU-6 | incidencia, comentarioIncidencia |
 
 El detalle de cada tabla, las relaciones y el reparto por HU están en [`ESQUEMA_BD.md`](ESQUEMA_BD.md).
+
+## Endpoints disponibles
+Cada HU agrega aquí los suyos. Las pruebas de cada HU van en su propio archivo `src/tests/<entidad>.http`.
+
+| HU | Método y ruta | Qué hace |
+|---|---|---|
+| HU-5 | `GET /bloqueos?sedeId=1` | Bloqueos vigentes (terminan hoy o después), con espacio, bloques y reservas canceladas |
+| HU-5 | `GET /bloqueos/preview?espacioId&desde&hasta&bloqueIds=4,5` | Reservas confirmadas que el bloqueo cancelaría |
+| HU-5 | `GET /bloqueos/:id` | Un bloqueo |
+| HU-5 | `POST /bloqueos` | Crea el bloqueo y cancela las reservas afectadas en una transacción |
+| HU-5 | `DELETE /bloqueos/:id?encargadoId=2` | Elimina el bloqueo (las reservas canceladas no se reactivan) |
+
+## Capas y errores
+`routes` → `controllers` (recibe y responde) → `services` (reglas de negocio) → `repositories` (Sequelize).
+Para una entidad con solo CRUD basta el patrón del profesor (controller + RepositoryBase).
+
+Cuando una regla falla, el servicio lanza `crearError(status, mensaje, { code, campos })` (`src/utils/errores.js`)
+y el controlador responde con `responderError`. El frontend recibe siempre la misma forma:
+```json
+{ "success": false, "message": "Revisa los campos marcados.", "code": "VALIDACION", "campos": { "motivo": "…" } }
+```
+400 datos inválidos · 403 sin permiso · 404 no existe · 409 choca con otro registro · 500 error interno.
