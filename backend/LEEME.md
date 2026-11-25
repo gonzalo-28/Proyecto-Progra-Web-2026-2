@@ -8,9 +8,12 @@ Express + Sequelize + PostgreSQL, con la misma estructura que la práctica 19 de
 3. En esta carpeta:
    ```
    npm install
-   npm run init     ← crea (o vuelve a crear) todas las tablas: sync({ force: true })
-   npm run dev      ← las siguientes veces (no borra datos)
+   npm run semilla  ← crea las tablas desde cero y carga los datos de prueba
+   npm run dev      ← levanta el servidor (no borra datos)
    ```
+   `npm run init` también recrea las tablas, pero las deja vacías.
+   La semilla lee `frontend/src/data/db.js` y sus fechas son relativas al día en que se corre:
+   si quieres que la bandeja de la HU-5 muestre "hoy", vuelve a correr `npm run semilla`.
 4. Abre `src/tests/pruebas.http` (extensión REST Client) y prueba `GET http://localhost:3005/` → `HEALTHY`.
 
 ## Estructura
@@ -22,7 +25,7 @@ src/models/*.js                un sequelize.define por tabla (14 tablas)
 src/models/relaciones.js       hasMany / belongsTo: aquí nacen las claves foráneas (…Id)
 src/repositories/RepositoryBase.js   CRUD genérico del profesor. NO se modifica
 src/repositories, services, controllers, routes   ← cada HU agrega los suyos
-src/data/                      semilla.js (pendiente, como migrate-juegos.js)
+src/data/semilla.js            datos de prueba (como migrate-juegos.js): npm run semilla
 src/tests/pruebas.http         pruebas con REST Client
 ```
 
