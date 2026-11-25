@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "init": "node index.js init"
+    "init": "node index.js init",
+    "semilla": "node src/data/semilla.js"
   },
   "dependencies": {
     "body-parser": "^2.4.0",
