@@ -1,6 +1,6 @@
 # Esquema de la base de datos: Reserva UL (backend con Express + Sequelize + PostgreSQL)
 
-Sale de `frontend/src/data/db.js`, de las semillas y de los servicios del frontend.
+Sale de `src/data/datosIniciales/db.js`, de las semillas y de los servicios del frontend.
 Está implementado en `backend/src/models/` (14 modelos + `relaciones.js`). Si cambias un modelo, actualiza también este archivo.
 
 ## Convenciones
@@ -170,8 +170,8 @@ Cada uno hace las tablas y los endpoints de su HU.
 | HU-2 | espacios, equipamientos, horarios_atencion | CRUD /espacios con include de equipamiento y horario, cambio de estado |
 | HU-3 | (lee espacios, reservas y bloqueos) | GET /espacios/buscar, GET /espacios/:id/disponibilidad?semana= |
 | HU-4 | bloques_horarios, reservas, invitados, eventos_reserva | POST /reservas (con invitados, en transacción), GET /reservas/usuario/:id, GET /reservas/codigo/:codigo, cancelar |
-| HU-5 | bloqueos, bloqueo_bloques (+ columnas de llegada y cancelación en reservas) | /bloqueos (listar, preview, crear, eliminar) y /operacion (bandeja, llegada, inasistencia, cancelar, búsqueda). Ver la tabla de endpoints de LEEME.md |
+| HU-5 | bloqueos, bloqueo_bloques (+ columnas de llegada y cancelación en reservas) | /bloqueos (listar, preview, crear, eliminar) y /operacion (bandeja, llegada, inasistencia, cancelar, búsqueda). Ver la tabla de endpoints de README.md |
 | HU-6 | incidencias, comentarios_incidencia | POST /incidencias, GET /incidencias/usuario/:id, GET /incidencias, POST comentario, PUT estado |
 
 **Orden de creación**, por las claves foráneas: sedes → usuarios → espacios (+ hijas) → bloques_horarios → bloqueos → reservas (+ hijas) → incidencias (+ comentarios).
-Para la semilla, un script `src/data/semilla.js` como `migrate-juegos.js` del profesor, con los datos de `frontend/src/data/db.js` y los ids numéricos.
+Para la semilla, un script `src/data/semilla.js` como `migrate-juegos.js` del profesor, con los datos de `src/data/datosIniciales/db.js` y los ids numéricos.

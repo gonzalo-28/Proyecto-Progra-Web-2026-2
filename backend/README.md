@@ -1,8 +1,11 @@
-# Backend de Reserva UL
+# Reserva UL · API
 
+API REST de Reserva UL (reservas de espacios de la Universidad de Lima).
 Express + Sequelize + PostgreSQL, con la misma estructura que la práctica 19 del profesor.
+Proyecto del curso Programación Web · Universidad de Lima · 2026-2 · Grupo 4.
+El aplicativo web (React + Vite) está en su propio repositorio.
 
-## Cómo levantarlo (la primera vez)
+## Cómo levantarlo en local (la primera vez)
 1. En pgAdmin crea la base **reservauldb** (Databases → Create → Database).
 2. En `src/config/database.js` pon la contraseña de TU PostgreSQL.
 3. En esta carpeta:
@@ -12,7 +15,7 @@ Express + Sequelize + PostgreSQL, con la misma estructura que la práctica 19 de
    npm run dev      ← levanta el servidor (no borra datos)
    ```
    `npm run init` también recrea las tablas, pero las deja vacías.
-   La semilla lee `frontend/src/data/db.js` y sus fechas son relativas al día en que se corre:
+   La semilla lee `src/data/datosIniciales/` y sus fechas son relativas al día en que se corre:
    si quieres que la bandeja de la HU-5 muestre "hoy", vuelve a correr `npm run semilla`.
 4. Abre `src/tests/pruebas.http` (extensión REST Client) y prueba `GET http://localhost:3005/` → `HEALTHY`.
 
@@ -70,3 +73,12 @@ y el controlador responde con `responderError`. El frontend recibe siempre la mi
 { "success": false, "message": "Revisa los campos marcados.", "code": "VALIDACION", "campos": { "motivo": "…" } }
 ```
 400 datos inválidos · 403 sin permiso · 404 no existe · 409 choca con otro registro · 500 error interno.
+
+## Despliegue en Vercel
+1. **Base de datos:** en Vercel → Storage → Create Database → **Neon** (Postgres). Conéctala al proyecto de la API:
+   Vercel agrega sola la variable `DATABASE_URL` y `src/config/database.js` la usa.
+2. **Cargar los datos en la nube:** copia `.env.example` como `.env`, pega la `DATABASE_URL` de Neon y corre
+   `npm run semilla:nube`. (`.env` no se sube a GitHub.)
+3. **API:** en Vercel → Add New → Project → importa este repositorio. Vercel detecta Express por `app.js`
+   (que hace `export default app`); no hay que configurar build ni puerto.
+4. Prueba `GET https://<tu-api>.vercel.app/` → `HEALTHY`. Esa URL es la que usa el frontend (`VITE_API_URL`).

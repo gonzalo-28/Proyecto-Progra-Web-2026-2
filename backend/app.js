@@ -1,3 +1,5 @@
+// Vercel ejecuta este archivo: detecta Express y usa la app que se exporta al final.
+// En local, index.js la importa, sincroniza la base y llama a listen (puerto 3005).
 import express from 'express'
 import bodyParser from 'body-parser';
 import cors from 'cors';
