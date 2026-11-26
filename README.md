@@ -19,44 +19,27 @@ Proyecto del curso **Programación Web** · Universidad de Lima · 2026-2 · Gru
 
 - **React 19** + **Vite 8**
 - **React Router 7**: rutas públicas, privadas y protegidas por rol
-- **CSS Modules** con tokens de diseño (`frontend/src/styles/tokens.css`)
+- **CSS Modules** con tokens de diseño (`src/styles/tokens.css`)
 - **ESLint**, con las reglas de `react-hooks` y `react-refresh`
-- Persistencia simulada en `localStorage` (primera entrega): los servicios imitan las respuestas de una API y sus validaciones.
-- **Backend** (en construcción): **Node.js + Express 5**, **Sequelize 6** y **PostgreSQL**. Ver `backend/LEEME.md` y el esquema de la base de datos en `backend/ESQUEMA_BD.md`.
+- Datos desde el **API REST** del proyecto (Node.js + Express + Sequelize + PostgreSQL), que vive en su propio repositorio: [Proyecto-Programa-Web-2026-2-API](https://github.com/benjaminmendozagutierrez872-collab/Proyecto-Programa-Web-2026-2-API). Los servicios llaman al API a través de `src/services/api.js`.
+- Mientras cada historia termina de conectarse, algunos servicios todavía usan la persistencia simulada en `localStorage` de la primera entrega.
 
 ## Cómo ejecutarlo
 
 Requisitos: **Node.js 20.19 o superior** (en la línea 22, la 22.13 o superior) y **Git**.
 
-El repositorio tiene dos proyectos, cada uno con su `package.json`:
-
-```
-Proyecto-Progra-Web-2026-2/
-├── frontend/   React + Vite (puerto 5173)
-└── backend/    Express + Sequelize + PostgreSQL (puerto 3005)
-```
-
-**Frontend**
-
 ```bash
 git clone https://github.com/gonzalo-28/Proyecto-Progra-Web-2026-2.git
-cd Proyecto-Progra-Web-2026-2/frontend
+cd Proyecto-Progra-Web-2026-2
 npm install
 npm run dev
 ```
 
 Abre **http://localhost:5173** en el navegador.
 
-**Backend** (necesita PostgreSQL y la base `reservauldb` creada en pgAdmin; detalles en `backend/LEEME.md`)
+La app necesita el API corriendo. En local, levántalo desde su repositorio ([instrucciones en su README](https://github.com/benjaminmendozagutierrez872-collab/Proyecto-Programa-Web-2026-2-API)): por defecto queda en `http://localhost:3005`, que es la URL que usa `src/services/api.js` si no se define `VITE_API_URL`. Para usar otra URL, copia `.env.example` como `.env.local` y cámbiala.
 
-```bash
-cd Proyecto-Progra-Web-2026-2/backend
-npm install
-npm run init   # la primera vez: crea las tablas
-npm run dev    # las siguientes veces
-```
-
-Comandos del frontend (se ejecutan dentro de `frontend/`):
+Comandos:
 
 | Comando | Para qué sirve |
 |---|---|
@@ -67,7 +50,7 @@ Comandos del frontend (se ejecutan dentro de `frontend/`):
 
 ### Datos de prueba
 
-La primera vez que se abre, la app copia los datos de `frontend/src/data/` en `localStorage` (clave `app_db`). Si los datos de prueba cambiaron o quieres empezar de cero, abre la consola del navegador (F12 → **Console**), ejecuta lo siguiente y recarga la página con F5:
+La primera vez que se abre, la app copia los datos de `src/data/` en `localStorage` (clave `app_db`). Si los datos de prueba cambiaron o quieres empezar de cero, abre la consola del navegador (F12 → **Console**), ejecuta lo siguiente y recarga la página con F5:
 
 ```js
 localStorage.removeItem('app_db')
@@ -102,10 +85,10 @@ Usuarios de prueba (todos con la contraseña **`Aa1234`**):
 
 En modo desarrollo, la bandeja del encargado acepta `?hora=HH:MM` para simular la hora actual y probar la tolerancia. Por ejemplo: `/encargado/bandeja?hora=10:08`.
 
-## Estructura del frontend
+## Estructura del proyecto
 
 ```
-frontend/src/
+src/
 ├── components/
 │   ├── ui/          Componentes genéricos y reutilizables (Button, Modal, TextField…)
 │   ├── features/    Componentes de cada funcionalidad (auth, spaces, search, reservations, operation…)
@@ -127,8 +110,14 @@ Reglas que sigue el código:
 - Los estilos usan CSS Modules y solo los valores definidos en los tokens.
 - El nombre de cada archivo de componente coincide exactamente, mayúsculas incluidas, con el componente y con sus imports (`TextField/TextField.jsx`).
 
+## Despliegue en Vercel
+
+1. En Vercel → **Add New → Project** → importa este repositorio. Vercel detecta Vite solo (build `npm run build`, salida `dist`).
+2. En **Settings → Environment Variables**, agrega `VITE_API_URL` con la URL del API desplegado (por ejemplo `https://<api>.vercel.app`) y vuelve a desplegar.
+3. `vercel.json` redirige todas las rutas a `index.html`, para que React Router funcione al recargar una página como `/mis-reservas`.
+
 ## Flujo de trabajo con Git
 
 1. Cada integrante trabaja en su propia rama (`feature/hu<N>-…`). Nadie trabaja directo en `main`.
-2. Antes de abrir un Pull Request, se actualiza la rama con `git merge origin/main` y se revisa que pasen `npm run lint` y `npm run build` (dentro de `frontend/`).
+2. Antes de abrir un Pull Request, se actualiza la rama con `git merge origin/main` y se revisa que pasen `npm run lint` y `npm run build`.
 3. El Pull Request lo revisa y lo aprueba **otro integrante** antes de unirlo a `main`.
