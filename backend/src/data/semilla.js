@@ -2,9 +2,12 @@
 //   npm run semilla
 // OJO: hace sync({ force: true }), así que BORRA todo y vuelve a cargar los datos de prueba.
 //
-// Los datos NO se copian aquí: se leen de frontend/src/data/db.js (la misma base inicial
-// que usa el frontend con localStorage). Así no hay dos copias que mantener y las fechas
-// siguen siendo RELATIVAS AL DÍA en que se corre la semilla (la bandeja de la HU-5 muestra "hoy").
+// Los datos están en ./datosIniciales/: son los mismos archivos que usaba el frontend
+// con localStorage (db.js, reservasSemilla.js y operacionSemilla.js). Las fechas son
+// RELATIVAS AL DÍA en que se corre la semilla (la bandeja de la HU-5 muestra "hoy").
+//
+// Para cargar la base de la NUBE: pon la cadena en el archivo .env (DATABASE_URL=...)
+// y corre  npm run semilla:nube
 //
 // El frontend usa ids de texto ("usr_101", "esp_001", "bloque_003").
 // Aquí cada lista recibe ids numéricos 1, 2, 3… y un Map traduce el id viejo al nuevo.
@@ -14,7 +17,7 @@ import {
   Sede, Usuario, Espacio, Equipamiento, BloqueHorario,
   Reserva, Invitado, EventoReserva
 } from '../models/relaciones.js'
-import initialDb from '../../../frontend/src/data/db.js'
+import initialDb from './datosIniciales/db.js'
 
 /** Map { idViejo → idNuevo } numerando la lista desde 1. */
 const numerar = (lista) => new Map(lista.map((item, index) => [item.id, index + 1]));

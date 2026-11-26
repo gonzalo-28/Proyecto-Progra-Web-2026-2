@@ -14,7 +14,7 @@ async function main() {
 
       console.log('Base de datos sincronizada!')
 
-      const PORT = 3005;
+      const PORT = process.env.PORT || 3005;
 
       app.listen(PORT, () => {
         console.log('Aplicación ejecutándose en el puerto ' + PORT);

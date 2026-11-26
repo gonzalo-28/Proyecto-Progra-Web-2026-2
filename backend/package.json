@@ -10,7 +10,8 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "init": "node index.js init",
-    "semilla": "node src/data/semilla.js"
+    "semilla": "node src/data/semilla.js",
+    "semilla:nube": "node --env-file=.env src/data/semilla.js"
   },
   "dependencies": {
     "body-parser": "^2.4.0",
@@ -21,5 +22,8 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
+  },
+  "engines": {
+    "node": ">=20.19"
   }
 }
